@@ -1,0 +1,312 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { ArrowUpRight, Calendar } from "lucide-react";
+import { GitHubLogoIcon } from "@radix-ui/react-icons";
+
+import {
+  AnimatedPageHeader,
+  SectionReveal,
+  StaggerContainer,
+  StaggerItem,
+} from "@/components/motion/motion-primitives";
+import { Button } from "@/components/ui/button";
+import FeaturedProjectCard from "@/components/projects/shared/project-card";
+import ProjectMediaViewer from "@/components/projects/detail/project-media";
+import ProjectHighlights from "@/components/projects/detail/project-highlights";
+import ProjectTechGroups from "@/components/projects/detail/project-tech-groups";
+import ProjectGallery from "@/components/projects/detail/project-gallery";
+import ProjectArchitecture from "@/components/projects/detail/project-architecture";
+import ProjectListSection from "@/components/projects/detail/project-points-section";
+import TechTag from "@/components/projects/shared/tech-tag";
+import ProjectMdxSection from "@/components/projects/detail/case-study/project-mdx-section";
+import { formatMonthYear } from "@/lib/utils";
+import {
+  getProjectBySlugFromMongo,
+  getVisibleProjectsFromMongo,
+} from "@/lib/server/public-data/projects";
+import { mapPublicProjectToViewerProject } from "@/lib/mappers/projects";
+import type { Project } from "@/types/project";
+
+type Props = {
+  params: Promise<{ slug: string }>;
+};
+
+export const revalidate = 3600;
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+
+  try {
+    const project = await getProjectBySlugFromMongo(slug);
+
+    if (!project) {
+      return {
+        title: "Project not found",
+      };
+    }
+
+    return {
+      title: `${project.title} | Shiham Ahamed`,
+      description: project.shortDescription,
+    };
+  } catch {
+    return {
+      title: "Project unavailable",
+    };
+  }
+}
+
+const getRelatedProjects = async (currentSlug: string): Promise<Project[]> => {
+  try {
+    const projects = await getVisibleProjectsFromMongo();
+
+    return projects
+      .filter((project) => project.slug !== currentSlug)
+      .slice(0, 3)
+      .map((project, index) => mapPublicProjectToViewerProject(project, index));
+  } catch (error) {
+    console.error("Failed to load related projects", error);
+
+    return [];
+  }
+};
+
+const ProjectDetailError = () => (
+  <main className="pb-20 sm:pb-24 lg:pb-28">
+    <section className="relative overflow-hidden border-b border-border/60">
+      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        <div className="max-w-2xl">
+          <p className="text-sm font-medium text-muted-foreground">
+            Project details
+          </p>
+          <h1 className="mt-3 text-4xl font-semibold tracking-[-0.05em] text-foreground sm:text-5xl">
+            Project unavailable
+          </h1>
+          <p className="mt-5 text-base leading-8 text-muted-foreground">
+            This project could not be loaded right now.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+);
+
+export default async function ProjectDetailsPage({ params }: Props) {
+  const { slug } = await params;
+  let publicProject;
+
+  try {
+    publicProject = await getProjectBySlugFromMongo(slug);
+  } catch (error) {
+    console.error("Failed to load project detail", error);
+    return <ProjectDetailError />;
+  }
+
+  if (!publicProject) {
+    notFound();
+  }
+
+  const project = mapPublicProjectToViewerProject(publicProject);
+  const relatedProjects = await getRelatedProjects(project.slug);
+
+  return (
+    <main className="pb-20 sm:pb-24 lg:pb-28">
+      {/* Hero */}
+      <section className="relative overflow-hidden border-b border-border/60">
+        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.10),transparent_22%),radial-gradient(circle_at_top_right,rgba(168,85,247,0.12),transparent_22%),radial-gradient(circle_at_bottom_center,rgba(34,211,238,0.08),transparent_28%)]" />
+
+        <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+          <div className="grid gap-8 xl:grid-cols-12 xl:items-start">
+            <StaggerContainer
+              revealOnView={false}
+              delayChildren={0.04}
+              className="space-y-6 xl:col-span-5"
+            >
+              <StaggerItem>
+                <div className="flex flex-wrap items-center gap-3">
+                <div className="inline-flex items-center rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
+                  {project.projectType}
+                </div>
+
+                {/* Project timeline info */}
+                {project.startDate && (
+                  <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/80 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
+                    <Calendar className="h-3.5 w-3.5" />
+                    {project.endDate ? (
+                      <span>
+                        {formatMonthYear(project.startDate)} -{" "}
+                        {formatMonthYear(project.endDate)}
+                      </span>
+                    ) : (
+                      <span>Started {formatMonthYear(project.startDate)}</span>
+                    )}
+                  </div>
+                )}
+                </div>
+              </StaggerItem>
+
+              <StaggerItem distance={8}>
+                <div>
+                <h1 className="text-4xl font-semibold tracking-[-0.05em] text-foreground sm:text-5xl lg:text-6xl">
+                  {project.title}
+                </h1>
+
+                <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground sm:text-lg">
+                  {project.longDescription}
+                </p>
+                </div>
+              </StaggerItem>
+
+              <StaggerItem>
+                <div className="flex flex-wrap gap-2">
+                {project.techStack.map((tag) => (
+                  <TechTag key={`${project.slug}-${tag.label}`} tag={tag} />
+                ))}
+                </div>
+              </StaggerItem>
+
+              <StaggerItem>
+                <div className="flex flex-wrap gap-3">
+                {project.links.github ? (
+                  <Button
+                    asChild
+                    className="h-11 rounded-lg bg-foreground px-5 text-background hover:opacity-90"
+                  >
+                    <Link
+                      href={project.links.github}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <GitHubLogoIcon className="mr-2 h-4 w-4" />
+                      GitHub
+                    </Link>
+                  </Button>
+                ) : null}
+
+                {project.links.live ? (
+                  <Button
+                    asChild
+                    variant="outline"
+                    className="h-11 rounded-lg border-border bg-background/80 px-5 hover:bg-accent"
+                  >
+                    <Link
+                      href={project.links.live}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <ArrowUpRight className="mr-2 h-4 w-4" />
+                      Live Demo
+                    </Link>
+                  </Button>
+                ) : null}
+
+                </div>
+              </StaggerItem>
+            </StaggerContainer>
+
+            <div className="xl:col-span-7">
+              <SectionReveal
+                className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-background/80 p-3 shadow-sm backdrop-blur-xl sm:p-4"
+                distance={6}
+                delay={0.08}
+              >
+                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.12),transparent_22%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.10),transparent_24%)]" />
+
+                <div className="relative z-10">
+                  <ProjectMediaViewer
+                    media={project.heroMedia}
+                    alt={project.title}
+                  />
+                </div>
+              </SectionReveal>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl space-y-14 px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+        {/* Overview + Tech */}
+        <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
+          <SectionReveal className="relative h-full overflow-hidden rounded-[2rem] border border-border/60 bg-background/80 p-5 shadow-sm backdrop-blur-xl sm:p-6 xl:col-span-5">
+            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.08),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.06),transparent_28%)]" />
+
+            <div className="relative z-10">
+              <p className="text-sm font-medium text-muted-foreground">
+                Overview
+              </p>
+
+              <div className="mt-5 space-y-4">
+                {project.overview.map((paragraph, index) => (
+                  <p
+                    key={index}
+                    className="text-sm leading-7 text-muted-foreground sm:text-base"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </SectionReveal>
+
+          <SectionReveal className="xl:col-span-7" delay={0.08}>
+            <ProjectTechGroups techGroups={project.techGroups} />
+          </SectionReveal>
+        </div>
+
+        {/* Gallery + Highlights */}
+        <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
+          <SectionReveal className="xl:col-span-7">
+            <ProjectGallery items={project.gallery} />
+          </SectionReveal>
+
+          <SectionReveal className="xl:col-span-5" delay={0.08}>
+            <ProjectHighlights items={project.highlights} />
+          </SectionReveal>
+        </div>
+
+        <ProjectArchitecture
+          image={project.architectureImage}
+          summary={project.architectureSummary}
+          points={project.architecturePoints}
+        />
+
+        <ProjectMdxSection mdxUrl={project.mdxUrl} />
+
+        <div className="grid gap-6 lg:grid-cols-2">
+          <ProjectListSection
+            title="Challenges & learnings"
+            items={project.challenges}
+          />
+          <ProjectListSection
+            title="Future improvements"
+            items={project.futureImprovements}
+          />
+        </div>
+      </section>
+
+      {/* Related */}
+      <section className="mx-auto max-w-7xl px-4 pb-4 sm:px-6 lg:px-8">
+        <AnimatedPageHeader className="max-w-2xl">
+          <p className="text-sm font-medium text-muted-foreground">
+            Related projects
+          </p>
+          <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-foreground sm:text-3xl">
+            More work to explore
+          </h2>
+        </AnimatedPageHeader>
+
+        <StaggerContainer
+          className="mt-8 grid grid-cols-1 gap-5 md:grid-cols-2 xl:grid-cols-3"
+          staggerChildren={0.035}
+        >
+          {relatedProjects.map((relatedProject) => (
+            <StaggerItem key={relatedProject.id}>
+              <FeaturedProjectCard project={relatedProject} />
+            </StaggerItem>
+          ))}
+        </StaggerContainer>
+      </section>
+    </main>
+  );
+}

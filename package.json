@@ -1,0 +1,22 @@
+{
+  "name": "portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack portfolio monorepo with public frontend, admin dashboard, and backend API.",
+  "scripts": {
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:admin": "npm --prefix admin-frontend run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:admin": "npm --prefix admin-frontend run build",
+    "build:backend": "npm --prefix backend run build",
+    "lint:frontend": "npm --prefix frontend run lint",
+    "lint:admin": "npm --prefix admin-frontend run lint",
+    "typecheck:backend": "npm --prefix backend run typecheck",
+    "seed:frontend": "npm --prefix frontend run seed",
+    "build": "npm run build:frontend && npm run build:admin && npm run build:backend",
+    "lint": "npm run lint:frontend && npm run lint:admin",
+    "typecheck": "npm run typecheck:backend",
+    "validate": "npm run typecheck && npm run lint && npm run build"
+  }
+}
