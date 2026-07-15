@@ -64,6 +64,18 @@ if (!workflow.includes("npm ci") || /vercel deploy|render deploy|audit fix/.test
 }
 
 const render = read("render.yaml");
+if (
+  !render.includes("buildCommand: npm ci --include=dev && npm run build:packages && npm run build:backend") ||
+  /buildCommand:\s*npm ci\s+&&/.test(render)
+) {
+  fail("Render must install dev dependencies before building internal packages and the backend");
+}
+if (!/key:\s*NODE_VERSION\s*\r?\n\s+value:\s*[\"']20\.20\.2[\"']/.test(render)) {
+  fail("Render must pin Node.js to 20.20.2");
+}
+if (!render.includes("startCommand: npm run start --workspace=@portfolio/backend")) {
+  fail("Render must start the backend workspace");
+}
 if (!render.includes("healthCheckPath: /api/health/ready") || !render.includes("sync: false")) {
   fail("Render blueprint is missing readiness or secret-sync safeguards");
 }

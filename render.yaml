@@ -4,11 +4,13 @@ services:
     runtime: node
     plan: free
     rootDir: .
-    buildCommand: npm ci && npm run build:packages && npm run build:backend
+    buildCommand: npm ci --include=dev && npm run build:packages && npm run build:backend
     startCommand: npm run start --workspace=@portfolio/backend
     healthCheckPath: /api/health/ready
     autoDeploy: true
     envVars:
+      - key: NODE_VERSION
+        value: "20.20.2"
       - key: NODE_ENV
         value: production
       - key: MONGO_URI
