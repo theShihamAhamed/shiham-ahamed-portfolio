@@ -5,7 +5,7 @@ import {
 import { getVisibleAchievements } from "@/lib/server/repositories/achievement.repository";
 
 export const runtime = "nodejs";
-export const revalidate = 21600;
+export const revalidate = 86400;
 
 export async function GET() {
   try {

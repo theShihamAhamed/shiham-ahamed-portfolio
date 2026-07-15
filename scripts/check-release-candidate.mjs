@@ -136,6 +136,20 @@ if (/\bdeploy\b|\bseed\b|production credentials/i.test(workflow)) {
   fail("CI contains a deployment, seed, or production-credential action.");
 }
 
+const render = read("render.yaml");
+if (!render.includes("buildCommand: npm ci --include=dev && npm run build:packages && npm run build:backend")) {
+  fail("Render must install dev dependencies before building internal packages and the backend.");
+}
+if (!/key:\s*NODE_VERSION\s*\r?\n\s+value:\s*[\"']20\.20\.2[\"']/.test(render)) {
+  fail("Render must pin Node.js to 20.20.2.");
+}
+if (!render.includes("startCommand: npm run start --workspace=@portfolio/backend")) {
+  fail("Render must start the backend workspace.");
+}
+if (!render.includes("healthCheckPath: /api/health/ready")) {
+  fail("Render must use the backend readiness endpoint.");
+}
+
 const sourceExtensions = new Set([".ts", ".tsx", ".mts", ".cts", ".mjs", ".cjs"]);
 const collect = (directory) => {
   const result = [];
@@ -172,6 +186,23 @@ const sourceText = [
   ...collect("packages/shared"),
   ...collect("packages/db"),
 ].map(read).join("\n");
+for (const pattern of [
+  /void\s+revalidate(?:PublicCache|ProjectCache|CertificationCache|AchievementCache|CurrentlyBuildingCache|SiteSettingsCache)?\s*\(/,
+  /604800/,
+  /7\s*\*\s*24\s*\*\s*60\s*\*\s*60/,
+]) {
+  if (pattern.test(sourceText)) fail("Forbidden active cache or invalidation pattern: " + pattern);
+}
+for (const file of [
+  "apps/backend/src/lib/revalidate-public-cache.ts",
+  "apps/frontend/app/api/revalidate/route.ts",
+  "apps/frontend/app/sitemap.ts",
+]) {
+  if (!exists(file)) fail("Missing cache reliability source: " + file);
+}
+if (!sourceText.includes("FRONTEND_REVALIDATE_URL") || !sourceText.includes("FRONTEND_REVALIDATE_SECRET")) {
+  fail("Cache revalidation environment configuration is missing from active source.");
+}
 for (const pattern of [/raw\.githubusercontent\.com/, /\bmdxUrl\b/, /NEXT_PUBLIC_MONGO_URI/, /hardcoded-production-domain-placeholder/]) {
   if (pattern.test(sourceText)) fail("Forbidden stale/release-risk source match: " + pattern);
 }

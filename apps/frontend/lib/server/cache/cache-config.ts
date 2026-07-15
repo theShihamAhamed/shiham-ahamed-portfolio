@@ -1,10 +1,11 @@
 import "server-only";
 
 export const PUBLIC_REVALIDATE_SECONDS = {
-  projects: 60 * 60,
-  about: 6 * 60 * 60,
-  currentlyBuilding: 60 * 60,
-  siteSettings: 60 * 60,
+  projects: 86_400,
+  about: 86_400,
+  currentlyBuilding: 86_400,
+  siteSettings: 86_400,
+  sitemap: 86_400,
 } as const;
 
 export const PUBLIC_CACHE_KEYS = {

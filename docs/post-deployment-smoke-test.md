@@ -38,6 +38,7 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 
 - [ ] GET /api/health returns stable liveness data without secrets.
 - [ ] GET /api/health/ready returns the expected ready/not-ready status.
+- [ ] Render startup uses the pinned Node 20.20.2 build/runtime configuration and `/api/health/ready` becomes ready after cold start.
 - [ ] Allowed CORS origin succeeds with credentials.
 - [ ] Denied CORS origin is rejected.
 - [ ] Cookie attributes match the selected domain mode.
@@ -52,6 +53,8 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 - [ ] An admin project write appears publicly after bounded revalidation.
 - [ ] Project slug changes invalidate both old and new detail URLs.
 - [ ] Home/list/detail cache refreshes after relevant mutations.
+- [ ] Revalidation retries transient network/408/429/5xx failures with bounded backoff and does not retry ordinary 4xx responses.
+- [ ] An invalidation failure leaves the database mutation intact, returns structured cache-invalidation metadata, and exposes no URL secret in response or logs.
 - [ ] ImageKit media is delivered and cleanup behavior is correct.
 - [ ] Contact delivery reaches the controlled test recipient through Resend.
 - [ ] No secrets appear in browser output, network responses, or logs.

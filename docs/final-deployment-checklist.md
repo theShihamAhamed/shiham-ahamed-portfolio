@@ -51,11 +51,15 @@ during Phase 10. Do not place credentials in this file.
 ## Render backend
 
 - [ ] Create the backend service from render.yaml or equivalent settings.
+- [ ] Confirm the exact build command is `npm ci --include=dev && npm run build:packages && npm run build:backend`.
+- [ ] Confirm `NODE_VERSION=20.20.2` is set before `NODE_ENV=production`.
 - [ ] Configure the exact ADMIN_FRONTEND_ORIGINS list.
 - [ ] Configure production MongoDB, admin hash, JWT, ImageKit, and revalidation secrets.
+- [ ] Set both `FRONTEND_REVALIDATE_URL=https://<public-host>/api/revalidate` and a matching `FRONTEND_REVALIDATE_SECRET` of at least 32 characters; never set only one.
 - [ ] Set AUTH_COOKIE_SAME_SITE and AUTH_COOKIE_SECURE for the selected domain mode.
 - [ ] Set TRUST_PROXY=true behind Render.
 - [ ] Confirm health check path /api/health/ready.
+- [ ] Confirm the backend starts from the workspace command `npm run start --workspace=@portfolio/backend`.
 - [ ] Verify the compiled start command and logs without secret values.
 
 ## Domains and DNS
@@ -94,7 +98,8 @@ during Phase 10. Do not place credentials in this file.
 - [ ] Test project create/update/delete and slug-change invalidation.
 - [ ] Test certification, achievement, currently-building, and settings updates.
 - [ ] Confirm old and new project slugs are invalidated.
-- [ ] Confirm failures are bounded and do not expose secrets.
+- [ ] Confirm failures are bounded, retry only transient failures, do not expose secrets, and report that the mutation succeeded when cache refresh is unconfirmed.
+- [ ] Confirm sitemap and public fallback TTL behavior is one day (86400 seconds).
 
 ## SEO verification
 

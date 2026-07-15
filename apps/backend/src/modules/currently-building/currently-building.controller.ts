@@ -1,4 +1,5 @@
 import { asyncHandler } from "../../utils/async-handler";
+import { getCacheInvalidationResponseOptions } from "../../utils/cache-invalidation-response";
 import { sendSuccess } from "../../utils/response";
 import { revalidatePublicCache } from "../../lib/revalidate-public-cache";
 import {
@@ -24,9 +25,7 @@ import type {
 const revalidateCurrentlyBuildingCache = (
   action: "create" | "update" | "delete",
   context: string,
-) => {
-  void revalidatePublicCache({ entity: "currentlyBuilding", action }, context);
-};
+) => revalidatePublicCache({ entity: "currentlyBuilding", action }, context);
 
 export const listAdminCurrentlyBuildingItems = asyncHandler(
   async (req, res) => {
@@ -73,7 +72,7 @@ export const createAdminCurrentlyBuildingItem = asyncHandler(
     const item = await createCurrentlyBuildingItem(
       req.body as CreateCurrentlyBuildingInput,
     );
-    revalidateCurrentlyBuildingCache("create", "currently-building create");
+    const cacheInvalidation = await revalidateCurrentlyBuildingCache("create", "currently-building create");
 
     return sendSuccess(
       res,
@@ -81,7 +80,7 @@ export const createAdminCurrentlyBuildingItem = asyncHandler(
         item: serializeAdminCurrentlyBuilding(item),
       },
       201,
-      { message: "Currently-building item created successfully" },
+      getCacheInvalidationResponseOptions("Currently-building item created successfully", cacheInvalidation),
     );
   },
 );
@@ -92,7 +91,7 @@ export const updateAdminCurrentlyBuildingItem = asyncHandler(
       String(req.params.id),
       req.body as UpdateCurrentlyBuildingInput,
     );
-    revalidateCurrentlyBuildingCache("update", "currently-building update");
+    const cacheInvalidation = await revalidateCurrentlyBuildingCache("update", "currently-building update");
 
     return sendSuccess(
       res,
@@ -100,7 +99,7 @@ export const updateAdminCurrentlyBuildingItem = asyncHandler(
         item: serializeAdminCurrentlyBuilding(item),
       },
       200,
-      { message: "Currently-building item updated successfully" },
+      getCacheInvalidationResponseOptions("Currently-building item updated successfully", cacheInvalidation),
     );
   },
 );
@@ -108,7 +107,7 @@ export const updateAdminCurrentlyBuildingItem = asyncHandler(
 export const deleteAdminCurrentlyBuildingItem = asyncHandler(
   async (req, res) => {
     await deleteCurrentlyBuildingItem(String(req.params.id));
-    revalidateCurrentlyBuildingCache("delete", "currently-building delete");
+    const cacheInvalidation = await revalidateCurrentlyBuildingCache("delete", "currently-building delete");
 
     return sendSuccess(
       res,
@@ -117,7 +116,7 @@ export const deleteAdminCurrentlyBuildingItem = asyncHandler(
         id: String(req.params.id),
       },
       200,
-      { message: "Currently-building item deleted successfully" },
+      getCacheInvalidationResponseOptions("Currently-building item deleted successfully", cacheInvalidation),
     );
   },
 );
@@ -128,7 +127,7 @@ export const updateCurrentlyBuildingVisibility = asyncHandler(
       String(req.params.id),
       Boolean(req.body.isVisible),
     );
-    revalidateCurrentlyBuildingCache("update", "currently-building visibility update");
+    const cacheInvalidation = await revalidateCurrentlyBuildingCache("update", "currently-building visibility update");
 
     return sendSuccess(
       res,
@@ -136,7 +135,7 @@ export const updateCurrentlyBuildingVisibility = asyncHandler(
         item: serializeAdminCurrentlyBuilding(item),
       },
       200,
-      { message: "Currently-building visibility updated successfully" },
+      getCacheInvalidationResponseOptions("Currently-building visibility updated successfully", cacheInvalidation),
     );
   },
 );
@@ -144,7 +143,7 @@ export const updateCurrentlyBuildingVisibility = asyncHandler(
 export const reorderAdminCurrentlyBuildingItems = asyncHandler(
   async (req, res) => {
     const items = await reorderCurrentlyBuildingItems(req.body.orderedIds);
-    revalidateCurrentlyBuildingCache("update", "currently-building reorder");
+    const cacheInvalidation = await revalidateCurrentlyBuildingCache("update", "currently-building reorder");
 
     return sendSuccess(
       res,
@@ -153,8 +152,11 @@ export const reorderAdminCurrentlyBuildingItems = asyncHandler(
       },
       200,
       {
-        message: "Currently-building items reordered successfully",
-        meta: { count: items.length },
+        ...getCacheInvalidationResponseOptions(
+          "Currently-building items reordered successfully",
+          cacheInvalidation,
+          { count: items.length },
+        ),
       },
     );
   },

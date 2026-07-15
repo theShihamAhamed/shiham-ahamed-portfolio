@@ -3,6 +3,8 @@ import type { MetadataRoute } from "next";
 import { getCanonicalUrl } from "@/lib/seo";
 import { getVisibleProjects } from "@/lib/server/repositories/project.repository";
 
+export const revalidate = 86400;
+
 const publicRoutes = ["/", "/about", "/projects", "/contact"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {

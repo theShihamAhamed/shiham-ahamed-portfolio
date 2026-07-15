@@ -177,3 +177,10 @@ after the cleanup validation run.
 - Commit `c2028a14c5bc8b59723228254a75d91457aa0e64` (`fix(ci): run TypeScript tests on Node 20`) was pushed normally without force-push.
 - GitHub Actions run `29415168482` passed all required gates: Install, Lint, Typecheck, Test, public assets, deployment configuration, release candidate, and Build.
 - PR #1 remains open and unmerged; no deployment or live service operation occurred.
+
+## Render build and public cache invalidation hardening
+
+- Release-gate checks enforce the Render build command, Node 20.20.2 pin, internal package build order, backend workspace start, readiness path, complete production revalidation configuration, absence of active `--experimental-strip-types`, and one-day fallback TTL policy.
+- Cache invalidation now validates request/response contracts, uses bounded timeout and transient retries, cleans up abort timers, avoids secret logging, and exposes structured success/failure metadata after awaited mutations. Project reorder uses a single post-operation refresh.
+- Focused contract tests and backend build/type checks passed. The aggregate local frontend test is not claimed green under Node 22.16.0 because of the pre-existing section-navigation/tsx loader mismatch; remote Node 20 CI is required for final acceptance.
+- Verdict for this repository change: ready for review and Node 20 CI verification; not a deployment approval. No merge or deployment was performed.

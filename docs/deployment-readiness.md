@@ -300,3 +300,10 @@ authoritative current classification for release readiness.
 - Commit `c2028a14c5bc8b59723228254a75d91457aa0e64` (`fix(ci): run TypeScript tests on Node 20`) was pushed normally without force-push.
 - GitHub Actions run `29415168482` passed the complete CI workflow, including Install, Lint, Typecheck, Test, asset, deployment, release, and all workspace builds.
 - PR #1 remains open and unmerged. No deployment, provider operation, database mutation, media operation, or production credential use occurred.
+
+## Render build and cache invalidation follow-up
+
+- Repository deployment readiness now includes the exact reproducible Render build command with dev dependencies and internal package ordering, the Node 20.20.2 pin, backend workspace startup, and readiness endpoint checks.
+- Production startup cannot proceed with a missing or partial frontend revalidation configuration. The URL/path, protocol, and minimum secret length are validated before runtime use.
+- Mutation cache refresh is bounded and observable through response metadata; database writes remain successful when the refresh target is unavailable. Staged smoke testing must verify retries, safe failure messaging, slug invalidation, and one-day sitemap/public fallback TTLs.
+- This remains repository readiness only. Render/Vercel configuration and deployed smoke evidence are still required before production deployment.

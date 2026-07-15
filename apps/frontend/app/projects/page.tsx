@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   alternates: { canonical: getCanonicalUrl("/projects").pathname },
 };
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 type ProjectsPageState =
   | {

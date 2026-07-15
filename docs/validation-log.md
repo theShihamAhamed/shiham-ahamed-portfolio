@@ -781,3 +781,10 @@ Read-only file/package/source searches and final docs-only consistency checks
 - Commit `c2028a14c5bc8b59723228254a75d91457aa0e64` (`fix(ci): run TypeScript tests on Node 20`) was pushed normally without force-push.
 - GitHub Actions run `29415168482` completed successfully on Node 20: Install, Lint, Typecheck, Test, public asset validation, deployment configuration, release-candidate validation, and Build all passed.
 - PR #1 is still open and unmerged. No deployment or live service operation occurred.
+
+## Render build and public cache invalidation hardening
+
+- Focused backend tests passed for production environment enforcement, invalidation success, transient retry/backoff, timeout/network failures, non-retryable 4xx responses, malformed responses, missing configuration, and secret-safe logging. Mutation-controller and frontend revalidation contract tests passed.
+- Render configuration checks now require `npm ci --include=dev && npm run build:packages && npm run build:backend`, `NODE_VERSION=20.20.2`, the backend workspace start command, and `/api/health/ready`. Active release checks reject `--experimental-strip-types`, seven-day TTLs, and fire-and-forget invalidation.
+- Local frontend focused contracts passed. The existing section-navigation test remains blocked only by the local Windows Node 22.16.0/tsx named-export loader mismatch; Node 20.20.2 CI remains authoritative for that workspace test. No unrelated section-navigation source was changed.
+- Live Render/Vercel verification remains outstanding by scope; no deployment, provider operation, cache mutation, or production credential use occurred.

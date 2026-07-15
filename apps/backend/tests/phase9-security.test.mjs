@@ -44,14 +44,65 @@ test("environment validation accepts development and secure production modes", (
     NODE_ENV: "production",
     PUBLIC_FRONTEND_URL: "https://shihamahamed.dev",
     AUTH_COOKIE_SECURE: "true",
+    FRONTEND_REVALIDATE_URL: "https://shihamahamed.dev/api/revalidate",
+    FRONTEND_REVALIDATE_SECRET: "c".repeat(32),
   });
   assert.equal(production.AUTH_COOKIE_SECURE, true);
+  assert.equal(production.FRONTEND_REVALIDATE_URL, "https://shihamahamed.dev/api/revalidate");
 });
 
 test("environment validation rejects unsafe cookie and origin combinations", () => {
   assert.throws(
     () => parseBackendEnv({ ...testEnvironment, NODE_ENV: "production" }),
     /AUTH_COOKIE_SECURE must be true in production/,
+  );
+  assert.throws(
+    () => parseBackendEnv({
+      ...testEnvironment,
+      NODE_ENV: "production",
+      AUTH_COOKIE_SECURE: "true",
+    }),
+    /FRONTEND_REVALIDATE_URL and FRONTEND_REVALIDATE_SECRET are required in production/,
+  );
+  assert.throws(
+    () => parseBackendEnv({
+      ...testEnvironment,
+      NODE_ENV: "production",
+      AUTH_COOKIE_SECURE: "true",
+      FRONTEND_REVALIDATE_URL: "https://shihamahamed.dev/api/revalidate",
+    }),
+    /FRONTEND_REVALIDATE_URL and FRONTEND_REVALIDATE_SECRET are both required in production/,
+  );
+  assert.throws(
+    () => parseBackendEnv({
+      ...testEnvironment,
+      FRONTEND_REVALIDATE_URL: "https://shihamahamed.dev/api/revalidate",
+    }),
+    /must be configured together/,
+  );
+  assert.throws(
+    () => parseBackendEnv({
+      ...testEnvironment,
+      FRONTEND_REVALIDATE_URL: "ftp://shihamahamed.dev/api/revalidate",
+      FRONTEND_REVALIDATE_SECRET: "c".repeat(32),
+    }),
+    /FRONTEND_REVALIDATE_URL: URL must use http or https/,
+  );
+  assert.throws(
+    () => parseBackendEnv({
+      ...testEnvironment,
+      FRONTEND_REVALIDATE_URL: "https://shihamahamed.dev/not-revalidate",
+      FRONTEND_REVALIDATE_SECRET: "c".repeat(32),
+    }),
+    /must target \/api\/revalidate/,
+  );
+  assert.throws(
+    () => parseBackendEnv({
+      ...testEnvironment,
+      FRONTEND_REVALIDATE_URL: "https://shihamahamed.dev/api/revalidate",
+      FRONTEND_REVALIDATE_SECRET: "short",
+    }),
+    /FRONTEND_REVALIDATE_SECRET must be at least 32 characters/,
   );
   assert.throws(
     () => parseBackendEnv({ ...testEnvironment, AUTH_COOKIE_SAME_SITE: "none" }),

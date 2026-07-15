@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   alternates: { canonical: getCanonicalUrl("/about").pathname },
 };
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 const DynamicSectionFallback = ({ message }: { message: string }) => (
   <div className="mt-8 rounded-2xl border border-border/60 bg-background/80 p-6 text-sm leading-7 text-muted-foreground shadow-sm backdrop-blur-xl">

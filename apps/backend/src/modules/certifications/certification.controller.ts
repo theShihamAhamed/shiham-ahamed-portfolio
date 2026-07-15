@@ -1,5 +1,6 @@
 import { AppError } from "../../utils/app-error";
 import { asyncHandler } from "../../utils/async-handler";
+import { getCacheInvalidationResponseOptions } from "../../utils/cache-invalidation-response";
 import { sendSuccess } from "../../utils/response";
 import { revalidatePublicCache } from "../../lib/revalidate-public-cache";
 import {
@@ -34,9 +35,7 @@ const getRequestFile = (file: Express.Multer.File | undefined) => {
 const revalidateCertificationCache = (
   action: "create" | "update" | "delete",
   context: string,
-) => {
-  void revalidatePublicCache({ entity: "certification", action }, context);
-};
+) => revalidatePublicCache({ entity: "certification", action }, context);
 
 export const listAdminCertifications = asyncHandler(async (req, res) => {
   const certifications = await getAdminCertifications(
@@ -78,7 +77,7 @@ export const createAdminCertification = asyncHandler(async (req, res) => {
   const certification = await createCertification(
     req.body as CreateCertificationInput,
   );
-  revalidateCertificationCache("create", "certification create");
+  const cacheInvalidation = await revalidateCertificationCache("create", "certification create");
 
   return sendSuccess(
     res,
@@ -86,7 +85,7 @@ export const createAdminCertification = asyncHandler(async (req, res) => {
       certification: serializeAdminCertification(certification),
     },
     201,
-    { message: "Certification created successfully" },
+    getCacheInvalidationResponseOptions("Certification created successfully", cacheInvalidation),
   );
 });
 
@@ -95,7 +94,7 @@ export const updateAdminCertification = asyncHandler(async (req, res) => {
     String(req.params.id),
     req.body as UpdateCertificationInput,
   );
-  revalidateCertificationCache("update", "certification update");
+  const cacheInvalidation = await revalidateCertificationCache("update", "certification update");
 
   return sendSuccess(
     res,
@@ -103,13 +102,13 @@ export const updateAdminCertification = asyncHandler(async (req, res) => {
       certification: serializeAdminCertification(certification),
     },
     200,
-    { message: "Certification updated successfully" },
+    getCacheInvalidationResponseOptions("Certification updated successfully", cacheInvalidation),
   );
 });
 
 export const deleteAdminCertification = asyncHandler(async (req, res) => {
   await deleteCertification(String(req.params.id));
-  revalidateCertificationCache("delete", "certification delete");
+  const cacheInvalidation = await revalidateCertificationCache("delete", "certification delete");
 
   return sendSuccess(
     res,
@@ -118,7 +117,7 @@ export const deleteAdminCertification = asyncHandler(async (req, res) => {
       id: String(req.params.id),
     },
     200,
-    { message: "Certification deleted successfully" },
+    getCacheInvalidationResponseOptions("Certification deleted successfully", cacheInvalidation),
   );
 });
 
@@ -128,7 +127,7 @@ export const replaceAdminCertificationImage = asyncHandler(async (req, res) => {
     getRequestFile(req.file),
     String(req.body.alt),
   );
-  revalidateCertificationCache("update", "certification image replacement");
+  const cacheInvalidation = await revalidateCertificationCache("update", "certification image replacement");
 
   return sendSuccess(
     res,
@@ -136,7 +135,7 @@ export const replaceAdminCertificationImage = asyncHandler(async (req, res) => {
       certification: serializeAdminCertification(certification),
     },
     200,
-    { message: "Certification image replaced successfully" },
+    getCacheInvalidationResponseOptions("Certification image replaced successfully", cacheInvalidation),
   );
 });
 
@@ -145,7 +144,7 @@ export const updateCertificationVisibility = asyncHandler(async (req, res) => {
     String(req.params.id),
     Boolean(req.body.isVisible),
   );
-  revalidateCertificationCache("update", "certification visibility update");
+  const cacheInvalidation = await revalidateCertificationCache("update", "certification visibility update");
 
   return sendSuccess(
     res,
@@ -153,13 +152,13 @@ export const updateCertificationVisibility = asyncHandler(async (req, res) => {
       certification: serializeAdminCertification(certification),
     },
     200,
-    { message: "Certification visibility updated successfully" },
+    getCacheInvalidationResponseOptions("Certification visibility updated successfully", cacheInvalidation),
   );
 });
 
 export const reorderAdminCertifications = asyncHandler(async (req, res) => {
   const certifications = await reorderCertifications(req.body.orderedIds);
-  revalidateCertificationCache("update", "certification reorder");
+  const cacheInvalidation = await revalidateCertificationCache("update", "certification reorder");
 
   return sendSuccess(
     res,
@@ -168,8 +167,11 @@ export const reorderAdminCertifications = asyncHandler(async (req, res) => {
     },
     200,
     {
-      message: "Certifications reordered successfully",
-      meta: { count: certifications.length },
+      ...getCacheInvalidationResponseOptions(
+        "Certifications reordered successfully",
+        cacheInvalidation,
+        { count: certifications.length },
+      ),
     },
   );
 });

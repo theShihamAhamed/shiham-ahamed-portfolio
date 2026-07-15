@@ -1,4 +1,5 @@
 import { asyncHandler } from "../../utils/async-handler";
+import { getCacheInvalidationResponseOptions } from "../../utils/cache-invalidation-response";
 import { sendSuccess } from "../../utils/response";
 import { revalidatePublicCache } from "../../lib/revalidate-public-cache";
 import { serializeSiteSettings } from "./site-settings.serializer";
@@ -18,7 +19,7 @@ export const getAdminSiteSettings = asyncHandler(async (_req, res) => {
 
 export const patchAdminSiteSettings = asyncHandler(async (req, res) => {
   const settings = await updateSiteSettings(req.body as UpdateSiteSettingsInput);
-  void revalidatePublicCache(
+  const cacheInvalidation = await revalidatePublicCache(
     { entity: "siteSettings", action: "update" },
     "site settings update",
   );
@@ -29,6 +30,6 @@ export const patchAdminSiteSettings = asyncHandler(async (req, res) => {
       settings: serializeSiteSettings(settings),
     },
     200,
-    { message: "Site settings updated successfully" },
+    getCacheInvalidationResponseOptions("Site settings updated successfully", cacheInvalidation),
   );
 });

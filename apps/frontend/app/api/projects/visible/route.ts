@@ -5,7 +5,7 @@ import {
 import { getVisibleProjects } from "@/lib/server/repositories/project.repository";
 
 export const runtime = "nodejs";
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export async function GET() {
   try {

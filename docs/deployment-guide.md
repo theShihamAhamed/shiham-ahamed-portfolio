@@ -60,11 +60,20 @@ canonical URL policy. Do not allow arbitrary `*.vercel.app` origins.
 ## Render backend
 
 The checked-in `render.yaml` is a reproducibility template with `sync: false`
-for secrets. It uses repository root context, Node 20-compatible commands,
-`npm ci`, `npm run build:packages`, `npm run build:backend`, and
-`npm run start --workspace=@portfolio/backend`. Configure the exact admin origin
-list, public URL, secrets, ImageKit values, and matching revalidation values in
-Render. The health check is `/api/health/ready`.
+for secrets. Keep the Render build command exactly:
+`npm ci --include=dev && npm run build:packages && npm run build:backend`.
+The service pins `NODE_VERSION=20.20.2` before `NODE_ENV=production`; dev
+dependencies are therefore available for the build while the compiled backend
+starts with `npm run start --workspace=@portfolio/backend`. Configure the exact
+admin origin list, public URL, secrets, ImageKit values, and matching
+revalidation values in Render. The health check is `/api/health/ready`.
+
+Production backend startup requires both `FRONTEND_REVALIDATE_URL` and
+`FRONTEND_REVALIDATE_SECRET`. The URL must be HTTP(S) and end at
+`/api/revalidate`; the secret must be at least 32 characters. Set both values
+to the same pair used by the public frontend. A successful mutation waits for
+bounded cache invalidation and reports its structured result; a cache failure
+does not roll back the database write.
 
 The free plan may sleep after inactivity. Expect cold-start latency and avoid
 using Render as the public read path. `TRUST_PROXY=true` is required behind the
@@ -117,7 +126,8 @@ After deployment configuration exists, Phase 10 should verify:
 2. Admin login, refresh-cookie persistence, logout, and denied origins.
 3. Project upload/create/edit/replacement and media cleanup.
 4. Public empty states and real visible content.
-5. Admin mutation followed by bounded public cache revalidation.
+5. Admin mutation followed by bounded public cache revalidation, including
+   retry behavior and a safe failure response.
 6. Canonical metadata, `/sitemap.xml`, `/robots.txt`, and social previews.
 7. Contact form validation, rate limiting, and verified Resend delivery.
 
