@@ -1068,3 +1068,10 @@ No file in this inventory was deleted before classification. Seed/data/media rem
 - Commit `c2028a14c5bc8b59723228254a75d91457aa0e64` (`fix(ci): run TypeScript tests on Node 20`) was pushed normally to `refactor/production-readiness` without force-push.
 - GitHub Actions run `29415168482` passed completely on the Node 20 CI runtime: Install, Lint, Typecheck, Test, public assets, deployment configuration, release candidate, and Build all passed.
 - PR #1 remains open and unmerged. No deployment or live service operation occurred.
+
+## Render build and public cache invalidation hardening
+
+- Implemented the permanent Render build contract: `npm ci --include=dev`, internal package builds before the backend build, `NODE_VERSION=20.20.2`, and the backend workspace start command. Deployment and release checks now enforce the command, ordering, Node pin, and `/api/health/ready` readiness path.
+- Production backend configuration now requires a complete HTTP(S) `/api/revalidate` URL plus a matching secret of at least 32 characters; development/test may omit both, but partial configuration is rejected. Examples and deployment guidance are aligned.
+- Public cache invalidation is awaited after successful mutations, retries transient failures at most three times with bounded timeout/backoff, validates the response body, avoids retrying ordinary 4xx errors, and returns structured metadata without exposing secrets. Project reorder performs one invalidation after the complete operation.
+- Public fallback TTLs and sitemap revalidation are one day. Focused backend/frontend contract tests were added. No deployment, live cache refresh, provider operation, or production credential use occurred.

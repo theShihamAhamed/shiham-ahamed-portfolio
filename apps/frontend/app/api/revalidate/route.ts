@@ -14,20 +14,24 @@ export const dynamic = "force-dynamic";
 
 const MAX_BODY_BYTES = 4_096;
 
+const noStoreHeaders = { "Cache-Control": "no-store" };
+
 const jsonError = (status: number, code: string, message: string) =>
   NextResponse.json(
     {
       success: false,
       error: { code, message },
     },
-    { status },
+    { status, headers: noStoreHeaders },
   );
 
 const getBearerToken = (request: NextRequest) => {
   const authorization = request.headers.get("authorization") ?? "";
-  const [scheme, token] = authorization.split(" ");
+  const [scheme, token, ...extra] = authorization.trim().split(/\s+/);
 
-  return scheme?.toLowerCase() === "bearer" && token ? token : undefined;
+  return scheme?.toLowerCase() === "bearer" && token && extra.length === 0
+    ? token
+    : undefined;
 };
 
 const secretsMatch = (provided: string | undefined, expected: string) => {
@@ -59,6 +63,15 @@ export async function POST(request: NextRequest) {
     return jsonError(401, "UNAUTHORIZED", "Unauthorized.");
   }
 
+  const contentType = request.headers.get("content-type")?.split(";", 1)[0].trim().toLowerCase();
+  if (contentType !== "application/json") {
+    return jsonError(
+      415,
+      "UNSUPPORTED_MEDIA_TYPE",
+      "Cache revalidation requests must use application/json.",
+    );
+  }
+
   const declaredLength = Number(request.headers.get("content-length"));
   if (Number.isFinite(declaredLength) && declaredLength > MAX_BODY_BYTES) {
     return jsonError(413, "PAYLOAD_TOO_LARGE", "Request body is too large.");
@@ -86,19 +99,36 @@ export async function POST(request: NextRequest) {
           fieldErrors: parsed.error.flatten().fieldErrors,
         },
       },
-      { status: 422 },
+      { status: 422, headers: noStoreHeaders },
     );
   }
 
-  const tags = getPublicCacheTagsForRevalidation(parsed.data);
-  tags.forEach((tag) => revalidateTag(tag, { expire: 0 }));
+  try {
+    const tags = getPublicCacheTagsForRevalidation(parsed.data);
+    tags.forEach((tag) => revalidateTag(tag, { expire: 0 }));
 
-  return NextResponse.json({
-    success: true,
-    revalidated: {
+    return NextResponse.json(
+      {
+        success: true,
+        revalidated: {
+          entity: parsed.data.entity,
+          action: parsed.data.action,
+          tags,
+        },
+      },
+      { headers: noStoreHeaders },
+    );
+  } catch (error) {
+    console.error("Public cache revalidation failed internally", {
+      event: "public_cache_invalidation",
       entity: parsed.data.entity,
       action: parsed.data.action,
-      tags,
-    },
-  });
+      error: error instanceof Error ? error.name : "unknown_error",
+    });
+    return jsonError(
+      500,
+      "REVALIDATION_FAILED",
+      "Cache revalidation failed unexpectedly.",
+    );
+  }
 }

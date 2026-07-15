@@ -23,6 +23,19 @@ const urlEnv = (message: string) =>
     return parsed.protocol === "http:" || parsed.protocol === "https:";
   }, "URL must use http or https");
 
+const revalidationUrlEnv = urlEnv(
+  "FRONTEND_REVALIDATE_URL must be a valid URL",
+).refine((value) => {
+  const parsed = new URL(value);
+  const pathname = parsed.pathname.replace(/\/+$/, "") || "/";
+  return pathname === "/api/revalidate" && !parsed.search && !parsed.hash;
+}, "FRONTEND_REVALIDATE_URL must target /api/revalidate without a query or hash");
+
+const revalidationSecretEnv = optionalEnvString.refine(
+  (value) => !value || value.length >= 32,
+  "FRONTEND_REVALIDATE_SECRET must be at least 32 characters",
+);
+
 const envSchema = z.object({
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
   PORT: z.coerce.number().int().min(1).max(65_535).default(5000),
@@ -39,8 +52,8 @@ const envSchema = z.object({
   IMAGEKIT_PRIVATE_KEY: z.string().trim().min(1, "IMAGEKIT_PRIVATE_KEY is required"),
   IMAGEKIT_URL_ENDPOINT: urlEnv("IMAGEKIT_URL_ENDPOINT must be a valid URL"),
   MAX_UPLOAD_SIZE_MB: z.coerce.number().min(1).max(25).default(8),
-  FRONTEND_REVALIDATE_URL: optionalEnvString,
-  FRONTEND_REVALIDATE_SECRET: optionalEnvString,
+  FRONTEND_REVALIDATE_URL: revalidationUrlEnv.optional(),
+  FRONTEND_REVALIDATE_SECRET: revalidationSecretEnv,
   AUTH_COOKIE_SAME_SITE: z.enum(["lax", "strict", "none"]).default("lax"),
   AUTH_COOKIE_SECURE: booleanEnv.default(false),
   AUTH_COOKIE_DOMAIN: optionalEnvString.refine(
@@ -96,8 +109,22 @@ export const parseBackendEnv = (input: NodeJS.ProcessEnv): BackendEnv => {
     parsed.data.FRONTEND_REVALIDATE_SECRET,
   ];
   if (revalidationPair.some(Boolean) && revalidationPair.some((value) => !value)) {
+    if (parsed.data.NODE_ENV === "production") {
+      throw new Error(
+        "Invalid environment configuration: FRONTEND_REVALIDATE_URL and FRONTEND_REVALIDATE_SECRET are both required in production",
+      );
+    }
     throw new Error(
       "Invalid environment configuration: FRONTEND_REVALIDATE_URL and FRONTEND_REVALIDATE_SECRET must be configured together",
+    );
+  }
+
+  if (
+    parsed.data.NODE_ENV === "production" &&
+    revalidationPair.every((value) => !value)
+  ) {
+    throw new Error(
+      "Invalid environment configuration: FRONTEND_REVALIDATE_URL and FRONTEND_REVALIDATE_SECRET are required in production",
     );
   }
 

@@ -1,5 +1,6 @@
 import { AppError } from "../../utils/app-error";
 import { asyncHandler } from "../../utils/async-handler";
+import { getCacheInvalidationResponseOptions } from "../../utils/cache-invalidation-response";
 import { sendSuccess } from "../../utils/response";
 import {
   revalidatePublicCache,
@@ -57,9 +58,7 @@ const revalidateProjectCache = (
     previousSlug?: string;
   },
   context: string,
-) => {
-  void revalidatePublicCache(request, context);
-};
+) => revalidatePublicCache(request, context);
 
 export const listAdminProjects = asyncHandler(async (req, res) => {
   const projects = await getAdminProjects(
@@ -120,7 +119,7 @@ export const getProjectBySlug = asyncHandler(async (req, res) => {
 
 export const createAdminProject = asyncHandler(async (req, res) => {
   const project = await createProject(req.body as CreateProjectInput);
-  revalidateProjectCache(
+  const cacheInvalidation = await revalidateProjectCache(
     { entity: "project", action: "create", slug: project.slug },
     "project create",
   );
@@ -131,7 +130,7 @@ export const createAdminProject = asyncHandler(async (req, res) => {
       project: serializeAdminProject(project),
     },
     201,
-    { message: "Project created successfully" },
+    getCacheInvalidationResponseOptions("Project created successfully", cacheInvalidation),
   );
 });
 
@@ -141,7 +140,7 @@ export const updateAdminProject = asyncHandler(async (req, res) => {
     String(req.params.id),
     req.body as UpdateProjectInput,
   );
-  revalidateProjectCache(
+  const cacheInvalidation = await revalidateProjectCache(
     {
       entity: "project",
       action: "update",
@@ -159,14 +158,14 @@ export const updateAdminProject = asyncHandler(async (req, res) => {
       project: serializeAdminProject(project),
     },
     200,
-    { message: "Project updated successfully" },
+    getCacheInvalidationResponseOptions("Project updated successfully", cacheInvalidation),
   );
 });
 
 export const deleteAdminProject = asyncHandler(async (req, res) => {
   const project = await getAdminProjectById(String(req.params.id));
   await deleteProject(String(req.params.id));
-  revalidateProjectCache(
+  const cacheInvalidation = await revalidateProjectCache(
     { entity: "project", action: "delete", slug: project.slug },
     "project delete",
   );
@@ -178,7 +177,7 @@ export const deleteAdminProject = asyncHandler(async (req, res) => {
       id: String(req.params.id),
     },
     200,
-    { message: "Project deleted successfully" },
+    getCacheInvalidationResponseOptions("Project deleted successfully", cacheInvalidation),
   );
 });
 
@@ -187,7 +186,7 @@ export const updateProjectFeatured = asyncHandler(async (req, res) => {
     String(req.params.id),
     Boolean(req.body.isFeatured),
   );
-  revalidateProjectCache(
+  const cacheInvalidation = await revalidateProjectCache(
     { entity: "project", action: "update", slug: project.slug },
     "project featured update",
   );
@@ -198,7 +197,7 @@ export const updateProjectFeatured = asyncHandler(async (req, res) => {
       project: serializeAdminProject(project),
     },
     200,
-    { message: "Project featured status updated successfully" },
+    getCacheInvalidationResponseOptions("Project featured status updated successfully", cacheInvalidation),
   );
 });
 
@@ -207,7 +206,7 @@ export const updateProjectVisibility = asyncHandler(async (req, res) => {
     String(req.params.id),
     Boolean(req.body.isVisible),
   );
-  revalidateProjectCache(
+  const cacheInvalidation = await revalidateProjectCache(
     { entity: "project", action: "update", slug: project.slug },
     "project visibility update",
   );
@@ -218,18 +217,18 @@ export const updateProjectVisibility = asyncHandler(async (req, res) => {
       project: serializeAdminProject(project),
     },
     200,
-    { message: "Project visibility updated successfully" },
+    getCacheInvalidationResponseOptions("Project visibility updated successfully", cacheInvalidation),
   );
 });
 
 export const reorderAdminProjects = asyncHandler(async (req, res) => {
   const projects = await reorderProjects(req.body.orderedIds);
-  projects.forEach((project) =>
-    revalidateProjectCache(
-      { entity: "project", action: "update", slug: project.slug },
-      "project reorder",
-    ),
-  );
+  const cacheInvalidation = projects[0]
+    ? await revalidateProjectCache(
+        { entity: "project", action: "update", slug: projects[0].slug },
+        "project reorder",
+      )
+    : undefined;
 
   return sendSuccess(
     res,
@@ -237,7 +236,13 @@ export const reorderAdminProjects = asyncHandler(async (req, res) => {
       projects: projects.map(serializeAdminProject),
     },
     200,
-    { message: "Projects reordered successfully", meta: { count: projects.length } },
+    cacheInvalidation
+      ? getCacheInvalidationResponseOptions(
+          "Projects reordered successfully",
+          cacheInvalidation,
+          { count: projects.length },
+        )
+      : { message: "Projects reordered successfully", meta: { count: projects.length } },
   );
 });
 
@@ -247,7 +252,7 @@ export const replaceThumbnail = asyncHandler(async (req, res) => {
     getRequestFile(req.file),
     String(req.body.alt),
   );
-  revalidateProjectCache(
+  const cacheInvalidation = await revalidateProjectCache(
     { entity: "project", action: "update", slug: project.slug },
     "project thumbnail replacement",
   );
@@ -258,7 +263,7 @@ export const replaceThumbnail = asyncHandler(async (req, res) => {
       project: serializeAdminProject(project),
     },
     200,
-    { message: "Project thumbnail replaced successfully" },
+    getCacheInvalidationResponseOptions("Project thumbnail replaced successfully", cacheInvalidation),
   );
 });
 
@@ -268,7 +273,7 @@ export const replaceArchitectureImage = asyncHandler(async (req, res) => {
     getRequestFile(req.file),
     String(req.body.alt),
   );
-  revalidateProjectCache(
+  const cacheInvalidation = await revalidateProjectCache(
     { entity: "project", action: "update", slug: project.slug },
     "project architecture image replacement",
   );
@@ -279,13 +284,13 @@ export const replaceArchitectureImage = asyncHandler(async (req, res) => {
       project: serializeAdminProject(project),
     },
     200,
-    { message: "Project architecture image replaced successfully" },
+    getCacheInvalidationResponseOptions("Project architecture image replaced successfully", cacheInvalidation),
   );
 });
 
 export const deleteArchitectureImage = asyncHandler(async (req, res) => {
   const project = await deleteProjectArchitectureImage(String(req.params.id));
-  revalidateProjectCache(
+  const cacheInvalidation = await revalidateProjectCache(
     { entity: "project", action: "update", slug: project.slug },
     "project architecture image delete",
   );
@@ -296,7 +301,7 @@ export const deleteArchitectureImage = asyncHandler(async (req, res) => {
       project: serializeAdminProject(project),
     },
     200,
-    { message: "Project architecture image deleted successfully" },
+    getCacheInvalidationResponseOptions("Project architecture image deleted successfully", cacheInvalidation),
   );
 });
 
@@ -306,7 +311,7 @@ export const addGalleryImages = asyncHandler(async (req, res) => {
     getRequestFiles(req.files as Express.Multer.File[] | undefined),
     String(req.body.alt),
   );
-  revalidateProjectCache(
+  const cacheInvalidation = await revalidateProjectCache(
     { entity: "project", action: "update", slug: project.slug },
     "project gallery image add",
   );
@@ -317,7 +322,7 @@ export const addGalleryImages = asyncHandler(async (req, res) => {
       project: serializeAdminProject(project),
     },
     200,
-    { message: "Project gallery images added successfully" },
+    getCacheInvalidationResponseOptions("Project gallery images added successfully", cacheInvalidation),
   );
 });
 
@@ -326,7 +331,7 @@ export const deleteGalleryImage = asyncHandler(async (req, res) => {
     String(req.params.id),
     String(req.params.imageFileId),
   );
-  revalidateProjectCache(
+  const cacheInvalidation = await revalidateProjectCache(
     { entity: "project", action: "update", slug: project.slug },
     "project gallery image delete",
   );
@@ -337,7 +342,7 @@ export const deleteGalleryImage = asyncHandler(async (req, res) => {
       project: serializeAdminProject(project),
     },
     200,
-    { message: "Project gallery image deleted successfully" },
+    getCacheInvalidationResponseOptions("Project gallery image deleted successfully", cacheInvalidation),
   );
 });
 
@@ -346,7 +351,7 @@ export const reorderGalleryImages = asyncHandler(async (req, res) => {
     String(req.params.id),
     req.body.orderedFileIds,
   );
-  revalidateProjectCache(
+  const cacheInvalidation = await revalidateProjectCache(
     { entity: "project", action: "update", slug: project.slug },
     "project gallery reorder",
   );
@@ -357,6 +362,6 @@ export const reorderGalleryImages = asyncHandler(async (req, res) => {
       project: serializeAdminProject(project),
     },
     200,
-    { message: "Project gallery reordered successfully" },
+    getCacheInvalidationResponseOptions("Project gallery reordered successfully", cacheInvalidation),
   );
 });

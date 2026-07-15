@@ -33,7 +33,7 @@ type Props = {
   params: Promise<{ slug: string }>;
 };
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;

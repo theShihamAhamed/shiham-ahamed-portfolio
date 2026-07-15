@@ -1,4 +1,5 @@
 import { asyncHandler } from "../../utils/async-handler";
+import { getCacheInvalidationResponseOptions } from "../../utils/cache-invalidation-response";
 import { sendSuccess } from "../../utils/response";
 import { revalidatePublicCache } from "../../lib/revalidate-public-cache";
 import {
@@ -24,9 +25,7 @@ import type {
 const revalidateAchievementCache = (
   action: "create" | "update" | "delete",
   context: string,
-) => {
-  void revalidatePublicCache({ entity: "achievement", action }, context);
-};
+) => revalidatePublicCache({ entity: "achievement", action }, context);
 
 export const listAdminAchievements = asyncHandler(async (req, res) => {
   const achievements = await getAdminAchievements(
@@ -66,7 +65,7 @@ export const listVisibleAchievements = asyncHandler(async (_req, res) => {
 
 export const createAdminAchievement = asyncHandler(async (req, res) => {
   const achievement = await createAchievement(req.body as CreateAchievementInput);
-  revalidateAchievementCache("create", "achievement create");
+  const cacheInvalidation = await revalidateAchievementCache("create", "achievement create");
 
   return sendSuccess(
     res,
@@ -74,7 +73,7 @@ export const createAdminAchievement = asyncHandler(async (req, res) => {
       achievement: serializeAdminAchievement(achievement),
     },
     201,
-    { message: "Achievement created successfully" },
+    getCacheInvalidationResponseOptions("Achievement created successfully", cacheInvalidation),
   );
 });
 
@@ -83,7 +82,7 @@ export const updateAdminAchievement = asyncHandler(async (req, res) => {
     String(req.params.id),
     req.body as UpdateAchievementInput,
   );
-  revalidateAchievementCache("update", "achievement update");
+  const cacheInvalidation = await revalidateAchievementCache("update", "achievement update");
 
   return sendSuccess(
     res,
@@ -91,13 +90,13 @@ export const updateAdminAchievement = asyncHandler(async (req, res) => {
       achievement: serializeAdminAchievement(achievement),
     },
     200,
-    { message: "Achievement updated successfully" },
+    getCacheInvalidationResponseOptions("Achievement updated successfully", cacheInvalidation),
   );
 });
 
 export const deleteAdminAchievement = asyncHandler(async (req, res) => {
   await deleteAchievement(String(req.params.id));
-  revalidateAchievementCache("delete", "achievement delete");
+  const cacheInvalidation = await revalidateAchievementCache("delete", "achievement delete");
 
   return sendSuccess(
     res,
@@ -106,7 +105,7 @@ export const deleteAdminAchievement = asyncHandler(async (req, res) => {
       id: String(req.params.id),
     },
     200,
-    { message: "Achievement deleted successfully" },
+    getCacheInvalidationResponseOptions("Achievement deleted successfully", cacheInvalidation),
   );
 });
 
@@ -115,7 +114,7 @@ export const updateAchievementVisibility = asyncHandler(async (req, res) => {
     String(req.params.id),
     Boolean(req.body.isVisible),
   );
-  revalidateAchievementCache("update", "achievement visibility update");
+  const cacheInvalidation = await revalidateAchievementCache("update", "achievement visibility update");
 
   return sendSuccess(
     res,
@@ -123,13 +122,13 @@ export const updateAchievementVisibility = asyncHandler(async (req, res) => {
       achievement: serializeAdminAchievement(achievement),
     },
     200,
-    { message: "Achievement visibility updated successfully" },
+    getCacheInvalidationResponseOptions("Achievement visibility updated successfully", cacheInvalidation),
   );
 });
 
 export const reorderAdminAchievements = asyncHandler(async (req, res) => {
   const achievements = await reorderAchievements(req.body.orderedIds);
-  revalidateAchievementCache("update", "achievement reorder");
+  const cacheInvalidation = await revalidateAchievementCache("update", "achievement reorder");
 
   return sendSuccess(
     res,
@@ -138,8 +137,11 @@ export const reorderAdminAchievements = asyncHandler(async (req, res) => {
     },
     200,
     {
-      message: "Achievements reordered successfully",
-      meta: { count: achievements.length },
+      ...getCacheInvalidationResponseOptions(
+        "Achievements reordered successfully",
+        cacheInvalidation,
+        { count: achievements.length },
+      ),
     },
   );
 });

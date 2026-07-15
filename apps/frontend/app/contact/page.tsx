@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   alternates: { canonical: getCanonicalUrl("/contact").pathname },
 };
 
-export const revalidate = 3600;
+export const revalidate = 86400;
 
 const fallbackContactProfile = {
   email: "",

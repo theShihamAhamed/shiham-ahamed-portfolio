@@ -51,11 +51,17 @@ during Phase 10. Do not place credentials in this file.
 ## Render backend
 
 - [ ] Create the backend service from render.yaml or equivalent settings.
+- [ ] Confirm the exact build command is `npm ci --include=dev && npm run build:packages && npm run build:backend`.
+- [ ] Confirm `NODE_VERSION=20.20.2` is set before `NODE_ENV=production`.
 - [ ] Configure the exact ADMIN_FRONTEND_ORIGINS list.
+- [ ] For the current provider-domain deployment, set the exact admin Vercel origin with no wildcard or trailing slash and use `AUTH_COOKIE_SAME_SITE=none`.
+- [ ] For the future custom-domain deployment, use `https://admin.shihamahamed.dev` and `AUTH_COOKIE_SAME_SITE=lax` instead.
 - [ ] Configure production MongoDB, admin hash, JWT, ImageKit, and revalidation secrets.
+- [ ] Set both `FRONTEND_REVALIDATE_URL=https://<public-host>/api/revalidate` and a matching `FRONTEND_REVALIDATE_SECRET` of at least 32 characters; never set only one.
 - [ ] Set AUTH_COOKIE_SAME_SITE and AUTH_COOKIE_SECURE for the selected domain mode.
 - [ ] Set TRUST_PROXY=true behind Render.
 - [ ] Confirm health check path /api/health/ready.
+- [ ] Confirm the backend starts from the workspace command `npm run start --workspace=@portfolio/backend`.
 - [ ] Verify the compiled start command and logs without secret values.
 
 ## Domains and DNS
@@ -71,6 +77,7 @@ during Phase 10. Do not place credentials in this file.
 - [ ] Store ADMIN_EMAIL and ADMIN_PASSWORD_HASH only in Render secret storage.
 - [ ] Verify login, refresh, invalid credentials, revocation, and logout clearing.
 - [ ] Verify custom-domain SameSite=Lax mode or provider-domain SameSite=None/Secure mode.
+- [ ] Repeat login, page refresh, token refresh, and logout verification after changing cookie mode or domains.
 - [ ] Rotate the initial operator credential if required by policy.
 
 ## Initial admin setup
@@ -94,7 +101,8 @@ during Phase 10. Do not place credentials in this file.
 - [ ] Test project create/update/delete and slug-change invalidation.
 - [ ] Test certification, achievement, currently-building, and settings updates.
 - [ ] Confirm old and new project slugs are invalidated.
-- [ ] Confirm failures are bounded and do not expose secrets.
+- [ ] Confirm failures are bounded, retry only transient failures, do not expose secrets, and report that the mutation succeeded when cache refresh is unconfirmed.
+- [ ] Confirm sitemap and public fallback TTL behavior is one day (86400 seconds).
 
 ## SEO verification
 

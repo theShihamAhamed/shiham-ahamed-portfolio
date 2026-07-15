@@ -64,8 +64,39 @@ if (!workflow.includes("npm ci") || /vercel deploy|render deploy|audit fix/.test
 }
 
 const render = read("render.yaml");
+if (
+  !render.includes("buildCommand: npm ci --include=dev && npm run build:packages && npm run build:backend") ||
+  /buildCommand:\s*npm ci\s+&&/.test(render)
+) {
+  fail("Render must install dev dependencies before building internal packages and the backend");
+}
+if (!/key:\s*NODE_VERSION\s*\r?\n\s+value:\s*[\"']20\.20\.2[\"']/.test(render)) {
+  fail("Render must pin Node.js to 20.20.2");
+}
+if (!render.includes("startCommand: npm run start --workspace=@portfolio/backend")) {
+  fail("Render must start the backend workspace");
+}
 if (!render.includes("healthCheckPath: /api/health/ready") || !render.includes("sync: false")) {
   fail("Render blueprint is missing readiness or secret-sync safeguards");
+}
+if (
+  !/key:\s*AUTH_COOKIE_SAME_SITE\s*\r?\n\s+sync:\s*false/.test(render) ||
+  /key:\s*AUTH_COOKIE_SAME_SITE\s*\r?\n\s+value:\s*lax/.test(render)
+) {
+  fail("Render must leave AUTH_COOKIE_SAME_SITE environment-specific via sync: false");
+}
+if (!/key:\s*AUTH_COOKIE_SECURE\s*\r?\n\s+value:\s*["']true["']/.test(render)) {
+  fail("Render must keep AUTH_COOKIE_SECURE=true");
+}
+
+const deploymentGuide = read("docs/deployment-guide.md");
+if (
+  !deploymentGuide.includes("AUTH_COOKIE_SAME_SITE=none") ||
+  !deploymentGuide.includes("AUTH_COOKIE_SAME_SITE=lax") ||
+  !deploymentGuide.includes("provider-domain") ||
+  !deploymentGuide.includes("custom-domain")
+) {
+  fail("Deployment guide must document provider-domain and custom-domain cookie modes");
 }
 
 for (const file of ["apps/frontend/app/sitemap.ts", "apps/frontend/app/robots.ts"]) {
