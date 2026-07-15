@@ -156,3 +156,9 @@ after the cleanup validation run.
 - The actual implementation uses Multer memory storage and direct ImageKit transfer, so broad upload ignores were removed without adding a runtime upload-directory rule.
 - Tracked source now includes the upload controller, routes, service, types, and validation. Release validation rejects missing/ignored required files and ignored TypeScript under application/package source trees.
 - Focused upload tests and the complete local validation matrix pass. Commit, push, temporary-clone, and remote CI results will be recorded after handoff.
+
+### Final remote CI observation
+
+- Repair commit `765ae24075cd2261d86fa780599280d6ac0a6b7c` is pushed normally and the clean-clone typecheck passes.
+- GitHub Actions run `29411644817` passed Install, Lint, and Typecheck, including the previously missing backend upload sources. It failed at Test because Node 20.20.2 rejects the existing `--experimental-strip-types` flag in the admin test script.
+- CI is not passed; no merge or deployment was performed. The Node/test-runtime issue is a separate follow-up and is not changed here.

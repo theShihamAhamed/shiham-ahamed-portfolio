@@ -1048,3 +1048,9 @@ No file in this inventory was deleted before classification. Seed/data/media rem
 - Release validation now requires those five paths to be tracked and rejects ignored TypeScript source under `apps/*/src` or `packages/*/src`.
 - Focused upload tests cover imports without provider calls, delete-ID validation, unsupported MIME rejection, and oversized-file rejection.
 - Local validation is complete; commit SHA, push result, temporary-clone result, and final GitHub Actions observation will be appended after the commit/push handoff.
+
+### Final remote CI observation
+
+- Commit `765ae24075cd2261d86fa780599280d6ac0a6b7c` was pushed normally without force-push. The temporary Git-only clone tracked all five upload sources and its full typecheck passed.
+- GitHub Actions run `29411644817` passed install, lint, and the complete internal-package/backend typecheck. It then failed in the existing admin test command: Node 20.20.2 reported `node: bad option: --experimental-strip-types`.
+- The upload-source omission is resolved. The remaining Node 20 test-runtime incompatibility is a separate follow-up; no unrelated change was made. PR #1 remains open and unmerged.

@@ -759,3 +759,9 @@ Read-only file/package/source searches and final docs-only consistency checks
 - Release regression protection now checks tracked required upload paths and rejects ignored TypeScript sources under application/package `src` directories.
 - Upload-focused tests pass for imports without ImageKit calls, invalid/seed-style file IDs, unsupported media types, and oversized uploads.
 - Local validation: `npm ci` passed with 3 audit findings (1 low, 2 moderate); clean internal-package typecheck passed; lint passed; 50 tests passed; asset/deployment/release checks passed; all five builds passed; approved-network `npm.cmd run validate` passed; both diff checks pass.
+
+### Final remote CI observation
+
+- Commit `765ae24075cd2261d86fa780599280d6ac0a6b7c` pushed successfully without force-push. Temporary clone verification passed: all five upload files were tracked, no local ignored state was inherited, `npm ci` passed, and full typecheck passed.
+- GitHub Actions run `29411644817`: Install, Lint, and Typecheck passed; Test failed at `apps/admin-frontend` because Node 20.20.2 does not recognize the existing `node --experimental-strip-types --test tests/*.test.mjs` command (`node: bad option: --experimental-strip-types`). Later checks were skipped.
+- The upload-module tracking repair is verified remotely. The remaining Node 20 test-runtime issue is outside this focused source-tracking repair and remains intentionally unresolved.

@@ -281,3 +281,8 @@ authoritative current classification for release readiness.
 - Uploads are memory-only through Multer and are sent directly to ImageKit; no local runtime upload directory is created or required.
 - The five backend upload source modules are now trackable, and release validation checks their presence without requiring credentials, a database, ImageKit, or media.
 - Local validation passed, including 50 tests and all workspace builds. No live upload, provider operation, deployment, or production credential use occurred.
+
+### Final remote CI observation
+
+- Commit `765ae24075cd2261d86fa780599280d6ac0a6b7c` was pushed normally. Run `29411644817` passed the repaired upload-source typecheck path and failed only at the existing Node 20 admin test flag; no deployment or provider operation occurred.
+- PR #1 remains open and unmerged. The remaining Node/test-runtime incompatibility requires a separate follow-up decision.
