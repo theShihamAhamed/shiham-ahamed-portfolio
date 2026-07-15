@@ -1,0 +1,130 @@
+# Phase 10 Release Readiness Report
+
+Date: 2026-07-15
+
+## Executive status
+
+**Ready for staged deployment with external prerequisites**
+
+The repository release candidate is green through local validation, focused
+contract checks, production builds, asset/deployment checks, and static fallback
+QA. No live deployment or external service verification was performed. Staged
+deployment may proceed only after the external prerequisites in the final
+deployment checklist are completed.
+
+This is not a claim of production readiness or deployed end-to-end QA.
+
+## Repository validation
+
+| Check | Result | Evidence |
+| --- | --- | --- |
+| Root install contract | Safe dry-run passed; real npm ci was blocked by a locked local Tailwind native binary | validation log |
+| Workspace resolution | Five workspaces resolve; one root lockfile remains | npm workspace listing |
+| Lint | Passed across shared, DB, frontend, admin, and backend | npm run lint |
+| Typecheck | Passed across all workspaces | npm run typecheck |
+| Tests | 46 passed: shared 18, DB 5, admin 7, backend 8, frontend 8 | npm test |
+| Asset checks | Passed | npm run check:assets |
+| Deployment checks | Passed | npm run check:deployment |
+| Release-candidate gate | Passed | npm run check:release |
+| Production builds | Shared, DB, public frontend, admin frontend, and backend passed | npm run build |
+| Aggregate validation | Passed with approved network access | npm run validate |
+| Diff check | Passed; Git emitted only LF-to-CRLF warnings | git diff --check |
+
+The restricted aggregate run stopped only when Next.js could not fetch the
+existing Google Geist fonts. The unchanged approved-network retry passed.
+
+## Critical workflow status
+
+| Workflow | Repository evidence | Live evidence |
+| --- | --- | --- |
+| Public data and empty states | Server repositories, DTOs, fixtures, route builds, and focused tests passed | Required after deployment |
+| Authentication | Cookie, environment, CORS, and validation contracts passed | Login/refresh/logout browser smoke test required |
+| Admin CRUD | Shared schemas, adapters, model/service contracts, and tests passed | Full authenticated CRUD required |
+| Uploads | Client/backend validation and cleanup contracts passed | ImageKit upload/replacement/removal required |
+| MDX | Bounded safe syntax, editor contracts, DB serialization, and public fallback tests passed | Author/preview/render browser test required |
+| Cache revalidation | Canonical operations and slug invalidation contracts passed | Mutation-to-public-cache smoke test required |
+| Contact | Validation, honeypot, throttling, and provider error handling are source-verified | Resend delivery test required |
+| SEO | Metadata, sitemap, robots, JSON-LD, and noindex checks/builds passed | Final domain/social preview check required |
+
+## Security status
+
+- Exact-origin credentialed CORS is implemented.
+- Production cookie invariants require Secure cookies and support custom-domain
+  and provider-domain modes.
+- Environment values are parsed and bounded without printing secret values.
+- Authentication, upload, refresh, and admin API rate limits are present.
+- JSON, URL-encoded, multipart, and revalidation request sizes are bounded.
+- ImageKit errors are sanitized.
+- Health/readiness and graceful shutdown paths are implemented.
+- Admin indexing is disabled; public security headers are present.
+- CSP remains a deployed-domain decision and is not falsely marked complete.
+- The current audit review records one low and two moderate residual findings;
+  no high or critical findings were reported in the Phase 9 follow-up.
+- No secret value appeared in repository documentation or client output scans.
+
+## External prerequisites
+
+The following are not repository-complete and require operator/provider work:
+
+- Vercel public and admin projects.
+- Render backend service.
+- MongoDB Atlas users, network access, indexes, and backups.
+- ImageKit credentials, folders, permissions, and media verification.
+- Resend verified sender/domain and delivery verification.
+- Final domain/DNS configuration.
+- Production environment variables and exact origin/cookie values.
+- Initial admin credential setup through operator secret management.
+- Real portfolio content and production media upload.
+- Deployed browser QA, cache revalidation, and rollback smoke tests.
+
+## Known limitations and risks
+
+- Interactive browser QA remains unavailable because the in-app browser
+  bootstrap lacks the documented sandboxPolicy metadata; no browser pass is
+  claimed.
+- Render free-tier sleep and in-memory rate limits require operational
+  acceptance or later infrastructure decisions.
+- Actual provider configuration, backups, monitoring, and external service
+  delivery were not verified.
+- The real npm ci run was blocked by a local locked Tailwind native binary;
+  npm ci --dry-run validated the root lockfile contract.
+- The final post-install default Turbopack aggregate rerun reached the existing
+  Google font path but failed on the local `@vercel/turbopack-next` font import
+  resolution. Public and admin Next production builds pass with the supported
+  webpack fallback; this is recorded as a local toolchain limitation and does
+  not change the repository build configuration.
+- The canonical technology registry contains 70 entries and 43 aliases; C++
+  and Socket.IO lookup checks pass, with 15 of 18 allowed categories populated
+  by intentional registry data.
+- Existing Node test-runner typeless-module and experimental TypeScript
+  warnings are non-failing.
+- Deployed Lighthouse, CSP, and social-preview verification remain external.
+
+## Deployment blockers
+
+No confirmed repository code blocker remains. External prerequisites are
+deployment gates and must be completed before production deployment.
+
+## Recommendation
+
+Proceed only to a controlled staged deployment after completing
+docs/final-deployment-checklist.md. Use
+docs/post-deployment-smoke-test.md immediately after each service becomes
+available. Do not represent the system as production-ready until the external
+checks and approval record are complete.
+
+## Post-Phase 10 maintenance — Pre-push repository cleanup
+
+Phase 10 remains completed. The maintenance pass is limited to repository
+hygiene and safe release preparation; it does not reopen the refactor plan or
+perform deployment/provider/database/media/email operations. The final outcome,
+branch, commit, push result, and any observed GitHub Actions state are recorded
+after the cleanup validation run.
+
+### Maintenance validation closeout
+
+- Branch: `refactor/production-readiness`.
+- Repository validation after cleanup and dependency alignment: passed, including lint, typecheck, 46 tests, asset/deployment/release checks, and all five workspace builds.
+- Clean install: `npm ci` passed; final audit count is 3 (1 low, 2 moderate, 0 high/critical). No audit fix was applied.
+- Whitespace and staging: both diff checks pass; the complete intended tree is staged and no intended file remains unstaged.
+- Push and GitHub Actions status are recorded only after commit/push review; no live deployment has occurred.

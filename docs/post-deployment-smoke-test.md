@@ -1,0 +1,66 @@
+# Post-Deployment Smoke Test
+
+Run this checklist after each staged deployment. Record result, observed URL,
+timestamp, evidence, issue, and whether rollback is required for every section.
+
+## Public
+
+- [ ] Home loads with populated content and no console/runtime error.
+- [ ] Projects page loads and filters by canonical project type.
+- [ ] Project cards link to valid visible slugs.
+- [ ] Completed, in-progress, planned, hidden, and unknown-slug behavior is correct.
+- [ ] Project detail renders safe media, technologies, timeline, and MDX.
+- [ ] Empty projects, certifications, achievements, currently-building, and settings states are intentional.
+- [ ] About page, skills, institution/profile assets, and quick navigation work.
+- [ ] Contact validation, honeypot, success, failure, and configured links work.
+- [ ] sitemap.xml contains only public visible routes/projects.
+- [ ] robots.txt has the expected production policy.
+- [ ] Canonical, Open Graph, Twitter/X, favicon, and JSON-LD metadata are correct.
+- [ ] Public pages work at mobile, tablet, and desktop widths.
+- [ ] Light and dark themes work.
+- [ ] Record any Lighthouse or performance observations.
+
+## Admin
+
+- [ ] Admin login succeeds with the operator account.
+- [ ] Invalid credentials produce a generic failure.
+- [ ] Refresh session persists and logout clears the refresh cookie.
+- [ ] Unauthenticated protected routes redirect or reject safely.
+- [ ] Create, edit, delete, and slug-change project flows work.
+- [ ] Known and custom technology flows work.
+- [ ] Media upload, replacement, removal, retry, and confirmation work.
+- [ ] Case-study write/preview/edit/clear flow works.
+- [ ] Certifications, achievements, currently-building, and site settings CRUD work.
+- [ ] Admin routes remain noindex.
+- [ ] Failed API/backend connections remain usable and sanitized.
+
+## Backend
+
+- [ ] GET /api/health returns stable liveness data without secrets.
+- [ ] GET /api/health/ready returns the expected ready/not-ready status.
+- [ ] Allowed CORS origin succeeds with credentials.
+- [ ] Denied CORS origin is rejected.
+- [ ] Cookie attributes match the selected domain mode.
+- [ ] Login, refresh, logout, and revoked-session behavior is correct.
+- [ ] Login, refresh, admin, and upload rate limits respond safely.
+- [ ] JSON, multipart, and upload-size limits are enforced.
+- [ ] Provider failures return sanitized errors.
+- [ ] SIGTERM/SIGINT shutdown closes the server and database cleanly.
+
+## Integration
+
+- [ ] An admin project write appears publicly after bounded revalidation.
+- [ ] Project slug changes invalidate both old and new detail URLs.
+- [ ] Home/list/detail cache refreshes after relevant mutations.
+- [ ] ImageKit media is delivered and cleanup behavior is correct.
+- [ ] Contact delivery reaches the controlled test recipient through Resend.
+- [ ] No secrets appear in browser output, network responses, or logs.
+
+## Evidence record
+
+| Area | Result | Observed URL | Timestamp | Evidence | Issue | Rollback required |
+| --- | --- | --- | --- | --- | --- | --- |
+| Public |  |  |  |  |  |  |
+| Admin |  |  |  |  |  |  |
+| Backend |  |  |  |  |  |  |
+| Integration |  |  |  |  |  |  |
