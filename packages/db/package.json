@@ -1,0 +1,26 @@
+{
+  "name": "@portfolio/db",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Server-only MongoDB and Mongoose foundation shared by portfolio server runtimes.",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "files": ["dist"],
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "lint": "node ../../scripts/check-package-boundaries.mjs db",
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "npm run build --workspace=@portfolio/shared && npm run build && node --test tests/*.test.cjs"
+  },
+  "dependencies": {
+    "@portfolio/shared": "*",
+    "mongoose": "^9.7.3"
+  }
+}

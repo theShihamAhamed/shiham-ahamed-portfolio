@@ -1,0 +1,23 @@
+import type { TechnologyRegistryEntry } from "./technology-types";
+
+const style = (accent: `#${string}`, lightText = "#17232b" as const, darkText = "#f8fafc" as const) => ({
+  brandColor: accent, color: accent, light: { bg: "#f1f5f9", text: lightText, border: accent }, dark: { bg: "#17232b", text: darkText, border: accent },
+});
+
+const entries = [
+  ["React", "react", ["reactjs"], "frontend", "#61DAFB"], ["Next.js", "nextjs", ["next", "next.js"], "frontend", "#000000"],
+  ["TypeScript", "typescript", ["ts"], "language", "#3178C6"], ["JavaScript", "javascript", ["js", "ecmascript"], "language", "#F7DF1E"],
+  ["HTML", "html", [], "frontend", "#E34F26"], ["CSS", "css", [], "frontend", "#1572B6"], ["Tailwind CSS", "tailwind-css", ["tailwind", "tailwindcss"], "ui", "#06B6D4"],
+  ["Sass", "sass", ["scss"], "ui", "#CC6699"], ["Bootstrap", "bootstrap", [], "ui", "#7952B3"], ["shadcn/ui", "shadcn-ui", ["shadcn"], "ui", "#18181B"],
+  ["Node.js", "nodejs", ["node", "node.js"], "backend", "#339933"], ["Express.js", "expressjs", ["express", "express.js"], "backend", "#000000"],
+  ["NestJS", "nestjs", ["nest"], "backend", "#E0234E"], ["Spring Boot", "spring-boot", ["springboot"], "backend", "#6DB33F"], ["Java", "java", [], "language", "#ED8B00"], ["Python", "python", [], "language", "#3776AB"], ["C#", "c-sharp", ["csharp"], "language", "#68217A"], ["C++", "cpp", ["cplusplus", "c plus plus"], "language", "#00599C"], [".NET", "dotnet", ["dot net", "dotnet core"], "backend", "#512BD4"],
+  ["MongoDB", "mongodb", ["mongo"], "database", "#47A248"], ["Mongoose", "mongoose", [], "database", "#880000"], ["PostgreSQL", "postgresql", ["postgres", "psql"], "database", "#4169E1"], ["MySQL", "mysql", [], "database", "#4479A1"], ["Redis", "redis", [], "database", "#DC382D"], ["Prisma", "prisma", [], "database", "#2D3748"], ["Drizzle ORM", "drizzle", ["drizzle orm"], "database", "#C5F74F"], ["Neon", "neon", [], "cloud", "#00E699"],
+  ["REST API", "rest-api", ["rest"], "architecture", "#2563EB"], ["GraphQL", "graphql", [], "backend", "#E10098"], ["WebSocket", "websocket", ["web sockets"], "messaging", "#2563EB"], ["Socket.IO", "socketio", ["socket io"], "messaging", "#010101"], ["Microservices", "microservices", [], "architecture", "#7C3AED"], ["Kafka", "kafka", ["apache kafka"], "messaging", "#231F20"],
+  ["JWT", "jwt", ["json web token"], "auth", "#000000"], ["OAuth", "oauth", ["oauth2"], "auth", "#EB5424"], ["bcrypt", "bcrypt", [], "auth", "#338033"],
+  ["Docker", "docker", [], "devops", "#2496ED"], ["Docker Compose", "docker-compose", ["compose"], "devops", "#2496ED"], ["Kubernetes", "kubernetes", ["k8s"], "devops", "#326CE5"], ["kubectl", "kubectl", [], "devops", "#326CE5"], ["GitHub Actions", "github-actions", [], "devops", "#2088FF"], ["Git", "git", [], "tooling", "#F05032"], ["GitHub", "github", [], "tooling", "#181717"], ["AWS", "aws", ["amazon web services"], "cloud", "#FF9900"], ["Amazon S3", "amazon-s3", ["s3"], "storage", "#569A31"], ["Vercel", "vercel", [], "cloud", "#000000"], ["Linux", "linux", [], "devops", "#FCC624"],
+  ["Jest", "jest", [], "testing", "#C21325"], ["Vitest", "vitest", [], "testing", "#6E9F18"], ["Playwright", "playwright", [], "testing", "#2EAD33"], ["Cypress", "cypress", [], "testing", "#17202C"], ["Postman", "postman", [], "testing", "#FF6C37"], ["TensorFlow", "tensorflow", [], "ai-ml", "#FF6F00"], ["RAG", "rag", ["retrieval augmented generation"], "ai-ml", "#7C3AED"], ["Stripe", "stripe", [], "payment", "#635BFF"], ["Cloudinary", "cloudinary", [], "storage", "#3448C5"], ["ImageKit", "imagekit", [], "storage", "#146EF5"], ["Resend", "resend", [], "messaging", "#000000"], ["Zod", "zod", [], "tooling", "#3068B7"], ["TanStack Query", "tanstack-query", ["react query", "tanstack"], "frontend", "#FF4154"], ["React Hook Form", "react-hook-form", ["rhf"], "frontend", "#EC5990"], ["Vite", "vite", [], "tooling", "#646CFF"], ["Nx", "nx", [], "tooling", "#143055"], ["GSAP", "gsap", [], "frontend", "#88CE02"], ["MDX", "mdx", [], "tooling", "#F9AC00"], ["Font Awesome", "font-awesome", ["fontawesome"], "ui", "#528DD7"],
+  ["Swagger", "swagger", ["openapi", "swagger ui"], "tooling", "#85EA2D"], ["YAML", "yaml", ["yml"], "language", "#CB171E"], ["Minikube", "minikube", [], "devops", "#2B2D42"], ["Multer", "multer", [], "backend", "#8B5CF6"],
+] as const;
+
+export const TECHNOLOGY_REGISTRY = entries.map(([label, slug, aliases, category, accent]) => ({ label, slug, aliases, category, ...style(accent) })) as unknown as readonly TechnologyRegistryEntry[];
+export const TECHNOLOGY_REGISTRY_BY_SLUG = Object.fromEntries(TECHNOLOGY_REGISTRY.map((entry) => [entry.slug, entry])) as Record<string, TechnologyRegistryEntry>;
