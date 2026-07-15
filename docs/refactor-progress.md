@@ -1062,3 +1062,9 @@ No file in this inventory was deleted before classification. Seed/data/media rem
 - Release validation now rejects `--experimental-strip-types` in active root, app, or package scripts and verifies the two Next.js test commands use `node --import=tsx`.
 - Exact Node 20.20.2 verification passed: admin 7/7, frontend 8/8, shared 18, DB 5, backend 12; 50 total tests. Docker was unavailable because its daemon was not running. The local Node 22.16.0 aggregate is not authoritative for the Node 20 CI gate.
 - Local `npm ci`, lint, typecheck, asset, deployment, release, and all five builds passed. The local audit reported four moderate findings; no automatic audit fix was applied. Commit, push, and resulting CI state will be recorded after handoff.
+
+### Final Node 20 CI handoff
+
+- Commit `c2028a14c5bc8b59723228254a75d91457aa0e64` (`fix(ci): run TypeScript tests on Node 20`) was pushed normally to `refactor/production-readiness` without force-push.
+- GitHub Actions run `29415168482` passed completely on the Node 20 CI runtime: Install, Lint, Typecheck, Test, public assets, deployment configuration, release candidate, and Build all passed.
+- PR #1 remains open and unmerged. No deployment or live service operation occurred.

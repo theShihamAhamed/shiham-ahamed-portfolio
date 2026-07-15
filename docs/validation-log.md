@@ -775,3 +775,9 @@ Read-only file/package/source searches and final docs-only consistency checks
 - Exact Node 20.20.2 result: admin 7/7 and frontend 8/8 passed without bad-option or type-stripping warnings. Explicit-path aggregate verification passed shared 18, DB 5, backend 12, for 50 total. Docker was unavailable because the daemon was stopped.
 - Local `npm ci`, lint, full typecheck, assets, deployment, release, and all five builds passed. Windows Node 22.16.0 `npm test`/`npm validate` stops in the new `tsx` tests with missing named exports; no application/test behavior was changed for that local-only mismatch. Audit: four moderate findings, no automatic fix.
 - Commit SHA, push result, and the new GitHub Actions state will be appended after handoff.
+
+### Final Node 20 CI handoff
+
+- Commit `c2028a14c5bc8b59723228254a75d91457aa0e64` (`fix(ci): run TypeScript tests on Node 20`) was pushed normally without force-push.
+- GitHub Actions run `29415168482` completed successfully on Node 20: Install, Lint, Typecheck, Test, public asset validation, deployment configuration, release-candidate validation, and Build all passed.
+- PR #1 is still open and unmerged. No deployment or live service operation occurred.

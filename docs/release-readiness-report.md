@@ -171,3 +171,9 @@ after the cleanup validation run.
 - Validation passed: `npm ci`, lint, typecheck, assets, deployment, release checks, all five builds, and exact Node 20.20.2 test execution. Totals: shared 18, DB 5, admin 7, backend 12, frontend 8 (50 total).
 - Windows Node 22.16.0 aggregate npm test/validate is a local runtime limitation; Docker was unavailable. The remote Node 20 workflow is the acceptance gate.
 - No generated output, environment file, secret, deployment, merge, or force-push is part of this repair. Commit, push, and resulting Actions state will be appended after handoff.
+
+### Final Node 20 CI handoff
+
+- Commit `c2028a14c5bc8b59723228254a75d91457aa0e64` (`fix(ci): run TypeScript tests on Node 20`) was pushed normally without force-push.
+- GitHub Actions run `29415168482` passed all required gates: Install, Lint, Typecheck, Test, public assets, deployment configuration, release candidate, and Build.
+- PR #1 remains open and unmerged; no deployment or live service operation occurred.
