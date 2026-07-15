@@ -142,3 +142,10 @@ after the cleanup validation run.
 - Confirmed cause: the internal package exports intentionally resolve to `dist`, but clean installation does not build workspace output; the prior aggregate typecheck reached DB before any internal package build.
 - Required repair: root typecheck now builds shared then DB before all consumer typechecks. CI checkout/setup-node actions are updated to v7/v6; application Node remains 20.
 - The clean-state regression and full release validation are required before CI can be considered passed; no generated `dist` output will be committed.
+
+### PR #1 CI follow-up outcome
+
+- Repair commit: `3b4b6594cf8dddc3cfe6ac4a922ac2961d20684c`; pushed normally to `refactor/production-readiness`.
+- Local clean-state and full approved-network validation passed, including 46 tests and all workspace builds.
+- GitHub Actions run `29408781891` failed at backend typecheck because upload route/service files are absent from the clean tracked checkout but present locally under the existing ignored `uploads/` pattern. The exact errors are recorded in the validation log.
+- CI status is Failed, not passed. PR #1 remains open; no merge or deployment was performed. Fixing the unrelated upload tracking issue requires a separate follow-up decision.

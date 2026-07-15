@@ -740,3 +740,11 @@ Read-only file/package/source searches and final docs-only consistency checks
 - Fix applied: root `typecheck` now starts with `npm run build:packages`, whose existing order is shared then DB. No package exports, source paths, TypeScript weakening, path aliases, or generated `dist` files were changed.
 - CI action updates: checkout v4→v7 and setup-node v4→v6; Node 20 and npm cache settings remain unchanged.
 - Clean-state regression: the failure was reproduced after removing only `packages/shared/dist` and `packages/db/dist`; the post-fix clean-state result and complete validation matrix will be recorded after execution.
+
+### PR #1 CI follow-up outcome
+
+- Clean-state local regression after `npm ci` and removal of both internal `dist` folders passed: shared built, DB built, then shared/DB/frontend/admin/backend typechecks passed locally.
+- Local validation passed: `npm ci`, lint, 46 tests, asset checks, deployment checks, release checks, standalone builds, `git diff --check`, and approved-network `npm.cmd run validate`.
+- Repair commit `3b4b6594cf8dddc3cfe6ac4a922ac2961d20684c` pushed successfully without force-push.
+- GitHub Actions run `29408781891`: install and lint passed; the repaired shared/DB bootstrap and consumer typechecks through admin passed; backend typecheck failed because the clean checkout lacks tracked `apps/backend/src/modules/uploads/uploads.routes.ts` and `uploads.service.ts`, followed by the implicit-any error at `apps/backend/src/modules/projects/project.service.ts:508`.
+- Local `apps/backend/src/modules/uploads/*` files are ignored by `.gitignore` (`uploads/`) and are not tracked. No unrelated upload-module or ignore-rule change was made. CI remains failed; PR #1 remains open and unmerged.

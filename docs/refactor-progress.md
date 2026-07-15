@@ -1030,3 +1030,11 @@ No file in this inventory was deleted before classification. Seed/data/media rem
 - CI modernization: `.github/workflows/ci.yml` now uses `actions/checkout@v7` and `actions/setup-node@v6`; Node 20 and npm caching remain unchanged.
 - Regression requirement: internal workspace packages must be built before typechecking applications or packages that consume their dist-based exports.
 - Repair validation and GitHub handoff will be appended after the clean-state validation and normal push.
+
+### PR #1 CI follow-up outcome
+
+- Repair commit `3b4b6594cf8dddc3cfe6ac4a922ac2961d20684c` was pushed normally to `refactor/production-readiness` with no force-push.
+- GitHub Actions run `29408781891` passed install, lint, shared/DB package bootstrap, shared/DB/frontend/admin typechecks, then failed at backend typecheck.
+- Exact remote errors: missing `./modules/uploads/uploads.routes` in `apps/backend/src/app.ts`; missing `../uploads/uploads.service` in `apps/backend/src/modules/certifications/certification.service.ts` and `apps/backend/src/modules/projects/project.service.ts`; and an implicit-any `image` parameter at `apps/backend/src/modules/projects/project.service.ts:508`.
+- Local verification found `apps/backend/src/modules/uploads/*` present but ignored by `.gitignore` (`uploads/`) and absent from tracked files. This is a pre-existing unrelated repository issue exposed by the clean checkout; it is intentionally not changed in this focused CI repair.
+- CI status: Failed. PR #1 remains open and unmerged.

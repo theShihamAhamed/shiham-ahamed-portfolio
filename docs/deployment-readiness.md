@@ -268,3 +268,9 @@ authoritative current classification for release readiness.
 - The repository uses dist-based exports for both internal packages, while `npm ci` does not generate their `dist` directories. The previous root typecheck omitted the required shared-then-DB package build and could pass only when stale local output existed.
 - The focused repair prepends `build:packages` to root `typecheck`; CI action majors are updated to checkout v7 and setup-node v6 while Node 20 remains unchanged. No deployment or external service operation is part of this repair.
 - Clean-state validation, commit SHA, push outcome, and observed PR check state will be recorded after completion.
+
+### PR #1 CI follow-up outcome
+
+- Commit `3b4b6594cf8dddc3cfe6ac4a922ac2961d20684c` was pushed normally; no force-push, merge, deployment, or provider operation occurred.
+- GitHub Actions run `29408781891` failed at backend typecheck after the repaired internal package bootstrap passed. The clean checkout cannot find the upload route/service modules; local copies exist but are ignored by the existing `uploads/` rule and are not tracked.
+- This unrelated upload/ignore issue is outside the focused package-build repair and remains unresolved. PR #1 is open and unmerged; CI is not passed.
