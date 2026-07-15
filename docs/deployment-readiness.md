@@ -286,3 +286,11 @@ authoritative current classification for release readiness.
 
 - Commit `765ae24075cd2261d86fa780599280d6ac0a6b7c` was pushed normally. Run `29411644817` passed the repaired upload-source typecheck path and failed only at the existing Node 20 admin test flag; no deployment or provider operation occurred.
 - PR #1 remains open and unmerged. The remaining Node/test-runtime incompatibility requires a separate follow-up decision.
+
+## PR #1 CI repair - make TypeScript tests Node 20-compatible
+
+- The remaining failure was a test-runner compatibility issue: Node `20.20.2` rejects `--experimental-strip-types` in admin, and public frontend had the same latent script.
+- Both Next.js workspaces explicitly own `tsx: ^4.19.2` and use `node --import=tsx`. CI remains on Node 20; no deployment configuration or production runtime changed.
+- Local install, lint, typecheck, assets, deployment, release checks, and all five builds passed. Exact Node 20.20.2 execution passed all 50 tests: shared 18, DB 5, admin 7, backend 12, frontend 8.
+- The Windows Node 22.16.0 aggregate is not claimed as a CI result; Docker was unavailable. GitHub Actions remains the authoritative Node 20 gate.
+- No live deployment, provider operation, database mutation, media operation, or production credential use occurred. Commit, push, and remote CI state will be recorded after handoff.

@@ -1054,3 +1054,11 @@ No file in this inventory was deleted before classification. Seed/data/media rem
 - Commit `765ae24075cd2261d86fa780599280d6ac0a6b7c` was pushed normally without force-push. The temporary Git-only clone tracked all five upload sources and its full typecheck passed.
 - GitHub Actions run `29411644817` passed install, lint, and the complete internal-package/backend typecheck. It then failed in the existing admin test command: Node 20.20.2 reported `node: bad option: --experimental-strip-types`.
 - The upload-source omission is resolved. The remaining Node 20 test-runtime incompatibility is a separate follow-up; no unrelated change was made. PR #1 remains open and unmerged.
+
+## PR #1 CI repair - make TypeScript tests Node 20-compatible
+
+- Runs `29411644817` and `29412049144` confirmed Node `20.20.2` rejects the active `node --experimental-strip-types --test tests/*.test.mjs` command in admin; the public frontend used the same latent command.
+- Both Next.js workspaces now own development-only `tsx: ^4.19.2` and run tests with `node --import=tsx --test tests/*.test.mjs`. CI remains on Node 20; no runtime upgrade or test weakening was made.
+- Release validation now rejects `--experimental-strip-types` in active root, app, or package scripts and verifies the two Next.js test commands use `node --import=tsx`.
+- Exact Node 20.20.2 verification passed: admin 7/7, frontend 8/8, shared 18, DB 5, backend 12; 50 total tests. Docker was unavailable because its daemon was not running. The local Node 22.16.0 aggregate is not authoritative for the Node 20 CI gate.
+- Local `npm ci`, lint, typecheck, asset, deployment, release, and all five builds passed. The local audit reported four moderate findings; no automatic audit fix was applied. Commit, push, and resulting CI state will be recorded after handoff.

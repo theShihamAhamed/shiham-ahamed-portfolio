@@ -162,3 +162,12 @@ after the cleanup validation run.
 - Repair commit `765ae24075cd2261d86fa780599280d6ac0a6b7c` is pushed normally and the clean-clone typecheck passes.
 - GitHub Actions run `29411644817` passed Install, Lint, and Typecheck, including the previously missing backend upload sources. It failed at Test because Node 20.20.2 rejects the existing `--experimental-strip-types` flag in the admin test script.
 - CI is not passed; no merge or deployment was performed. The Node/test-runtime issue is a separate follow-up and is not changed here.
+
+## PR #1 CI repair - make TypeScript tests Node 20-compatible
+
+- Runs `29411644817` and `29412049144` established that Node `20.20.2` rejects `node --experimental-strip-types --test tests/*.test.mjs` in admin; frontend used the same unsupported flag.
+- Added explicit `tsx: ^4.19.2` development ownership to both Next.js workspaces and changed both commands to `node --import=tsx --test tests/*.test.mjs`. Node 20 remains the CI and documented runtime.
+- Release validation rejects the unsupported flag in active package scripts and verifies the admin/frontend commands use `node --import=tsx`.
+- Validation passed: `npm ci`, lint, typecheck, assets, deployment, release checks, all five builds, and exact Node 20.20.2 test execution. Totals: shared 18, DB 5, admin 7, backend 12, frontend 8 (50 total).
+- Windows Node 22.16.0 aggregate npm test/validate is a local runtime limitation; Docker was unavailable. The remote Node 20 workflow is the acceptance gate.
+- No generated output, environment file, secret, deployment, merge, or force-push is part of this repair. Commit, push, and resulting Actions state will be appended after handoff.

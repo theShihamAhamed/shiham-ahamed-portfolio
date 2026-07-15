@@ -765,3 +765,13 @@ Read-only file/package/source searches and final docs-only consistency checks
 - Commit `765ae24075cd2261d86fa780599280d6ac0a6b7c` pushed successfully without force-push. Temporary clone verification passed: all five upload files were tracked, no local ignored state was inherited, `npm ci` passed, and full typecheck passed.
 - GitHub Actions run `29411644817`: Install, Lint, and Typecheck passed; Test failed at `apps/admin-frontend` because Node 20.20.2 does not recognize the existing `node --experimental-strip-types --test tests/*.test.mjs` command (`node: bad option: --experimental-strip-types`). Later checks were skipped.
 - The upload-module tracking repair is verified remotely. The remaining Node 20 test-runtime issue is outside this focused source-tracking repair and remains intentionally unresolved.
+
+## PR #1 CI repair - make TypeScript tests Node 20-compatible
+
+- Runs `29411644817` and `29412049144` used Node `20.20.2` and failed at `node --experimental-strip-types --test tests/*.test.mjs` in admin; public frontend contained the same unsupported active command.
+- Admin and frontend now declare `tsx: ^4.19.2` in `devDependencies` and use `node --import=tsx --test tests/*.test.mjs`. Only the root `package-lock.json` was updated.
+- Reviewed TypeScript imports: admin loads `image-upload.ts` and `project-form.utils.ts`; frontend loads `section-navigation.ts`. They use ordinary type aliases/generics and workspace imports; no enums, decorators, namespaces, JSX/TSX, or special path aliases were found in the tested path.
+- Release validation scans active root/app/package scripts for `--experimental-strip-types` and requires the two Next.js test commands to use `node --import=tsx`; historical documentation is not scanned.
+- Exact Node 20.20.2 result: admin 7/7 and frontend 8/8 passed without bad-option or type-stripping warnings. Explicit-path aggregate verification passed shared 18, DB 5, backend 12, for 50 total. Docker was unavailable because the daemon was stopped.
+- Local `npm ci`, lint, full typecheck, assets, deployment, release, and all five builds passed. Windows Node 22.16.0 `npm test`/`npm validate` stops in the new `tsx` tests with missing named exports; no application/test behavior was changed for that local-only mismatch. Audit: four moderate findings, no automatic fix.
+- Commit SHA, push result, and the new GitHub Actions state will be appended after handoff.

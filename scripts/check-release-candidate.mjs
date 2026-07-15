@@ -60,6 +60,31 @@ if (ignoredSourceFiles.length > 0) {
 }
 
 const rootPackage = JSON.parse(read("package.json"));
+const activePackageManifests = ["package.json"];
+for (const workspaceRoot of ["apps", "packages"]) {
+  for (const entry of fs.readdirSync(path.join(root, workspaceRoot), { withFileTypes: true })) {
+    if (entry.isDirectory() && exists(path.join(workspaceRoot, entry.name, "package.json"))) {
+      activePackageManifests.push(path.join(workspaceRoot, entry.name, "package.json"));
+    }
+  }
+}
+
+for (const file of activePackageManifests) {
+  const packageJson = JSON.parse(read(file));
+  for (const [scriptName, command] of Object.entries(packageJson.scripts ?? {})) {
+    if (typeof command === "string" && command.includes("--experimental-strip-types")) {
+      fail(`${file} script ${scriptName} uses unsupported --experimental-strip-types.`);
+    }
+  }
+}
+
+for (const file of ["apps/admin-frontend/package.json", "apps/frontend/package.json"]) {
+  const packageJson = JSON.parse(read(file));
+  if (!packageJson.scripts?.test?.includes("node --import=tsx --test")) {
+    fail(`${file} must run TypeScript tests with node --import=tsx.`);
+  }
+}
+
 const requiredWorkspaces = [
   "apps/frontend/package.json",
   "apps/admin-frontend/package.json",
