@@ -261,3 +261,10 @@ authoritative current classification for release readiness.
 - Feature branch `refactor/production-readiness` was pushed to `origin` at commit `f845dea19bdfd781e5dfd05fbed8643f8e24b52c`.
 - GitHub Actions status: Not observed; the remote connector returned no workflow runs/status checks for this commit. Open a pull request to trigger the configured CI workflow.
 - No merge, force-push, deployment, provider operation, or live service operation occurred.
+
+## PR #1 CI repair — internal workspace build bootstrap
+
+- PR #1 exposed a clean-install typecheck failure: DB files `src/models.ts`, `src/serializers.ts`, and `src/types.ts` could not resolve `@portfolio/shared` (TS2307).
+- The repository uses dist-based exports for both internal packages, while `npm ci` does not generate their `dist` directories. The previous root typecheck omitted the required shared-then-DB package build and could pass only when stale local output existed.
+- The focused repair prepends `build:packages` to root `typecheck`; CI action majors are updated to checkout v7 and setup-node v6 while Node 20 remains unchanged. No deployment or external service operation is part of this repair.
+- Clean-state validation, commit SHA, push outcome, and observed PR check state will be recorded after completion.

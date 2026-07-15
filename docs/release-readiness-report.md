@@ -135,3 +135,10 @@ after the cleanup validation run.
 - Commit SHA: `f845dea19bdfd781e5dfd05fbed8643f8e24b52c`.
 - Push outcome: completed without force-push; no merge performed.
 - GitHub Actions: not observed. The connector returned no workflow runs or combined status checks for this commit, so CI is not claimed as passed. Open a pull request to run the configured checks.
+
+## PR #1 CI repair — internal workspace build bootstrap
+
+- Blocking failure: clean GitHub Actions typecheck reported TS2307 for `@portfolio/shared` in the DB models, serializers, and types files.
+- Confirmed cause: the internal package exports intentionally resolve to `dist`, but clean installation does not build workspace output; the prior aggregate typecheck reached DB before any internal package build.
+- Required repair: root typecheck now builds shared then DB before all consumer typechecks. CI checkout/setup-node actions are updated to v7/v6; application Node remains 20.
+- The clean-state regression and full release validation are required before CI can be considered passed; no generated `dist` output will be committed.

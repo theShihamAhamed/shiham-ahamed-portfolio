@@ -732,3 +732,11 @@ Read-only file/package/source searches and final docs-only consistency checks
 - `git status`: clean after commit. `git log -1 --stat` and `git show --summary --oneline HEAD` confirmed 554 changed paths, including the workspace moves, additions, modifications, and deletions.
 - `git push -u origin refactor/production-readiness`: passed; remote branch created and tracking configured. No force push or remote history rewrite occurred.
 - GitHub Actions observation: the GitHub connector returned an empty workflow-run list and empty combined-status list for the pushed SHA. No CI pass is claimed; no pull request was opened or merged.
+
+## PR #1 CI repair — internal workspace build bootstrap
+
+- PR #1 failure: after clean `npm ci`, `npm run typecheck` failed in `packages/db/src/models.ts`, `packages/db/src/serializers.ts`, and `packages/db/src/types.ts` with TS2307: Cannot find module `@portfolio/shared` or its corresponding type declarations.
+- Root cause confirmed: `@portfolio/shared` exports `./dist/index.d.ts` and `./dist/index.js`; `@portfolio/db` declares `@portfolio/shared` as a dependency; `npm ci` does not create workspace `dist` output; and the old root typecheck command did not build internal packages first.
+- Fix applied: root `typecheck` now starts with `npm run build:packages`, whose existing order is shared then DB. No package exports, source paths, TypeScript weakening, path aliases, or generated `dist` files were changed.
+- CI action updates: checkout v4→v7 and setup-node v4→v6; Node 20 and npm cache settings remain unchanged.
+- Clean-state regression: the failure was reproduced after removing only `packages/shared/dist` and `packages/db/dist`; the post-fix clean-state result and complete validation matrix will be recorded after execution.

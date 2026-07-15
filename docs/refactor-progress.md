@@ -1021,3 +1021,12 @@ No file in this inventory was deleted before classification. Seed/data/media rem
 - GitHub Actions: not observed. The GitHub connector returned no workflow runs or status checks for this commit; the checked-in workflow runs on `main` pushes or pull requests, and no pull request was opened by this task.
 - Final maintenance status: Completed.
 - Exact next action: Open a pull request from `refactor/production-readiness` to `main`, then observe the CI workflow before merging; do not merge while checks are unavailable or failing.
+
+## PR #1 CI repair — internal workspace build bootstrap
+
+- GitHub Actions failure reproduced locally from a clean internal-package state: `packages/db/src/models.ts`, `packages/db/src/serializers.ts`, and `packages/db/src/types.ts` each reported TS2307 for `@portfolio/shared`.
+- Root cause confirmed: `@portfolio/shared` and `@portfolio/db` export declarations from `dist`; `npm ci` installs workspace dependencies but does not generate `dist`; the old aggregate `typecheck` ran `typecheck:shared` and `typecheck:db` without first running `build:packages`. A stale local `dist` directory could therefore mask the clean-checkout failure.
+- Focused fix: root `typecheck` now runs `npm run build:packages` first. Existing build order remains shared, then DB, followed by shared/DB/frontend/admin/backend typechecks. Package exports remain dist-based and no generated `dist` output is tracked.
+- CI modernization: `.github/workflows/ci.yml` now uses `actions/checkout@v7` and `actions/setup-node@v6`; Node 20 and npm caching remain unchanged.
+- Regression requirement: internal workspace packages must be built before typechecking applications or packages that consume their dist-based exports.
+- Repair validation and GitHub handoff will be appended after the clean-state validation and normal push.
