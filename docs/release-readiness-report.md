@@ -149,3 +149,10 @@ after the cleanup validation run.
 - Local clean-state and full approved-network validation passed, including 46 tests and all workspace builds.
 - GitHub Actions run `29408781891` failed at backend typecheck because upload route/service files are absent from the clean tracked checkout but present locally under the existing ignored `uploads/` pattern. The exact errors are recorded in the validation log.
 - CI status is Failed, not passed. PR #1 remains open; no merge or deployment was performed. Fixing the unrelated upload tracking issue requires a separate follow-up decision.
+
+## PR #1 CI repair — track backend upload source modules
+
+- CI runs `29408781891` and `29409140385` established that package bootstrap was fixed; the next blocker was required backend upload source ignored by root patterns `uploads/` and `*/uploads/`.
+- The actual implementation uses Multer memory storage and direct ImageKit transfer, so broad upload ignores were removed without adding a runtime upload-directory rule.
+- Tracked source now includes the upload controller, routes, service, types, and validation. Release validation rejects missing/ignored required files and ignored TypeScript under application/package source trees.
+- Focused upload tests and the complete local validation matrix pass. Commit, push, temporary-clone, and remote CI results will be recorded after handoff.

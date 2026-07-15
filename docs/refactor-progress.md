@@ -1038,3 +1038,13 @@ No file in this inventory was deleted before classification. Seed/data/media rem
 - Exact remote errors: missing `./modules/uploads/uploads.routes` in `apps/backend/src/app.ts`; missing `../uploads/uploads.service` in `apps/backend/src/modules/certifications/certification.service.ts` and `apps/backend/src/modules/projects/project.service.ts`; and an implicit-any `image` parameter at `apps/backend/src/modules/projects/project.service.ts:508`.
 - Local verification found `apps/backend/src/modules/uploads/*` present but ignored by `.gitignore` (`uploads/`) and absent from tracked files. This is a pre-existing unrelated repository issue exposed by the clean checkout; it is intentionally not changed in this focused CI repair.
 - CI status: Failed. PR #1 remains open and unmerged.
+
+## PR #1 CI repair — track backend upload source modules
+
+- Previous CI runs `29408781891` and `29409140385` confirmed that the internal-package bootstrap succeeded, then backend typecheck failed because the upload source directory was omitted from clean checkouts.
+- Root cause: broad `.gitignore` rules `uploads/` and `*/uploads/` ignored the required `apps/backend/src/modules/uploads/` source directory.
+- Runtime behavior confirmed: Multer uses `memoryStorage()` and sends buffers directly to ImageKit. No local or persistent runtime upload directory exists, so no replacement upload-runtime ignore rule is needed.
+- The five legitimate TypeScript source files are now trackable and staged: controller, routes, service, types, and validation. No media, generated output, secrets, credentials, or local temporary paths were found.
+- Release validation now requires those five paths to be tracked and rejects ignored TypeScript source under `apps/*/src` or `packages/*/src`.
+- Focused upload tests cover imports without provider calls, delete-ID validation, unsupported MIME rejection, and oversized-file rejection.
+- Local validation is complete; commit SHA, push result, temporary-clone result, and final GitHub Actions observation will be appended after the commit/push handoff.

@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
@@ -11,6 +12,52 @@ const fail = (message) => {
 const requireText = (relativePath, pattern, message) => {
   if (!pattern.test(read(relativePath))) fail(relativePath + ": " + message);
 };
+const gitOutput = (args) => {
+  try {
+    return execFileSync("git", args, {
+      cwd: root,
+      encoding: "utf8",
+      stdio: ["ignore", "pipe", "ignore"],
+    }).trim();
+  } catch {
+    return "";
+  }
+};
+const gitHasMatch = (args) => gitOutput(args).length > 0;
+
+const requiredBackendUploadSources = [
+  "apps/backend/src/modules/uploads/uploads.controller.ts",
+  "apps/backend/src/modules/uploads/uploads.routes.ts",
+  "apps/backend/src/modules/uploads/uploads.service.ts",
+  "apps/backend/src/modules/uploads/uploads.types.ts",
+  "apps/backend/src/modules/uploads/uploads.validation.ts",
+];
+
+for (const file of requiredBackendUploadSources) {
+  if (!exists(file)) fail("Missing backend upload source: " + file);
+  if (!gitHasMatch(["ls-files", "--error-unmatch", "--", file])) {
+    fail("Required backend upload source is not tracked: " + file);
+  }
+  if (gitHasMatch(["check-ignore", "--no-index", "--", file])) {
+    fail("Required backend upload source is ignored: " + file);
+  }
+}
+
+const ignoredSourceFiles = gitOutput([
+  "ls-files",
+  "--others",
+  "--ignored",
+  "--exclude-standard",
+  "--",
+  "apps",
+  "packages",
+])
+  .split(/\r?\n/)
+  .filter((file) => /^(?:apps|packages)\/[^/]+\/src\/.+\.(?:ts|tsx|mts|cts)$/.test(file));
+
+if (ignoredSourceFiles.length > 0) {
+  fail("Ignored TypeScript source files detected: " + ignoredSourceFiles.join(", "));
+}
 
 const rootPackage = JSON.parse(read("package.json"));
 const requiredWorkspaces = [

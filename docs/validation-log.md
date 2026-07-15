@@ -748,3 +748,14 @@ Read-only file/package/source searches and final docs-only consistency checks
 - Repair commit `3b4b6594cf8dddc3cfe6ac4a922ac2961d20684c` pushed successfully without force-push.
 - GitHub Actions run `29408781891`: install and lint passed; the repaired shared/DB bootstrap and consumer typechecks through admin passed; backend typecheck failed because the clean checkout lacks tracked `apps/backend/src/modules/uploads/uploads.routes.ts` and `uploads.service.ts`, followed by the implicit-any error at `apps/backend/src/modules/projects/project.service.ts:508`.
 - Local `apps/backend/src/modules/uploads/*` files are ignored by `.gitignore` (`uploads/`) and are not tracked. No unrelated upload-module or ignore-rule change was made. CI remains failed; PR #1 remains open and unmerged.
+
+## PR #1 CI repair — track backend upload source modules
+
+- Confirmed previous CI failures: runs `29408781891` and `29409140385` passed install/lint and the internal shared-then-DB bootstrap, then failed during backend typecheck because clean checkout omitted `apps/backend/src/modules/uploads/uploads.routes.ts` and `uploads.service.ts`.
+- Exact ignore cause: root `.gitignore` patterns `uploads/` and `*/uploads/` matched the backend source directory.
+- Upload storage behavior: `upload.middleware.ts` configures Multer `memoryStorage()` with MIME and file-size limits; `uploads.service.ts` derives dimensions from the in-memory buffer and sends the buffer directly to ImageKit. No local runtime upload directory is created.
+- Final ignore policy: broad upload rules removed; no replacement upload directory rule added because storage is memory-only.
+- Five source files are now trackable: `uploads.controller.ts`, `uploads.routes.ts`, `uploads.service.ts`, `uploads.types.ts`, and `uploads.validation.ts`. Review found no binary, generated, secret, credential, production-media, or local-path content.
+- Release regression protection now checks tracked required upload paths and rejects ignored TypeScript sources under application/package `src` directories.
+- Upload-focused tests pass for imports without ImageKit calls, invalid/seed-style file IDs, unsupported media types, and oversized uploads.
+- Local validation: `npm ci` passed with 3 audit findings (1 low, 2 moderate); clean internal-package typecheck passed; lint passed; 50 tests passed; asset/deployment/release checks passed; all five builds passed; approved-network `npm.cmd run validate` passed; both diff checks pass.

@@ -274,3 +274,10 @@ authoritative current classification for release readiness.
 - Commit `3b4b6594cf8dddc3cfe6ac4a922ac2961d20684c` was pushed normally; no force-push, merge, deployment, or provider operation occurred.
 - GitHub Actions run `29408781891` failed at backend typecheck after the repaired internal package bootstrap passed. The clean checkout cannot find the upload route/service modules; local copies exist but are ignored by the existing `uploads/` rule and are not tracked.
 - This unrelated upload/ignore issue is outside the focused package-build repair and remains unresolved. PR #1 is open and unmerged; CI is not passed.
+
+## PR #1 CI repair — track backend upload source modules
+
+- The remaining CI blocker was an unsafe broad ignore rule, not a deployment or provider issue. `uploads/` and `*/uploads/` ignored required backend source.
+- Uploads are memory-only through Multer and are sent directly to ImageKit; no local runtime upload directory is created or required.
+- The five backend upload source modules are now trackable, and release validation checks their presence without requiring credentials, a database, ImageKit, or media.
+- Local validation passed, including 50 tests and all workspace builds. No live upload, provider operation, deployment, or production credential use occurred.
