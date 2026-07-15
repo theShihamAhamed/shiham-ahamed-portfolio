@@ -184,3 +184,9 @@ after the cleanup validation run.
 - Cache invalidation now validates request/response contracts, uses bounded timeout and transient retries, cleans up abort timers, avoids secret logging, and exposes structured success/failure metadata after awaited mutations. Project reorder uses a single post-operation refresh.
 - Focused contract tests and backend build/type checks passed. The aggregate local frontend test is not claimed green under Node 22.16.0 because of the pre-existing section-navigation/tsx loader mismatch; remote Node 20 CI is required for final acceptance.
 - Verdict for this repository change: ready for review and Node 20 CI verification; not a deployment approval. No merge or deployment was performed.
+
+## Provider-domain cookie configuration follow-up
+
+- The Render Blueprint leaves `AUTH_COOKIE_SAME_SITE` deployment-specific through `sync: false`; `AUTH_COOKIE_SECURE=true` remains enforced.
+- Provider-domain deployment guidance requires an exact non-wildcard admin Vercel origin, `SameSite=None`, Secure cookies, and no cookie domain. Custom-domain guidance requires `SameSite=Lax`, Secure cookies, and no cookie domain unless explicitly needed.
+- Deployment validation now rejects a hardcoded Render `lax` value and requires both documented modes. Live authentication smoke testing remains external.

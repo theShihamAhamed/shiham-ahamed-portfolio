@@ -85,10 +85,33 @@ Set `ADMIN_FRONTEND_ORIGINS` to comma-separated exact origins, including
 protocol and port where applicable. Credentials are enabled only for those
 origins. Wildcards and arbitrary provider subdomains are not accepted.
 
-For custom-domain mode use `AUTH_COOKIE_SAME_SITE=lax`,
-`AUTH_COOKIE_SECURE=true`, and leave `AUTH_COOKIE_DOMAIN` empty unless a shared
-cookie domain is actually required. For cross-site provider testing use
-`AUTH_COOKIE_SAME_SITE=none` and `AUTH_COOKIE_SECURE=true`.
+The Render Blueprint leaves `AUTH_COOKIE_SAME_SITE` as `sync: false` so the
+deployment owner selects the mode for the active domains. For the current
+cross-site provider-domain deployment (`*.vercel.app` admin to `*.onrender.com`
+API), configure:
+
+```env
+ADMIN_FRONTEND_ORIGINS=https://<exact-admin-vercel-domain>
+AUTH_COOKIE_SAME_SITE=none
+AUTH_COOKIE_SECURE=true
+AUTH_COOKIE_DOMAIN=
+```
+
+The exact admin origin is required: do not use a `*.vercel.app` wildcard and do
+not include a trailing slash. `SameSite=None` requires `Secure=true`.
+
+For the future custom-domain deployment, configure:
+
+```env
+ADMIN_FRONTEND_ORIGINS=https://admin.shihamahamed.dev
+AUTH_COOKIE_SAME_SITE=lax
+AUTH_COOKIE_SECURE=true
+AUTH_COOKIE_DOMAIN=
+```
+
+Change the cookie mode when moving between provider-domain and custom-domain
+deployments. Leave `AUTH_COOKIE_DOMAIN` unset unless a shared cookie domain is
+explicitly required.
 
 ## MongoDB Atlas
 

@@ -788,3 +788,9 @@ Read-only file/package/source searches and final docs-only consistency checks
 - Render configuration checks now require `npm ci --include=dev && npm run build:packages && npm run build:backend`, `NODE_VERSION=20.20.2`, the backend workspace start command, and `/api/health/ready`. Active release checks reject `--experimental-strip-types`, seven-day TTLs, and fire-and-forget invalidation.
 - Local frontend focused contracts passed. The existing section-navigation test remains blocked only by the local Windows Node 22.16.0/tsx named-export loader mismatch; Node 20.20.2 CI remains authoritative for that workspace test. No unrelated section-navigation source was changed.
 - Live Render/Vercel verification remains outstanding by scope; no deployment, provider operation, cache mutation, or production credential use occurred.
+
+## Provider-domain cookie configuration follow-up
+
+- Confirmed PR #2’s remaining deployment issue: Render hardcoded `AUTH_COOKIE_SAME_SITE=lax` while the current Vercel-to-Render provider domains are cross-site.
+- Changed the Blueprint to `AUTH_COOKIE_SAME_SITE: sync: false` while retaining `AUTH_COOKIE_SECURE=true`, allowing provider-domain `none` and future custom-domain `lax` configuration without hardcoding either deployment permanently.
+- Added deployment regression checks and explicit provider/custom-domain documentation covering exact origins, no wildcards, no trailing slash, Secure cookies, unset cookie domain, and authentication smoke tests.

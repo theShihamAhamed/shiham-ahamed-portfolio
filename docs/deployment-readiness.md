@@ -307,3 +307,9 @@ authoritative current classification for release readiness.
 - Production startup cannot proceed with a missing or partial frontend revalidation configuration. The URL/path, protocol, and minimum secret length are validated before runtime use.
 - Mutation cache refresh is bounded and observable through response metadata; database writes remain successful when the refresh target is unavailable. Staged smoke testing must verify retries, safe failure messaging, slug invalidation, and one-day sitemap/public fallback TTLs.
 - This remains repository readiness only. Render/Vercel configuration and deployed smoke evidence are still required before production deployment.
+
+## Provider-domain cookie configuration follow-up
+
+- Render no longer hardcodes `AUTH_COOKIE_SAME_SITE=lax`; the Blueprint uses `sync: false` so deployment configuration selects the active domain mode.
+- The current provider-domain setup requires the exact admin Vercel origin, `AUTH_COOKIE_SAME_SITE=none`, `AUTH_COOKIE_SECURE=true`, and an unset cookie domain. The future custom-domain setup uses `AUTH_COOKIE_SAME_SITE=lax` with Secure cookies.
+- Deployment validation checks both modes in the guide and preserves the existing Node 20.20.2, build-order, backend-start, and readiness checks. Login, refresh, token refresh, and logout remain staged smoke-test requirements.

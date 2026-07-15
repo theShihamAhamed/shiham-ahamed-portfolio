@@ -42,7 +42,10 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 - [ ] Allowed CORS origin succeeds with credentials.
 - [ ] Denied CORS origin is rejected.
 - [ ] Cookie attributes match the selected domain mode.
+- [ ] Provider-domain mode uses the exact admin origin, `SameSite=None`, `Secure=true`, and no cookie domain.
+- [ ] Custom-domain mode uses `SameSite=Lax`, `Secure=true`, and no cookie domain unless explicitly required.
 - [ ] Login, refresh, logout, and revoked-session behavior is correct.
+- [ ] Login, page refresh, token refresh, and logout remain correct after the selected cookie mode is configured.
 - [ ] Login, refresh, admin, and upload rate limits respond safely.
 - [ ] JSON, multipart, and upload-size limits are enforced.
 - [ ] Provider failures return sanitized errors.
