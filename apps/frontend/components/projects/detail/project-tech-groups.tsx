@@ -65,7 +65,7 @@ const ProjectTechGroups = ({ techGroups }: Props) => {
         accent="violet"
       />
 
-      <div className="mt-5 grid gap-4 md:grid-cols-2">
+      <div className="mt-5 grid gap-x-5 gap-y-7 md:grid-cols-2">
         {groups.map((group, index) => {
           const headingId = `project-technology-group-${index}`;
 

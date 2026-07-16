@@ -33,8 +33,15 @@ test("public README section has one primary container and a viewport-fixed expan
   assert.match(expandable, /aria-controls/);
   assert.match(expandable, /history\.pushState/);
   assert.match(expandable, /NAV_OFFSET/);
-  assert.match(expandable, /\{expanded \? \(/);
-  assert.match(expandable, /\) : \(\s*<div className="mt-6 flex justify-center">/s);
+  assert.match(expandable, /import \{ createPortal \} from "react-dom"/);
+  assert.match(expandable, /const mounted = React\.useSyncExternalStore/);
+  assert.match(
+    expandable,
+    /React\.useSyncExternalStore\(\s*subscribeToMountState,\s*\(\) => true,\s*\(\) => false/s,
+  );
+  assert.match(expandable, /mounted && expanded\s*\? createPortal\(/s);
+  assert.match(expandable, /document\.body/);
+  assert.match(expandable, /\{!expanded \? \(\s*<div className="mt-6 flex justify-center">/s);
   assert.match(expandable, /Show full details/);
   assert.match(expandable, /Show less/);
   assert.equal((expandable.match(/aria-expanded="true"/g) ?? []).length, 1);
@@ -42,6 +49,10 @@ test("public README section has one primary container and a viewport-fixed expan
   assert.match(expandable, /fixed inset-x-0/);
   assert.doesNotMatch(expandable, /sticky bottom-4/);
   assert.equal((expandable.match(/Show less/g) ?? []).length, 1);
+  assert.match(
+    expandable,
+    /<\/div>\s*\{mounted && expanded\s*\? createPortal\(/s,
+  );
   assert.match(expandable, /ref=\{expandButtonRef\}/);
   assert.match(expandable, /expandButtonRef\.current\?\.focus\(\{ preventScroll: true \}\)/);
   assert.match(expandable, /scrollToSectionTop/);

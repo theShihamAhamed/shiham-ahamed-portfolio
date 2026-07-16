@@ -168,6 +168,10 @@ test("technology inventory formats neutral semantic legend groups", () => {
     techGroups.indexOf("<h3"),
     techGroups.indexOf("</h3>") + "</h3>".length,
   );
+  const legendStyles = projectDetailCss.slice(
+    projectDetailCss.indexOf(".project-detail-tech-legend {"),
+    projectDetailCss.indexOf(".project-detail-tech-list"),
+  );
 
   assert.doesNotMatch(techGroups, /TechTag|tech-badge-theme|--tech-brand/);
   assert.match(techGroups, /<ProjectDetailSurface/);
@@ -183,9 +187,17 @@ test("technology inventory formats neutral semantic legend groups", () => {
   assert.match(techGroups, /devops: "DevOps"/);
   assert.doesNotMatch(legendLabel, /aria-hidden|rounded-full|size-\[5px\]/);
   assert.match(techGroups, /project-detail-tech-legend/);
+  assert.match(techGroups, /grid gap-x-5 gap-y-7 md:grid-cols-2/);
   assert.match(projectDetailCss, /border: 1\.5px dashed/);
-  assert.match(projectDetailCss, /padding: 22px 16px 16px/);
-  assert.match(projectDetailCss, /background: var\(--project-detail-legend-fill\)/);
+  assert.match(legendStyles, /padding: 17px 16px/);
+  assert.match(legendStyles, /position: static/);
+  assert.match(legendStyles, /margin-bottom: 12px/);
+  assert.match(legendStyles, /background: transparent/);
+  assert.doesNotMatch(
+    legendStyles,
+    /position: absolute|top:|left:|backdrop-filter|box-shadow/,
+  );
+  assert.doesNotMatch(projectDetailCss, /--project-detail-legend-/);
   assert.doesNotMatch(
     techGroups,
     /TechTag|tech-badge-theme|--tech-brand|backdrop-blur|shadow|hover:/,
@@ -387,6 +399,10 @@ test("README rendering and expansion controls remain editorial and functional", 
   assert.match(readmeRenderer, /<ProjectCodeBlock/);
   assert.match(expandableDetails, /Show full details/);
   assert.match(expandableDetails, /Show less/);
+  assert.match(expandableDetails, /createPortal/);
+  assert.match(expandableDetails, /mounted && expanded/);
+  assert.match(expandableDetails, /document\.body/);
+  assert.equal((expandableDetails.match(/Show less/g) ?? []).length, 1);
   assert.match(expandableDetails, /focus\(\{ preventScroll: true \}\)/);
   assert.match(expandableDetails, /pb-\[env\(safe-area-inset-bottom\)\]/);
 });
