@@ -20,7 +20,7 @@ import ProjectGallery from "@/components/projects/detail/project-gallery";
 import ProjectArchitecture from "@/components/projects/detail/project-architecture";
 import ProjectListSection from "@/components/projects/detail/project-points-section";
 import TechTag from "@/components/projects/shared/tech-tag";
-import ProjectMdxSection from "@/components/projects/detail/case-study/project-mdx-section";
+import ProjectReadmeSection from "@/components/projects/detail/case-study/project-readme-section";
 import { formatProjectDateRange } from "@/lib/utils";
 import {
   getProjectDetailData,
@@ -275,7 +275,7 @@ export default async function ProjectDetailsPage({ params }: Props) {
           points={project.architecturePoints}
         />
 
-        <ProjectMdxSection caseStudyMdx={project.caseStudyMdx} />
+        <ProjectReadmeSection caseStudyMdx={project.caseStudyMdx} />
 
         <div className="grid gap-6 lg:grid-cols-2">
           <ProjectListSection

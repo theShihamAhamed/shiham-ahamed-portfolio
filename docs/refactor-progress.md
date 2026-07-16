@@ -1075,3 +1075,18 @@ No file in this inventory was deleted before classification. Seed/data/media rem
 - Production backend configuration now requires a complete HTTP(S) `/api/revalidate` URL plus a matching secret of at least 32 characters; development/test may omit both, but partial configuration is rejected. Examples and deployment guidance are aligned.
 - Public cache invalidation is awaited after successful mutations, retries transient failures at most three times with bounded timeout/backoff, validates the response body, avoids retrying ordinary 4xx errors, and returns structured metadata without exposing secrets. Project reorder performs one invalidation after the complete operation.
 - Public fallback TTLs and sitemap revalidation are one day. Focused backend/frontend contract tests were added. No deployment, live cache refresh, provider operation, or production credential use occurred.
+
+## Post-deployment maintenance — GitHub README-style case studies (2026-07-16)
+
+- **Exact scope:** Replace executable stored-MDX rendering with GitHub-Flavoured Markdown plus a restricted, sanitized README-compatible HTML subset while preserving the existing `caseStudyMdx` database/API property and records. Redesign the admin case-study field as an accessible full-width Edit/Preview tab editor, add responsive GitHub-style rendering and block-code copy controls in both frontends, and remove the public double-card presentation.
+- **Files/components changed:** Shared case-study policy and helpers; admin `CaseStudyEditorField`, README renderer, and code-copy component; public README renderer, section, expandable details, and code-copy component; project detail import; focused shared/admin/frontend tests; ADR, readiness, release, smoke-test, and progress documentation.
+- **Security approach:** Markdown-aware code masking prevents false positives for fenced, indented, and inline code. Raw HTML is limited to the shared README element/attribute allowlist, event handlers/styles/forms/interactive raw controls/custom tags are rejected, safe link/image protocols are enforced, and both renderers run `remark-gfm`, `rehype-raw`, shared `rehype-sanitize`, and `rehype-slug` in that order. Stored content is never compiled as executable MDX/JSX.
+- **Tests performed:** Shared regression suite passed 22/22; new admin and frontend contract tests passed; both Next production builds and shared/frontend/admin typechecks passed. Workspace admin/frontend test commands were also run and remain blocked only by the existing Node 22 `node --import=tsx` named-export incompatibility in `image-upload.ts` and `section-navigation.ts`; no feature failure was observed.
+- **Operations explicitly excluded:** No migration, seed, database read/write, media upload/change, environment-variable change, provider operation, Vercel/Render/MongoDB/ImageKit/Resend/GitHub setting change, push, or live deployment occurred.
+- **Final validation result:** Implementation builds and focused content-security/UI contract checks pass. Full aggregate validation remains subject to the documented Node 20 test runtime and external browser smoke-test prerequisites.
+
+## Follow-up maintenance — public case-study collapse control (2026-07-16)
+
+- Restored the expanded `Show less` action as one safe-area-aware viewport-fixed control; the collapsed state retains only the inline `Show full details` action.
+- Preserved smooth collapse return to the case-study section with the sticky-header offset and restored focus to the inline expansion button without a focus-induced scroll jump.
+- The focused frontend contract suite, typecheck, lint, and production build pass. Full frontend and aggregate tests still encounter the existing Node 22 `node --import=tsx` named-export loader mismatch.
