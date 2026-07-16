@@ -50,17 +50,17 @@ This is the append-only decision record for the complete refactor. Approved entr
 - **Risks:** Cookie/CORS configuration, backend availability, and missed cache invalidation.
 - **Follow-up actions:** Preserve API boundaries; finalize domain/cookie/CORS and verify revalidation.
 
-## ADR-005 — Store case-study MDX in MongoDB
+## ADR-005 — Store sanitized README Markdown in MongoDB
 
 - **Status:** Approved
 - **Date:** 2026-07-12
 - **Phase:** 6
-- **Context:** Current project data can reference raw GitHub MDX, creating runtime availability/versioning and authoring dependencies.
-- **Decision:** Remove runtime dependence on GitHub raw files; author MDX directly in admin; store it in MongoDB; render through a controlled frontend mapping. Keep external article URL separate.
-- **Alternatives considered:** Keep GitHub raw URLs; bundle local MDX; adopt a separate CMS.
-- **Consequences:** Unified admin content management and database availability, with a new safe editor/render pipeline.
-- **Risks:** Unsafe MDX execution, malformed content, preview mismatch, or large documents.
-- **Follow-up actions:** Define validation/restrictions, editor/preview, component allowlist, fallbacks, and theme QA.
+- **Context:** Project case studies need to accept GitHub README content without runtime availability/versioning dependencies or executable author-controlled MDX.
+- **Decision:** Store GitHub-Flavoured Markdown with sanitized README-compatible HTML in the existing `caseStudyMdx` field. The field name remains for API/database compatibility, but content is never compiled as executable MDX/JSX. Raw HTML is parsed and sanitized with one shared browser-safe policy used by the admin Preview and public frontend. External article URLs remain separate. Relative GitHub assets are intentionally not resolved; authors remove or replace those URLs before saving.
+- **Alternatives considered:** Keep GitHub raw URLs; compile stored MDX; bundle local MDX; adopt a separate CMS; add a GitHub-relative asset resolver.
+- **Consequences:** Admin and public rendering share a non-executable GFM/README pipeline with bounded input, safe URL handling, stable heading slugs, and controlled HTML presentation. Existing records and API property names remain unchanged.
+- **Risks:** Malformed Markdown, unsupported README HTML, remote image availability, or large documents can still affect presentation; renderer sanitization remains defense in depth for previously stored content.
+- **Follow-up actions:** Keep the shared policy, focused regression tests, and staged responsive/light/dark smoke review current.
 
 ## ADR-006 — Remove stored project year
 
@@ -116,7 +116,8 @@ This is the append-only decision record for the complete refactor. Approved entr
 
 - **2026-07-13 — Phase 3:** ADR-006 and the project-type portion of ADR-007 were implemented and validated. Optional form end-date blanks normalize to absence/unset at the API/model boundary; this is a routine representation detail within the approved month-timeline contract, not a new material architecture decision. No ADR was added or superseded.
 - **2026-07-13 — Phase 4:** Shared admin field composition, explicit create/edit adapters, admin-local upload preflight helpers, and reliable unload/explicit-cancel protection were implemented within ADR-003/004 and the Phase 3 contract. These are routine UI ownership/lifecycle choices, not a new persistence, service, or framework architecture; no ADR was added or superseded.
-- **2026-07-14 - Phase 6:** ADR-005 was implemented. `caseStudyMdx` is stored as optional bounded project content; external article links remain independent; admin authoring uses controlled Markdown/MDX subset preview; public rendering compiles stored source only through GFM/slug plugins and mapped safe components; invalid/unsafe content receives a controlled fallback. Existing project cache tags already cover list, featured, and detail reads, so no new cache architecture was required. No migration or compatibility layer was added.
+- **2026-07-14 - Phase 6:** The original bounded stored case-study contract was implemented with external article links kept independent and existing project cache tags preserved. The later maintenance decision below supersedes its executable-MDX rendering terminology without changing the persisted field or API contract.
+- **2026-07-16 - Post-deployment maintenance:** `caseStudyMdx` now means GitHub-Flavoured Markdown with sanitized README-compatible HTML. Admin Preview and the public project detail page use the same shared allowlist/protocol policy; raw HTML is parsed before sanitization, and the public path no longer uses an executable MDX compiler. Relative GitHub assets remain intentionally unresolved. No migration, seed, database, media, environment, provider, or deployment operation was performed.
 
 - **2026-07-14 - Phase 9:** ADR-009 was implemented and aggregate-validated. The deployment security policy remains preparation-only: no provider configuration, live domain change, credential operation, database operation, or Phase 10 QA was performed.
 

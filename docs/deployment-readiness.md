@@ -40,7 +40,7 @@ This is a living checklist, not a claim of readiness. An unchecked item is outst
 - [ ] Image upload UX and failure/replacement/removal behavior verified.
 - [x] Project create/edit field ownership and Phase 3 payload adapters are aligned and regression-tested.
 - [x] Admin image preflight, pending/error/success states, previews, and replacement/removal controls are implemented and source/test/build verified (interactive transport QA remains outstanding).
-- [ ] MDX editor/preview and validation verified.
+- [ ] README Markdown editor/preview and shared validation verified.
 - [ ] Loading/error/empty states reviewed.
 
 ## Backend — Render
@@ -87,7 +87,7 @@ Neither option is complete until domains are confirmed and behavior is tested.
 - [ ] No obsolete seed/demo content or seed-only behavior.
 - [ ] Real projects uploaded/verified through admin.
 - [ ] Real certifications and achievements verified.
-- [ ] No GitHub raw MDX runtime dependency.
+- [ ] No GitHub raw README runtime dependency or executable MDX path.
 - [ ] Public visibility/order rules verified.
 - [ ] Final media assets, alt text, dimensions, and ownership reviewed.
 
@@ -100,7 +100,7 @@ Neither option is complete until domains are confirmed and behavior is tested.
 - [ ] Strict CORS and origin validation verified.
 - [ ] Shared/server input validation covers all boundaries.
 - [ ] Upload type/size/dimension/authorization validation verified.
-- [ ] MDX syntax/components/links are restricted and sanitized as designed.
+- [ ] README Markdown, raw HTML, links, images, and generated task-list controls are restricted and sanitized as designed.
 - [ ] Dependency audit findings reviewed, resolved, or explicitly accepted.
 
 ## CI and QA
@@ -118,7 +118,7 @@ Neither option is complete until domains are confirmed and behavior is tested.
 - [x] Phase 5 seed/demo fixtures and static project technology examples use the canonical union; interactive browser QA remains tracked for Phase 10.
 - [ ] Admin authentication/CRUD/upload QA completed.
 - [ ] Cache revalidation QA completed.
-- [ ] MDX author/preview/render QA completed.
+- [ ] README author/preview/render QA completed.
 - [ ] Deployment smoke tests completed on final domains.
 
 ## Phase 7 readiness review - 2026-07-14
@@ -187,10 +187,10 @@ Neither option is complete until domains are confirmed and behavior is tested.
 ## Phase 6 readiness review - 2026-07-14
 
 - [x] Admin stored case-study editor/preview, shared validation, and public controlled rendering implemented and automated-build verified.
-- [x] No active raw GitHub MDX runtime dependency remains; external article links remain separate.
+- [x] No active raw GitHub README runtime dependency or executable MDX path remains; external article links remain separate.
 - [x] Stored case-study syntax, component surface, links/images, size limit, and fallback behavior are covered by shared/DB/backend checks.
 - [x] Existing project cache invalidation covers case-study updates.
-- [ ] Interactive admin/public MDX author/preview/render QA remains outstanding because the in-app browser bootstrap still lacks `sandboxPolicy` metadata.
+- [ ] Interactive admin/public README author/preview/render QA remains outstanding because the in-app browser bootstrap still lacks `sandboxPolicy` metadata.
 - [ ] Production domains, credentials, live database, deployment configuration, and final responsive/theme QA remain later deployment-readiness work.
 - Phase 6 implementation status: Completed. Phase 7 remains not started. Overall deployment verdict remains Not deployment-ready.
 

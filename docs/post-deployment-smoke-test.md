@@ -9,7 +9,7 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 - [ ] Projects page loads and filters by canonical project type.
 - [ ] Project cards link to valid visible slugs.
 - [ ] Completed, in-progress, planned, hidden, and unknown-slug behavior is correct.
-- [ ] Project detail renders safe media, technologies, timeline, and MDX.
+- [ ] Project detail renders safe media, technologies, timeline, and sanitized GitHub README-style case-study content.
 - [ ] Empty projects, certifications, achievements, currently-building, and settings states are intentional.
 - [ ] About page, skills, institution/profile assets, and quick navigation work.
 - [ ] Contact validation, honeypot, success, failure, and configured links work.
@@ -29,7 +29,7 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 - [ ] Create, edit, delete, and slug-change project flows work.
 - [ ] Known and custom technology flows work.
 - [ ] Media upload, replacement, removal, retry, and confirmation work.
-- [ ] Case-study write/preview/edit/clear flow works.
+- [ ] Case-study Edit/Preview tabs, safe README HTML, code-copy controls, edit/clear flow, and validation errors work.
 - [ ] Certifications, achievements, currently-building, and site settings CRUD work.
 - [ ] Admin routes remain noindex.
 - [ ] Failed API/backend connections remain usable and sanitized.

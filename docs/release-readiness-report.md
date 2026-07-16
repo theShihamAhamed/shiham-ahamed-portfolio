@@ -41,7 +41,7 @@ existing Google Geist fonts. The unchanged approved-network retry passed.
 | Authentication | Cookie, environment, CORS, and validation contracts passed | Login/refresh/logout browser smoke test required |
 | Admin CRUD | Shared schemas, adapters, model/service contracts, and tests passed | Full authenticated CRUD required |
 | Uploads | Client/backend validation and cleanup contracts passed | ImageKit upload/replacement/removal required |
-| MDX | Bounded safe syntax, editor contracts, DB serialization, and public fallback tests passed | Author/preview/render browser test required |
+| README case study | Bounded GFM/README HTML syntax, editor contracts, DB serialization, and public fallback tests passed | Author/preview/render browser test required |
 | Cache revalidation | Canonical operations and slug invalidation contracts passed | Mutation-to-public-cache smoke test required |
 | Contact | Validation, honeypot, throttling, and provider error handling are source-verified | Resend delivery test required |
 | SEO | Metadata, sitemap, robots, JSON-LD, and noindex checks/builds passed | Final domain/social preview check required |
