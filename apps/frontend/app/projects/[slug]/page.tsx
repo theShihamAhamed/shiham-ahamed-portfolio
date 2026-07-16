@@ -232,24 +232,20 @@ export default async function ProjectDetailsPage({ params }: Props) {
       <section className="mx-auto max-w-7xl space-y-14 px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
         {/* Overview + Tech */}
         <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
-          <SectionReveal className="relative h-full overflow-hidden rounded-[2rem] border border-border/60 bg-background/80 p-5 shadow-sm backdrop-blur-xl sm:p-6 xl:col-span-5">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.08),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.06),transparent_28%)]" />
+          <SectionReveal className="h-full rounded-2xl border border-border/50 bg-card p-5 sm:p-6 xl:col-span-5">
+            <h2 className="text-sm font-medium text-muted-foreground">
+              Overview
+            </h2>
 
-            <div className="relative z-10">
-              <p className="text-sm font-medium text-muted-foreground">
-                Overview
-              </p>
-
-              <div className="mt-5 space-y-4">
-                {project.overview.map((paragraph, index) => (
-                  <p
-                    key={index}
-                    className="text-sm leading-7 text-muted-foreground sm:text-base"
-                  >
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
+            <div className="mt-5 space-y-4">
+              {project.overview.map((paragraph, index) => (
+                <p
+                  key={index}
+                  className="text-sm leading-7 text-muted-foreground sm:text-base"
+                >
+                  {paragraph}
+                </p>
+              ))}
             </div>
           </SectionReveal>
 

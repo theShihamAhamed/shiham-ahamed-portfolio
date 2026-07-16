@@ -188,8 +188,39 @@
    ========================= */
 
 @layer base {
-  .tech-badge-theme { background: var(--tech-light-bg); color: var(--tech-light-text); border-color: var(--tech-light-border); }
-  .dark .tech-badge-theme { background: var(--tech-dark-bg); color: var(--tech-dark-text); border-color: var(--tech-dark-border); }
+  .tech-badge-theme {
+    background: var(--muted);
+    color: var(--foreground);
+  }
+
+  @supports (color: color-mix(in srgb, red, blue)) {
+    .tech-badge-theme {
+      background: color-mix(
+        in srgb,
+        var(--tech-brand) 12%,
+        var(--background)
+      );
+      color: color-mix(
+        in srgb,
+        var(--tech-brand) 35%,
+        var(--foreground)
+      );
+    }
+
+    .dark .tech-badge-theme {
+      background: color-mix(
+        in srgb,
+        var(--tech-brand) 16%,
+        var(--background)
+      );
+      color: color-mix(
+        in srgb,
+        var(--tech-brand) 50%,
+        var(--foreground)
+      );
+    }
+  }
+
   *,
   *::before,
   *::after {

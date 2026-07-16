@@ -1,29 +1,53 @@
+import { Check, type LucideIcon } from "lucide-react";
+
 type Props = {
   title: string;
   items: string[];
+  icon?: LucideIcon;
+  marker?: "dot" | "check";
 };
 
-const ProjectListSection = ({ title, items }: Props) => {
+const ProjectListSection = ({
+  title,
+  items,
+  icon: Icon,
+  marker = "dot",
+}: Props) => {
   if (!items.length) return null;
 
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-background/80 p-5 shadow-sm backdrop-blur-xl sm:p-6">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.06),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.05),transparent_28%)]" />
-
-      <div className="relative z-10">
-        <p className="text-sm font-medium text-muted-foreground">{title}</p>
-
-        <div className="mt-5 grid gap-3">
-          {items.map((item) => (
-            <div
-              key={item}
-              className="rounded-[1.25rem] border border-border/60 bg-background/70 px-4 py-3 text-sm leading-7 text-foreground shadow-sm backdrop-blur-sm"
-            >
-              {item}
-            </div>
-          ))}
-        </div>
+    <section className="rounded-2xl border border-border/50 bg-card p-5 sm:p-6">
+      <div className="flex items-center gap-2">
+        {Icon ? (
+          <Icon
+            aria-hidden="true"
+            className="size-4 shrink-0 text-muted-foreground"
+          />
+        ) : null}
+        <h2 className="text-sm font-medium text-muted-foreground">{title}</h2>
       </div>
+
+      <ul className="mt-4 divide-y divide-border/40">
+        {items.map((item) => (
+          <li
+            key={item}
+            className="flex items-start gap-3 py-3 first:pt-0 last:pb-0"
+          >
+            {marker === "check" ? (
+              <Check
+                aria-hidden="true"
+                className="mt-1.5 size-3.5 shrink-0 text-muted-foreground"
+              />
+            ) : (
+              <span
+                aria-hidden="true"
+                className="mt-[11px] size-1.5 shrink-0 rounded-full bg-muted-foreground/50"
+              />
+            )}
+            <span className="text-sm leading-7 text-foreground">{item}</span>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 };

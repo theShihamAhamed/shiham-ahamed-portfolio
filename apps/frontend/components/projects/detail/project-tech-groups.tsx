@@ -1,5 +1,4 @@
-import { TechGroups } from "@/types/project";
-import TechTag from "@/components/projects/shared/tech-tag";
+import type { ProjectTag, TechGroups } from "@/types/project";
 
 type Props = {
   techGroups: TechGroups;
@@ -8,41 +7,60 @@ type Props = {
 const ProjectTechGroups = ({ techGroups }: Props) => {
   const groups = Object.entries(techGroups)
     .map(([title, items]) => ({ title, items }))
-    .filter((group): group is { title: string; items: Array<import("@/types/project").ProjectTag | string> } =>
+    .filter((group): group is { title: string; items: Array<ProjectTag | string> } =>
       Boolean(group.items?.length),
     );
 
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-background/80 p-5 shadow-sm backdrop-blur-xl sm:p-6">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.08),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.07),transparent_28%)]" />
+    <section
+      aria-labelledby="project-technologies-heading"
+      className="rounded-2xl border border-border/50 bg-card p-5 sm:p-6"
+    >
+      <h2
+        id="project-technologies-heading"
+        className="text-sm font-medium text-muted-foreground"
+      >
+        Technologies, frameworks, and tools
+      </h2>
 
-      <div className="relative z-10">
-        <p className="text-sm font-medium text-muted-foreground">
-          Technologies, frameworks, and tools
-        </p>
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
+        {groups.map((group, index) => {
+          const headingId = `project-technology-group-${index}`;
 
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {groups.map((group) => (
-            <div
+          return (
+            <section
               key={group.title}
-              className="rounded-[1.5rem] border border-border/60 bg-background/70 p-4 shadow-sm backdrop-blur-sm"
+              aria-labelledby={headingId}
+              className="relative rounded-xl border border-dashed border-border/60 px-4 pb-4 pt-5"
             >
-              <h3 className="text-sm font-semibold tracking-[-0.02em] text-foreground">
+              <h3
+                id={headingId}
+                className="absolute -top-2.5 left-3 bg-card px-2 text-xs font-semibold tracking-[-0.01em] text-foreground"
+              >
                 {group.title}
               </h3>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                {group.items?.map((item) => (
-                  <TechTag
-                    key={typeof item === "string" ? item : item.label}
-                    tag={typeof item === "string" ? { label: item } : item}
-                    className="px-3 py-1.5"
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+              <ul className="flex flex-wrap gap-x-4 gap-y-2">
+                {group.items.map((item) => {
+                  const label = typeof item === "string" ? item : item.label;
+
+                  return (
+                    <li
+                      key={label}
+                      className="flex max-w-full min-w-0 items-start gap-2 text-sm leading-6 text-muted-foreground"
+                    >
+                      <span
+                        aria-hidden="true"
+                        className="mt-[9px] size-1.5 shrink-0 rounded-full bg-muted-foreground/50"
+                      />
+                      <span className="min-w-0 break-words">{label}</span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          );
+        })}
       </div>
     </section>
   );

@@ -61,7 +61,7 @@ const FeaturedProjectCard = ({ project }: Props) => {
             <TechTag key={`${project.title}-${tag.label}`} tag={tag} />
           ))}
           {project.techStack.length > 5 && (
-            <span className="inline-flex items-center rounded-full border border-border/60 px-2.5 py-1 text-xs font-medium text-muted-foreground">
+            <span className="inline-flex h-6 items-center rounded-full bg-muted/60 px-2.5 text-[11px] font-medium text-muted-foreground">
               +{project.techStack.length - 5}
             </span>
           )}
