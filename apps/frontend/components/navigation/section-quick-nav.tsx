@@ -147,11 +147,11 @@ export default function SectionQuickNav({
     <nav
       aria-label="On this page"
       className={cn(
-        "fixed right-5 top-1/2 z-40 hidden -translate-y-1/2 lg:block xl:right-8",
+        "fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 lg:block xl:right-6 2xl:right-8",
         className,
       )}
     >
-      <ol className="group rounded-2xl border border-border/60 bg-background/75 p-1.5 shadow-lg shadow-black/5 backdrop-blur-xl transition-all duration-200 ease-out hover:bg-background/85 focus-within:bg-background/85 motion-reduce:transition-none dark:shadow-black/30">
+      <ol className="w-11 overflow-visible rounded-full border border-border/40 bg-background/70 p-1 shadow-sm shadow-black/5 backdrop-blur-md transition-[border-color,background-color] duration-150 ease-out hover:border-border/60 focus-within:border-ring/50 supports-[backdrop-filter]:bg-background/30 motion-reduce:transition-none dark:shadow-black/20 dark:supports-[backdrop-filter]:bg-background/35">
         {items.map((item) => {
           const isActive = item.id === activeId;
 
@@ -163,26 +163,24 @@ export default function SectionQuickNav({
                 aria-current={isActive ? "location" : undefined}
                 onClick={(event) => handleItemClick(item.id, event)}
                 className={cn(
-                  "flex min-h-11 cursor-pointer items-center gap-3 rounded-xl px-2.5 py-1.5 text-left transition-colors duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 motion-reduce:transition-none",
+                  "group/item relative flex size-9 cursor-pointer items-center justify-center rounded-full text-left transition-colors duration-150 ease-out hover:bg-accent/35 focus-visible:z-10 focus-visible:bg-accent/35 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/70 focus-visible:ring-offset-2 focus-visible:ring-offset-background motion-reduce:transition-none",
                   isActive
                     ? "text-foreground"
-                    : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
+                    : "text-muted-foreground hover:text-foreground",
                 )}
               >
                 <span
                   aria-hidden="true"
                   className={cn(
-                    "shrink-0 rounded-full transition-all duration-200 ease-out motion-reduce:transition-none",
+                    "shrink-0 rounded-full transition-[height,width,background-color,box-shadow,opacity] duration-150 ease-out motion-reduce:transition-none",
                     isActive
-                      ? "h-8 w-1.5 bg-foreground shadow-[0_0_14px_rgba(0,0,0,0.22)] dark:shadow-[0_0_16px_rgba(255,255,255,0.28)]"
-                      : "h-5 w-1 bg-muted-foreground/35",
+                      ? "h-4 w-1.5 bg-foreground ring-2 ring-foreground/10"
+                      : "size-[5px] bg-muted-foreground/45 group-hover/item:bg-foreground/65 group-focus-visible/item:bg-foreground/65",
                   )}
                 />
                 <span
-                  className={cn(
-                    "max-w-0 translate-x-1 overflow-hidden whitespace-nowrap text-xs font-medium opacity-0 transition-all duration-200 ease-out group-hover:max-w-36 group-hover:translate-x-0 group-hover:opacity-100 group-focus-within:max-w-36 group-focus-within:translate-x-0 group-focus-within:opacity-100 motion-reduce:transition-none",
-                    isActive ? "text-foreground" : "text-muted-foreground",
-                  )}
+                  aria-hidden="true"
+                  className="pointer-events-none absolute right-full top-1/2 mr-2.5 -translate-y-1/2 translate-x-1 whitespace-nowrap rounded-md border border-border/40 bg-background/90 px-2 py-1 text-xs font-medium text-foreground opacity-0 shadow-sm backdrop-blur-md transition-[opacity,transform] duration-150 ease-out group-hover/item:translate-x-0 group-hover/item:opacity-100 group-focus-visible/item:translate-x-0 group-focus-visible/item:opacity-100 supports-[backdrop-filter]:bg-background/70 motion-reduce:translate-x-0 motion-reduce:transition-none dark:supports-[backdrop-filter]:bg-background/75"
                 >
                   {item.label}
                 </span>
