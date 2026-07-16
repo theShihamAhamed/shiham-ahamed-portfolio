@@ -13,6 +13,7 @@ const ProjectHighlights = ({ items }: Props) => {
       items={items}
       icon={Sparkles}
       marker="check"
+      accent="violet"
     />
   );
 };

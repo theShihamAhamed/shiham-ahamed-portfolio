@@ -3,10 +3,12 @@
 import * as React from "react";
 import Image from "next/image";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Expand } from "lucide-react";
+import { ChevronLeft, ChevronRight, Expand, Images } from "lucide-react";
 
 import { ProjectGalleryItem } from "@/types/project";
 import { cn } from "@/lib/utils";
+import ProjectDetailSectionHeader from "@/components/projects/detail/project-detail-section-header";
+import ProjectDetailSurface from "@/components/projects/detail/project-detail-surface";
 import {
   ProjectImageLightbox,
   type LightboxImage,
@@ -67,15 +69,22 @@ const ProjectGallery = ({ items }: Props) => {
 
   return (
     <>
-      <section className="relative max-w-full overflow-hidden rounded-[2rem] border border-border/60 bg-background/80 p-5 shadow-sm backdrop-blur-xl sm:p-6">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.10),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.08),transparent_30%)]" />
+      <ProjectDetailSurface
+        aria-labelledby="project-gallery-heading"
+        accent="cool"
+        intensity="secondary"
+        className="max-w-full p-5 sm:p-6"
+      >
+        <ProjectDetailSectionHeader
+          id="project-gallery-heading"
+          title="Gallery"
+          icon={Images}
+          accent="cool"
+        />
 
-        <div className="relative z-10">
-          <p className="text-sm font-medium text-muted-foreground">Gallery</p>
-
-          <div className="mt-5">
-            <div className="relative overflow-hidden rounded-[1.5rem] border border-border/60 bg-muted/20">
-              <div className="relative aspect-[16/10] w-full">
+        <div className="mt-5">
+          <div className="relative overflow-hidden rounded-[1.5rem] border border-border/60 bg-muted/20">
+            <div className="relative aspect-[16/10] w-full">
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activeImage.id}
@@ -128,51 +137,50 @@ const ProjectGallery = ({ items }: Props) => {
                     </button>
                   </>
                 ) : null}
-              </div>
-            </div>
-
-            <div
-              ref={thumbnailStripRef}
-              className="gallery-scrollbar mt-4 flex max-w-full gap-3 overflow-x-auto overscroll-x-contain pb-2"
-            >
-              {items.map((item, index) => (
-                <button
-                  ref={(el) => {
-                    thumbnailRefs.current[index] = el;
-                  }}
-                  key={item.id}
-                  type="button"
-                  onClick={() => setActiveIndex(index)}
-                  aria-label={`Show ${item.alt}`}
-                  aria-pressed={activeIndex === index}
-                  className={cn(
-                    "relative h-20 w-32 shrink-0 overflow-hidden rounded-2xl border border-border/60 bg-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45 cursor-pointer",
-                    activeIndex === index
-                      ? "opacity-100"
-                      : "opacity-75 hover:opacity-100",
-                  )}
-                >
-                  <Image
-                    src={item.src}
-                    alt={item.alt}
-                    fill
-                    className="object-contain"
-                    sizes="128px"
-                  />
-
-                  {activeIndex !== index ? (
-                    <span className="pointer-events-none absolute inset-0 bg-black/5 dark:bg-black/10" />
-                  ) : null}
-
-                  {activeIndex === index ? (
-                    <span className="pointer-events-none absolute inset-0 rounded-2xl ring-2 ring-inset ring-foreground/90" />
-                  ) : null}
-                </button>
-              ))}
             </div>
           </div>
+
+          <div
+            ref={thumbnailStripRef}
+            className="gallery-scrollbar mt-4 flex max-w-full gap-3 overflow-x-auto overscroll-x-contain pb-2"
+          >
+            {items.map((item, index) => (
+              <button
+                ref={(el) => {
+                  thumbnailRefs.current[index] = el;
+                }}
+                key={item.id}
+                type="button"
+                onClick={() => setActiveIndex(index)}
+                aria-label={`Show ${item.alt}`}
+                aria-pressed={activeIndex === index}
+                className={cn(
+                  "relative h-20 w-32 shrink-0 overflow-hidden rounded-2xl border border-border/60 bg-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/45 cursor-pointer",
+                  activeIndex === index
+                    ? "opacity-100"
+                    : "opacity-75 hover:opacity-100",
+                )}
+              >
+                <Image
+                  src={item.src}
+                  alt={item.alt}
+                  fill
+                  className="object-contain"
+                  sizes="128px"
+                />
+
+                {activeIndex !== index ? (
+                  <span className="pointer-events-none absolute inset-0 bg-black/5 dark:bg-black/10" />
+                ) : null}
+
+                {activeIndex === index ? (
+                  <span className="pointer-events-none absolute inset-0 rounded-2xl ring-2 ring-inset ring-foreground/90" />
+                ) : null}
+              </button>
+            ))}
+          </div>
         </div>
-      </section>
+      </ProjectDetailSurface>
 
       <ProjectImageLightbox
         images={lightboxImages}

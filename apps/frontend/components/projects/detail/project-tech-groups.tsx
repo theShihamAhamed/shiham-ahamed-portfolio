@@ -1,3 +1,7 @@
+import { Code2 } from "lucide-react";
+
+import ProjectDetailSectionHeader from "@/components/projects/detail/project-detail-section-header";
+import ProjectDetailSurface from "@/components/projects/detail/project-detail-surface";
 import type { ProjectTag, TechGroups } from "@/types/project";
 
 type Props = {
@@ -12,16 +16,18 @@ const ProjectTechGroups = ({ techGroups }: Props) => {
     );
 
   return (
-    <section
+    <ProjectDetailSurface
       aria-labelledby="project-technologies-heading"
-      className="rounded-2xl border border-border/50 bg-card p-5 sm:p-6"
+      accent="violet"
+      intensity="secondary"
+      className="p-5 sm:p-6"
     >
-      <h2
+      <ProjectDetailSectionHeader
         id="project-technologies-heading"
-        className="text-sm font-medium text-muted-foreground"
-      >
-        Technologies, frameworks, and tools
-      </h2>
+        title="Technologies, frameworks, and tools"
+        icon={Code2}
+        accent="violet"
+      />
 
       <div className="mt-5 grid gap-4 md:grid-cols-2">
         {groups.map((group, index) => {
@@ -31,12 +37,16 @@ const ProjectTechGroups = ({ techGroups }: Props) => {
             <section
               key={group.title}
               aria-labelledby={headingId}
-              className="relative rounded-xl border border-dashed border-border/60 px-4 pb-4 pt-5"
+              className="project-detail-tech-legend"
             >
               <h3
                 id={headingId}
-                className="absolute -top-2.5 left-3 bg-card px-2 text-xs font-semibold tracking-[-0.01em] text-foreground"
+                className="project-detail-tech-legend-label"
               >
+                <span
+                  aria-hidden="true"
+                  className="size-[5px] shrink-0 rounded-full bg-muted-foreground/55"
+                />
                 {group.title}
               </h3>
 
@@ -62,7 +72,7 @@ const ProjectTechGroups = ({ techGroups }: Props) => {
           );
         })}
       </div>
-    </section>
+    </ProjectDetailSurface>
   );
 };
 
