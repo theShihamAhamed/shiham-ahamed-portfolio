@@ -163,7 +163,12 @@ test("promotional badge usage remains limited to hero and shared project cards",
   assert.doesNotMatch(overflowToken, /border|shadow|hover:|cursor-/);
 });
 
-test("technology inventory uses neutral semantic legend groups", () => {
+test("technology inventory formats neutral semantic legend groups", () => {
+  const legendLabel = techGroups.slice(
+    techGroups.indexOf("<h3"),
+    techGroups.indexOf("</h3>") + "</h3>".length,
+  );
+
   assert.doesNotMatch(techGroups, /TechTag|tech-badge-theme|--tech-brand/);
   assert.match(techGroups, /<ProjectDetailSurface/);
   assert.match(techGroups, /accent="violet"/);
@@ -172,14 +177,44 @@ test("technology inventory uses neutral semantic legend groups", () => {
   assert.match(techGroups, /aria-labelledby/);
   assert.match(techGroups, /<ul/);
   assert.match(techGroups, /<li/);
-  assert.match(techGroups, /aria-hidden="true"/);
+  assert.match(techGroups, /formatTechnologyGroupLabel\(group\.title\)/);
+  assert.match(techGroups, /technologyGroupLabelOverrides/);
+  assert.match(techGroups, /api: "API"/);
+  assert.match(techGroups, /devops: "DevOps"/);
+  assert.doesNotMatch(legendLabel, /aria-hidden|rounded-full|size-\[5px\]/);
   assert.match(techGroups, /project-detail-tech-legend/);
   assert.match(projectDetailCss, /border: 1\.5px dashed/);
   assert.match(projectDetailCss, /padding: 22px 16px 16px/);
-  assert.match(projectDetailCss, /background: var\(--project-detail-surface-fill\)/);
+  assert.match(projectDetailCss, /background: var\(--project-detail-legend-fill\)/);
   assert.doesNotMatch(
     techGroups,
     /TechTag|tech-badge-theme|--tech-brand|backdrop-blur|shadow|hover:/,
+  );
+});
+
+test("technology items use decorative non-final dividers without bullets", () => {
+  const technologyList = techGroups.slice(
+    techGroups.indexOf('<ul className="project-detail-tech-list">'),
+    techGroups.indexOf("</ul>") + "</ul>".length,
+  );
+  const technologyListCss = projectDetailCss.slice(
+    projectDetailCss.indexOf(".project-detail-tech-list"),
+    projectDetailCss.indexOf(".project-detail-list-check"),
+  );
+
+  assert.match(technologyList, /<li key=\{label\}/);
+  assert.match(technologyList, /project-detail-tech-name/);
+  assert.match(technologyList, /itemIndex < group\.items\.length - 1/);
+  assert.match(technologyList, /aria-hidden="true"/);
+  assert.match(technologyList, /project-detail-tech-separator/);
+  assert.doesNotMatch(technologyList, /rounded-full|size-1\.5|bg-muted-foreground/);
+  assert.doesNotMatch(technologyList, /<button|<a\s|onClick|hover:|TechTag/);
+  assert.match(technologyListCss, /height: 15px/);
+  assert.match(technologyListCss, /width: 1px/);
+  assert.match(technologyListCss, /background: var\(--border\)/);
+  assert.doesNotMatch(
+    technologyListCss,
+    /backdrop-filter|box-shadow|filter:\s*blur/,
   );
 });
 
@@ -228,7 +263,12 @@ test("architecture points are semantic while image lightbox behavior remains", (
   assert.match(architecture, /setLightboxOpen\(true\)/);
 });
 
-test("bounded project detail surfaces use static layered edges", () => {
+test("bounded project detail surfaces use fallback-first translucent glass", () => {
+  const fallbackIndex = projectDetailCss.indexOf(
+    "--project-detail-fallback-alpha: 0.94",
+  );
+  const supportsIndex = projectDetailCss.indexOf("@supports (");
+
   assert.match(
     projectDetailSurface,
     /projectDetailSurfaceAccents = \[\s*"aurora",\s*"cool",\s*"violet",\s*"warm",\s*"neutral",\s*\] as const/s,
@@ -250,9 +290,33 @@ test("bounded project detail surfaces use static layered edges", () => {
   assert.match(projectDetailCss, /border-box/);
   assert.match(projectDetailCss, /box-shadow:/);
   assert.match(projectDetailCss, /\.dark \.project-detail-surface/);
+  assert.ok(fallbackIndex >= 0);
+  assert.ok(supportsIndex > fallbackIndex);
+  assert.match(
+    projectDetailCss,
+    /--project-detail-surface-fill: rgba\([\s\S]*?--project-detail-fallback-alpha/,
+  );
+  assert.match(projectDetailCss, /--project-detail-glass-alpha: 0\.8/);
+  assert.match(projectDetailCss, /--project-detail-glass-alpha: 0\.74/);
+  assert.match(projectDetailCss, /--project-detail-glass-alpha: 0\.58/);
+  assert.match(projectDetailCss, /--project-detail-glass-alpha: 0\.52/);
+  assert.match(
+    projectDetailCss,
+    /@supports \(\s*\(backdrop-filter: blur\(1px\)\) or\s*\(-webkit-backdrop-filter: blur\(1px\)\)/s,
+  );
+  assert.match(
+    projectDetailCss,
+    /-webkit-backdrop-filter: blur\(var\(--project-detail-backdrop-blur\)\)/,
+  );
+  assert.match(
+    projectDetailCss,
+    /(?<!-webkit-)backdrop-filter: blur\(var\(--project-detail-backdrop-blur\)\)/,
+  );
+  assert.match(projectDetailCss, /--project-detail-backdrop-blur: 16px/);
+  assert.match(projectDetailCss, /--project-detail-backdrop-blur: 18px/);
   assert.doesNotMatch(
     projectDetailCss,
-    /@keyframes|animation:|filter:\s*blur|mask-composite|-webkit-mask|hover:/,
+    /@keyframes|animation:|(?<!backdrop-)filter:\s*blur|mask-composite|-webkit-mask|hover:/,
   );
 });
 

@@ -8,6 +8,42 @@ type Props = {
   techGroups: TechGroups;
 };
 
+const technologyGroupLabelOverrides: Record<string, string> = {
+  ai: "AI",
+  api: "API",
+  cdn: "CDN",
+  "ci/cd": "CI/CD",
+  cms: "CMS",
+  css: "CSS",
+  devops: "DevOps",
+  html: "HTML",
+  ide: "IDE",
+  ml: "ML",
+  orm: "ORM",
+  qa: "QA",
+  sdk: "SDK",
+  ui: "UI",
+  "ui/ux": "UI/UX",
+  ux: "UX",
+};
+
+export const formatTechnologyGroupLabel = (value: string) => {
+  return value
+    .trim()
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((word) => {
+      const normalizedWord = word.toLowerCase();
+
+      return (
+        technologyGroupLabelOverrides[normalizedWord] ??
+        `${normalizedWord.charAt(0).toUpperCase()}${normalizedWord.slice(1)}`
+      );
+    })
+    .join(" ");
+};
+
 const ProjectTechGroups = ({ techGroups }: Props) => {
   const groups = Object.entries(techGroups)
     .map(([title, items]) => ({ title, items }))
@@ -43,27 +79,22 @@ const ProjectTechGroups = ({ techGroups }: Props) => {
                 id={headingId}
                 className="project-detail-tech-legend-label"
               >
-                <span
-                  aria-hidden="true"
-                  className="size-[5px] shrink-0 rounded-full bg-muted-foreground/55"
-                />
-                {group.title}
+                {formatTechnologyGroupLabel(group.title)}
               </h3>
 
-              <ul className="flex flex-wrap gap-x-4 gap-y-2">
-                {group.items.map((item) => {
+              <ul className="project-detail-tech-list">
+                {group.items.map((item, itemIndex) => {
                   const label = typeof item === "string" ? item : item.label;
 
                   return (
-                    <li
-                      key={label}
-                      className="flex max-w-full min-w-0 items-start gap-2 text-sm leading-6 text-muted-foreground"
-                    >
-                      <span
-                        aria-hidden="true"
-                        className="mt-[9px] size-1.5 shrink-0 rounded-full bg-muted-foreground/50"
-                      />
-                      <span className="min-w-0 break-words">{label}</span>
+                    <li key={label} className="project-detail-tech-item">
+                      <span className="project-detail-tech-name">{label}</span>
+                      {itemIndex < group.items.length - 1 ? (
+                        <span
+                          aria-hidden="true"
+                          className="project-detail-tech-separator"
+                        />
+                      ) : null}
                     </li>
                   );
                 })}
