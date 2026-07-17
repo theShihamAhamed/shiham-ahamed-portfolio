@@ -61,6 +61,9 @@ test("public README section has one primary container and a viewport-fixed expan
 
 test("collapsed README previews clip and mask without painting over the glass surface", () => {
   const expandable = read("apps/frontend/components/projects/detail/case-study/project-expandable-details.tsx");
+  const renderer = read("apps/frontend/components/projects/detail/case-study/project-readme-renderer.tsx");
+  const surface = read("apps/frontend/components/projects/detail/project-detail-surface.tsx");
+  const page = read("apps/frontend/app/projects/[slug]/page.tsx");
   const globalCss = read("apps/frontend/app/globals.css");
   const previewCss = globalCss.slice(
     globalCss.indexOf("Project case-study preview"),
@@ -68,6 +71,9 @@ test("collapsed README previews clip and mask without painting over the glass su
   );
   const fallbackIndex = previewCss.indexOf('data-state="collapsed"');
   const supportsIndex = previewCss.indexOf("@supports (");
+  const collapsedRule = previewCss.match(
+    /\.project-case-study-preview\[data-state="collapsed"\]\s*\{[\s\S]*?\}/,
+  )?.[0];
 
   assert.match(expandable, /className="project-case-study-preview"/);
   assert.match(expandable, /data-state=\{previewState\}/);
@@ -87,10 +93,15 @@ test("collapsed README previews clip and mask without painting over the glass su
 
   assert.ok(fallbackIndex >= 0);
   assert.ok(supportsIndex > fallbackIndex);
-  assert.match(
-    previewCss,
-    /\.project-case-study-preview\[data-state="collapsed"\]\s*\{[\s\S]*?max-height: 520px;[\s\S]*?overflow: clip;[\s\S]*?\}/,
+  assert.ok(collapsedRule);
+  assert.match(collapsedRule, /max-height: 520px;/);
+  assert.match(collapsedRule, /overflow: hidden;/);
+  assert.match(collapsedRule, /overflow: clip;/);
+  assert.ok(
+    collapsedRule.indexOf("overflow: hidden;") <
+      collapsedRule.indexOf("overflow: clip;"),
   );
+  assert.match(collapsedRule, /contain: layout paint;/);
   assert.match(previewCss, /-webkit-mask-image: linear-gradient\(/);
   assert.match(previewCss, /(?<!-webkit-)mask-image: linear-gradient\(/);
   assert.match(previewCss, /#000 calc\(100% - 104px\)/);
@@ -98,7 +109,11 @@ test("collapsed README previews clip and mask without painting over the glass su
     previewCss,
     /\.project-case-study-preview\[data-state="expanded"\]\s*\{[\s\S]*?max-height: none;[\s\S]*?overflow: visible;[\s\S]*?contain: none;[\s\S]*?-webkit-mask-image: none;[\s\S]*?mask-image: none;[\s\S]*?\}/,
   );
-  assert.doesNotMatch(previewCss, /contain: layout paint/);
+  assert.equal((previewCss.match(/contain: layout paint/g) ?? []).length, 1);
+  assert.equal((globalCss.match(/contain: layout paint/g) ?? []).length, 1);
+  assert.doesNotMatch(renderer, /contain: layout paint/);
+  assert.doesNotMatch(surface, /contain: layout paint/);
+  assert.doesNotMatch(page, /contain: layout paint/);
 });
 
 test("public code blocks copy only code and expose a temporary accessible status", () => {

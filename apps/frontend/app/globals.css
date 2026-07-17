@@ -773,7 +773,9 @@
 
 .project-case-study-preview[data-state="collapsed"] {
   max-height: 520px;
+  overflow: hidden;
   overflow: clip;
+  contain: layout paint;
 }
 
 @supports (
