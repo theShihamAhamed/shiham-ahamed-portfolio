@@ -1,6 +1,6 @@
 "use client";
 
-import { TECH_TAG_CATEGORY_DEFINITIONS, createCustomTechnologySlug, findTechnologyByNameOrAlias, getTechTagCategoryLabel, searchTechnologies, type ProjectTechStackItem, type TechTagCategory } from "@portfolio/shared";
+import { TECH_TAG_CATEGORY_DEFINITIONS, createCustomTechnologySlug, findTechnologyByNameOrAlias, getTechTagCategoryLabel, searchTechnologies, type ProjectTechStackItem, type TechTagCategory, type TechnologySlug } from "@portfolio/shared";
 import { Plus, Trash2 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -15,7 +15,7 @@ export function TechStackInput({ value, onChange, onValidityChange }: Props) {
   const [query, setQuery] = useState("");
   const results = useMemo(() => searchTechnologies(query).slice(0, 8), [query]);
   const selected = new Set(value.filter((item): item is Extract<ProjectTechStackItem, { kind: "known" }> => item.kind === "known").map((item) => item.slug));
-  const addKnown = (slug: string) => { if (selected.has(slug)) return; onChange([...value, { kind: "known", slug: slug as never, showOnCard: false }]); setQuery(""); };
+  const addKnown = (slug: TechnologySlug) => { if (selected.has(slug)) return; onChange([...value, { kind: "known", slug, showOnCard: false }]); setQuery(""); };
   const addCustom = () => { const label = query.trim(); if (!label || findTechnologyByNameOrAlias(label)) return; onChange([...value, { kind: "custom", slug: createCustomTechnologySlug(label), label, category: "other", color: accent, showOnCard: false }]); setQuery(""); };
   const update = (index: number, item: ProjectTechStackItem) => onChange(value.map((current, currentIndex) => currentIndex === index ? item : current));
   const valid = value.length > 0 && value.every((item) => item.kind === "known" || (item.label.trim() && item.slug && /^#[0-9a-fA-F]{6}$/.test(item.color)));
