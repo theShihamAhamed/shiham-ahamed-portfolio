@@ -33,8 +33,15 @@ test("public README section has one primary container and a viewport-fixed expan
   assert.match(expandable, /aria-controls/);
   assert.match(expandable, /history\.pushState/);
   assert.match(expandable, /NAV_OFFSET/);
-  assert.match(expandable, /\{expanded \? \(/);
-  assert.match(expandable, /\) : \(\s*<div className="mt-6 flex justify-center">/s);
+  assert.match(expandable, /import \{ createPortal \} from "react-dom"/);
+  assert.match(expandable, /const mounted = React\.useSyncExternalStore/);
+  assert.match(
+    expandable,
+    /React\.useSyncExternalStore\(\s*subscribeToMountState,\s*\(\) => true,\s*\(\) => false/s,
+  );
+  assert.match(expandable, /mounted && isExpanded\s*\? createPortal\(/s);
+  assert.match(expandable, /document\.body/);
+  assert.match(expandable, /\{hasOverflow && !isExpanded \? \(\s*<div className="mt-6 flex justify-center">/s);
   assert.match(expandable, /Show full details/);
   assert.match(expandable, /Show less/);
   assert.equal((expandable.match(/aria-expanded="true"/g) ?? []).length, 1);
@@ -42,10 +49,56 @@ test("public README section has one primary container and a viewport-fixed expan
   assert.match(expandable, /fixed inset-x-0/);
   assert.doesNotMatch(expandable, /sticky bottom-4/);
   assert.equal((expandable.match(/Show less/g) ?? []).length, 1);
+  assert.match(
+    expandable,
+    /<\/div>\s*\{mounted && isExpanded\s*\? createPortal\(/s,
+  );
   assert.match(expandable, /ref=\{expandButtonRef\}/);
   assert.match(expandable, /expandButtonRef\.current\?\.focus\(\{ preventScroll: true \}\)/);
   assert.match(expandable, /scrollToSectionTop/);
   assert.doesNotMatch(expandable, /rounded-\[2rem\].*border/);
+});
+
+test("collapsed README previews clip and mask without painting over the glass surface", () => {
+  const expandable = read("apps/frontend/components/projects/detail/case-study/project-expandable-details.tsx");
+  const globalCss = read("apps/frontend/app/globals.css");
+  const previewCss = globalCss.slice(
+    globalCss.indexOf("Project case-study preview"),
+    globalCss.indexOf("Project detail surfaces"),
+  );
+  const fallbackIndex = previewCss.indexOf('data-state="collapsed"');
+  const supportsIndex = previewCss.indexOf("@supports (");
+
+  assert.match(expandable, /className="project-case-study-preview"/);
+  assert.match(expandable, /data-state=\{previewState\}/);
+  assert.match(
+    expandable,
+    /inert=\{previewState === "collapsed" \? true : undefined\}/,
+  );
+  assert.match(expandable, /tabIndex=\{isExpanded \? -1 : undefined\}/);
+  assert.match(expandable, /ResizeObserver/);
+  assert.match(expandable, /PREVIEW_MAX_HEIGHT = 520/);
+  assert.match(expandable, /pendingExpandFocusRef/);
+  assert.match(expandable, /prefers-reduced-motion: reduce/);
+  assert.doesNotMatch(
+    expandable,
+    /bg-gradient-to-t|from-background|via-background|pointer-events-none absolute inset-x-0 bottom-0/,
+  );
+
+  assert.ok(fallbackIndex >= 0);
+  assert.ok(supportsIndex > fallbackIndex);
+  assert.match(
+    previewCss,
+    /\.project-case-study-preview\[data-state="collapsed"\]\s*\{[\s\S]*?max-height: 520px;[\s\S]*?overflow: clip;[\s\S]*?\}/,
+  );
+  assert.match(previewCss, /-webkit-mask-image: linear-gradient\(/);
+  assert.match(previewCss, /(?<!-webkit-)mask-image: linear-gradient\(/);
+  assert.match(previewCss, /#000 calc\(100% - 104px\)/);
+  assert.match(
+    previewCss,
+    /\.project-case-study-preview\[data-state="expanded"\]\s*\{[\s\S]*?max-height: none;[\s\S]*?overflow: visible;[\s\S]*?contain: none;[\s\S]*?-webkit-mask-image: none;[\s\S]*?mask-image: none;[\s\S]*?\}/,
+  );
+  assert.doesNotMatch(previewCss, /contain: layout paint/);
 });
 
 test("public code blocks copy only code and expose a temporary accessible status", () => {

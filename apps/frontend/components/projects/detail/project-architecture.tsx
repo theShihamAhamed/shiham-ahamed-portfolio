@@ -2,9 +2,12 @@
 
 import * as React from "react";
 import Image from "next/image";
-import { Expand } from "lucide-react";
+import { Expand, Network } from "lucide-react";
 
 import { ProjectImageLightbox } from "@/components/projects/detail/project-image-lightbox";
+import ProjectDetailSectionHeader from "@/components/projects/detail/project-detail-section-header";
+import ProjectDetailSurface from "@/components/projects/detail/project-detail-surface";
+import { cn } from "@/lib/utils";
 
 type Props = {
   image?: string;
@@ -14,42 +17,78 @@ type Props = {
 
 const ProjectArchitecture = ({ image, summary, points }: Props) => {
   const [lightboxOpen, setLightboxOpen] = React.useState(false);
+  const hasText = Boolean(summary || points?.length);
 
-  if (!image && !summary && !points?.length) return null;
+  if (!image && !hasText) return null;
 
   return (
     <>
-      <section className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-background/80 p-5 shadow-sm backdrop-blur-xl sm:p-6">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.08),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.06),transparent_28%)]" />
+      <section aria-labelledby="project-architecture-heading">
+        <div
+          className={cn(
+            "grid gap-6",
+            hasText && image && "xl:grid-cols-12 xl:items-start",
+          )}
+        >
+          {hasText ? (
+            <ProjectDetailSurface
+              as="div"
+              accent="warm"
+              intensity="secondary"
+              className={cn("p-5 sm:p-6", image && "xl:col-span-5")}
+            >
+              <ProjectDetailSectionHeader
+                id="project-architecture-heading"
+                title="Architecture"
+                icon={Network}
+                accent="warm"
+              />
 
-        <div className="relative z-10">
-          <p className="text-sm font-medium text-muted-foreground">
-            Architecture
-          </p>
+              <div className="mt-5 flex flex-col gap-4">
+                {summary ? (
+                  <p className="text-sm leading-7 text-muted-foreground sm:text-base">
+                    {summary}
+                  </p>
+                ) : null}
 
-          <div className="mt-5 grid gap-6 xl:grid-cols-12 xl:items-start">
-            <div className="flex flex-col gap-4 xl:col-span-5">
-              {summary ? (
-                <p className="text-sm leading-7 text-muted-foreground sm:text-base">
-                  {summary}
-                </p>
+                {points?.length ? (
+                  <ul className="space-y-3">
+                    {points.map((point) => (
+                      <li key={point} className="flex items-start gap-3">
+                        <span
+                          aria-hidden="true"
+                          className="project-detail-list-dot mt-[11px] size-1.5 shrink-0 rounded-full"
+                        />
+                        <span className="text-sm leading-7 text-foreground">
+                          {point}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
+            </ProjectDetailSurface>
+          ) : null}
+
+          {image ? (
+            <ProjectDetailSurface
+              as="div"
+              accent="violet"
+              intensity="primary"
+              className={cn(
+                hasText ? "p-2 sm:p-3 xl:col-span-7" : "p-5 sm:p-6",
+              )}
+            >
+              {!hasText ? (
+                <ProjectDetailSectionHeader
+                  id="project-architecture-heading"
+                  title="Architecture"
+                  icon={Network}
+                  accent="violet"
+                />
               ) : null}
 
-              {points?.length ? (
-                <div className="grid gap-3">
-                  {points.map((point) => (
-                    <div
-                      key={point}
-                      className="rounded-[1.25rem] border border-border/60 bg-background/70 px-4 py-3 text-sm text-foreground shadow-sm backdrop-blur-sm"
-                    >
-                      {point}
-                    </div>
-                  ))}
-                </div>
-              ) : null}
-            </div>
-            <div className="min-w-0 xl:col-span-7">
-              {image ? (
+              <div className={cn(!hasText && "mt-5")}>
                 <button
                   type="button"
                   onClick={() => setLightboxOpen(true)}
@@ -69,9 +108,9 @@ const ProjectArchitecture = ({ image, summary, points }: Props) => {
                     <Expand className="h-4 w-4" aria-hidden="true" />
                   </span>
                 </button>
-              ) : null}
-            </div>
-          </div>
+              </div>
+            </ProjectDetailSurface>
+          ) : null}
         </div>
       </section>
 

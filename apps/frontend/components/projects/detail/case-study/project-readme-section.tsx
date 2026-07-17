@@ -2,6 +2,7 @@ import { getCaseStudyMdxValidationIssues } from "@portfolio/shared";
 
 import ProjectExpandableDetails from "@/components/projects/detail/case-study/project-expandable-details";
 import { ProjectReadmeRenderer } from "@/components/projects/detail/case-study/project-readme-renderer";
+import ProjectDetailSurface from "@/components/projects/detail/project-detail-surface";
 
 type Props = {
   caseStudyMdx?: string;
@@ -13,14 +14,22 @@ const ProjectReadmeSection = ({ caseStudyMdx }: Props) => {
   const validationIssue = getCaseStudyMdxValidationIssues(caseStudyMdx)[0];
 
   return (
-    <section
+    <ProjectDetailSurface
       id="project-case-study"
       aria-labelledby="project-case-study-title"
-      className="overflow-hidden rounded-2xl border border-border/60 bg-background/50 p-5 text-foreground sm:p-8"
+      accent="neutral"
+      intensity="subtle"
+      className="p-5 text-foreground sm:p-8"
     >
-      <p id="project-case-study-title" className="text-sm font-medium text-muted-foreground">
-        Project case study
-      </p>
+      <div>
+        <h2
+          id="project-case-study-title"
+          className="text-lg font-semibold tracking-[-0.025em] text-foreground sm:text-xl"
+        >
+          Project case study
+        </h2>
+        <span className="project-detail-quiet-accent" aria-hidden="true" />
+      </div>
 
       {validationIssue ? (
         <div role="alert" className="mt-5 rounded-xl border border-border/60 bg-background/70 p-5 text-sm leading-7 text-muted-foreground">
@@ -32,7 +41,7 @@ const ProjectReadmeSection = ({ caseStudyMdx }: Props) => {
           <ProjectReadmeRenderer source={caseStudyMdx} />
         </ProjectExpandableDetails>
       )}
-    </section>
+    </ProjectDetailSurface>
   );
 };
 

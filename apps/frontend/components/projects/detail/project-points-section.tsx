@@ -1,30 +1,68 @@
+import { Check, type LucideIcon } from "lucide-react";
+
+import ProjectDetailSectionHeader from "@/components/projects/detail/project-detail-section-header";
+import ProjectDetailSurface, {
+  type ProjectDetailSurfaceAccent,
+} from "@/components/projects/detail/project-detail-surface";
+
 type Props = {
   title: string;
   items: string[];
+  icon: LucideIcon;
+  marker?: "dot" | "check";
+  accent?: Exclude<ProjectDetailSurfaceAccent, "aurora">;
 };
 
-const ProjectListSection = ({ title, items }: Props) => {
+const ProjectListSection = ({
+  title,
+  items,
+  icon,
+  marker = "dot",
+  accent = "neutral",
+}: Props) => {
   if (!items.length) return null;
 
+  const headingId = `project-${title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")}-heading`;
+
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-background/80 p-5 shadow-sm backdrop-blur-xl sm:p-6">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.06),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.05),transparent_28%)]" />
+    <ProjectDetailSurface
+      aria-labelledby={headingId}
+      accent={accent}
+      intensity="secondary"
+      className="p-5 sm:p-6"
+    >
+      <ProjectDetailSectionHeader
+        id={headingId}
+        title={title}
+        icon={icon}
+        accent={accent}
+      />
 
-      <div className="relative z-10">
-        <p className="text-sm font-medium text-muted-foreground">{title}</p>
-
-        <div className="mt-5 grid gap-3">
-          {items.map((item) => (
-            <div
-              key={item}
-              className="rounded-[1.25rem] border border-border/60 bg-background/70 px-4 py-3 text-sm leading-7 text-foreground shadow-sm backdrop-blur-sm"
-            >
-              {item}
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
+      <ul className="mt-5 divide-y divide-border/40">
+        {items.map((item) => (
+          <li
+            key={item}
+            className="flex items-start gap-3 py-3 first:pt-0 last:pb-0"
+          >
+            {marker === "check" ? (
+              <Check
+                aria-hidden="true"
+                className="project-detail-list-check mt-1.5 size-3.5 shrink-0"
+              />
+            ) : (
+              <span
+                aria-hidden="true"
+                className="project-detail-list-dot mt-[11px] size-1.5 shrink-0 rounded-full"
+              />
+            )}
+            <span className="text-sm leading-7 text-foreground">{item}</span>
+          </li>
+        ))}
+      </ul>
+    </ProjectDetailSurface>
   );
 };
 

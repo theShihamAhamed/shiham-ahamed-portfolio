@@ -1,50 +1,109 @@
-import { TechGroups } from "@/types/project";
-import TechTag from "@/components/projects/shared/tech-tag";
+import { Code2 } from "lucide-react";
+
+import ProjectDetailSectionHeader from "@/components/projects/detail/project-detail-section-header";
+import ProjectDetailSurface from "@/components/projects/detail/project-detail-surface";
+import type { ProjectTag, TechGroups } from "@/types/project";
 
 type Props = {
   techGroups: TechGroups;
 };
 
+const technologyGroupLabelOverrides: Record<string, string> = {
+  ai: "AI",
+  api: "API",
+  cdn: "CDN",
+  "ci/cd": "CI/CD",
+  cms: "CMS",
+  css: "CSS",
+  devops: "DevOps",
+  html: "HTML",
+  ide: "IDE",
+  ml: "ML",
+  orm: "ORM",
+  qa: "QA",
+  sdk: "SDK",
+  ui: "UI",
+  "ui/ux": "UI/UX",
+  ux: "UX",
+};
+
+export const formatTechnologyGroupLabel = (value: string) => {
+  return value
+    .trim()
+    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((word) => {
+      const normalizedWord = word.toLowerCase();
+
+      return (
+        technologyGroupLabelOverrides[normalizedWord] ??
+        `${normalizedWord.charAt(0).toUpperCase()}${normalizedWord.slice(1)}`
+      );
+    })
+    .join(" ");
+};
+
 const ProjectTechGroups = ({ techGroups }: Props) => {
   const groups = Object.entries(techGroups)
     .map(([title, items]) => ({ title, items }))
-    .filter((group): group is { title: string; items: Array<import("@/types/project").ProjectTag | string> } =>
+    .filter((group): group is { title: string; items: Array<ProjectTag | string> } =>
       Boolean(group.items?.length),
     );
 
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-background/80 p-5 shadow-sm backdrop-blur-xl sm:p-6">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(59,130,246,0.08),transparent_28%),radial-gradient(circle_at_bottom_left,rgba(168,85,247,0.07),transparent_28%)]" />
+    <ProjectDetailSurface
+      aria-labelledby="project-technologies-heading"
+      accent="violet"
+      intensity="secondary"
+      className="p-5 sm:p-6"
+    >
+      <ProjectDetailSectionHeader
+        id="project-technologies-heading"
+        title="Technologies, frameworks, and tools"
+        icon={Code2}
+        accent="violet"
+      />
 
-      <div className="relative z-10">
-        <p className="text-sm font-medium text-muted-foreground">
-          Technologies, frameworks, and tools
-        </p>
+      <div className="mt-5 grid gap-x-5 gap-y-7 md:grid-cols-2">
+        {groups.map((group, index) => {
+          const headingId = `project-technology-group-${index}`;
 
-        <div className="mt-6 grid gap-4 md:grid-cols-2">
-          {groups.map((group) => (
-            <div
+          return (
+            <section
               key={group.title}
-              className="rounded-[1.5rem] border border-border/60 bg-background/70 p-4 shadow-sm backdrop-blur-sm"
+              aria-labelledby={headingId}
+              className="project-detail-tech-legend"
             >
-              <h3 className="text-sm font-semibold tracking-[-0.02em] text-foreground">
-                {group.title}
+              <h3
+                id={headingId}
+                className="project-detail-tech-legend-label"
+              >
+                {formatTechnologyGroupLabel(group.title)}
               </h3>
 
-              <div className="mt-4 flex flex-wrap gap-2">
-                {group.items?.map((item) => (
-                  <TechTag
-                    key={typeof item === "string" ? item : item.label}
-                    tag={typeof item === "string" ? { label: item } : item}
-                    className="px-3 py-1.5"
-                  />
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
+              <ul className="project-detail-tech-list">
+                {group.items.map((item, itemIndex) => {
+                  const label = typeof item === "string" ? item : item.label;
+
+                  return (
+                    <li key={label} className="project-detail-tech-item">
+                      <span className="project-detail-tech-name">{label}</span>
+                      {itemIndex < group.items.length - 1 ? (
+                        <span
+                          aria-hidden="true"
+                          className="project-detail-tech-separator"
+                        />
+                      ) : null}
+                    </li>
+                  );
+                })}
+              </ul>
+            </section>
+          );
+        })}
       </div>
-    </section>
+    </ProjectDetailSurface>
   );
 };
 

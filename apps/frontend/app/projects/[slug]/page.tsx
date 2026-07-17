@@ -1,7 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowUpRight, Calendar } from "lucide-react";
+import {
+  ArrowUpRight,
+  Calendar,
+  FileText,
+  Mountain,
+  TrendingUp,
+} from "lucide-react";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import { getProjectTypeLabel } from "@portfolio/shared";
 
@@ -19,6 +25,8 @@ import ProjectTechGroups from "@/components/projects/detail/project-tech-groups"
 import ProjectGallery from "@/components/projects/detail/project-gallery";
 import ProjectArchitecture from "@/components/projects/detail/project-architecture";
 import ProjectListSection from "@/components/projects/detail/project-points-section";
+import ProjectDetailSectionHeader from "@/components/projects/detail/project-detail-section-header";
+import ProjectDetailSurface from "@/components/projects/detail/project-detail-surface";
 import TechTag from "@/components/projects/shared/tech-tag";
 import ProjectReadmeSection from "@/components/projects/detail/case-study/project-readme-section";
 import { formatProjectDateRange } from "@/lib/utils";
@@ -118,11 +126,9 @@ export default async function ProjectDetailsPage({ params }: Props) {
   );
 
   return (
-    <main className="pb-20 sm:pb-24 lg:pb-28">
+    <main className="project-detail-page pb-20 sm:pb-24 lg:pb-28">
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/60">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.10),transparent_22%),radial-gradient(circle_at_top_right,rgba(168,85,247,0.12),transparent_22%),radial-gradient(circle_at_bottom_center,rgba(34,211,238,0.08),transparent_28%)]" />
-
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
           <div className="grid gap-8 xl:grid-cols-12 xl:items-start">
             <StaggerContainer
@@ -211,81 +217,97 @@ export default async function ProjectDetailsPage({ params }: Props) {
 
             <div className="xl:col-span-7">
               <SectionReveal
-                className="relative overflow-hidden rounded-[2rem] border border-border/60 bg-background/80 p-3 shadow-sm backdrop-blur-xl sm:p-4"
                 distance={6}
                 delay={0.08}
               >
-                <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.12),transparent_22%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.10),transparent_24%)]" />
-
-                <div className="relative z-10">
+                <ProjectDetailSurface
+                  as="div"
+                  accent="aurora"
+                  intensity="primary"
+                  className="p-3 sm:p-4"
+                >
                   <ProjectMediaViewer
                     media={project.heroMedia}
                     alt={project.title}
                   />
-                </div>
+                </ProjectDetailSurface>
               </SectionReveal>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-7xl space-y-14 px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
-        {/* Overview + Tech */}
-        <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
-          <SectionReveal className="relative h-full overflow-hidden rounded-[2rem] border border-border/60 bg-background/80 p-5 shadow-sm backdrop-blur-xl sm:p-6 xl:col-span-5">
-            <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.08),transparent_30%),radial-gradient(circle_at_bottom_right,rgba(168,85,247,0.06),transparent_28%)]" />
+      <section>
+        <div className="mx-auto max-w-7xl space-y-14 px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+          {/* Overview + Tech */}
+          <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
+            <SectionReveal className="h-full xl:col-span-5">
+              <ProjectDetailSurface
+                aria-labelledby="project-overview-heading"
+                accent="warm"
+                intensity="secondary"
+                className="h-full p-5 sm:p-6"
+              >
+                <ProjectDetailSectionHeader
+                  id="project-overview-heading"
+                  title="Overview"
+                  icon={FileText}
+                  accent="warm"
+                />
 
-            <div className="relative z-10">
-              <p className="text-sm font-medium text-muted-foreground">
-                Overview
-              </p>
+                <div className="mt-5 space-y-4">
+                  {project.overview.map((paragraph, index) => (
+                    <p
+                      key={index}
+                      className="text-sm leading-7 text-muted-foreground sm:text-base"
+                    >
+                      {paragraph}
+                    </p>
+                  ))}
+                </div>
+              </ProjectDetailSurface>
+            </SectionReveal>
 
-              <div className="mt-5 space-y-4">
-                {project.overview.map((paragraph, index) => (
-                  <p
-                    key={index}
-                    className="text-sm leading-7 text-muted-foreground sm:text-base"
-                  >
-                    {paragraph}
-                  </p>
-                ))}
-              </div>
-            </div>
-          </SectionReveal>
+            <SectionReveal className="xl:col-span-7" delay={0.08}>
+              <ProjectTechGroups techGroups={project.techGroups} />
+            </SectionReveal>
+          </div>
 
-          <SectionReveal className="xl:col-span-7" delay={0.08}>
-            <ProjectTechGroups techGroups={project.techGroups} />
-          </SectionReveal>
-        </div>
+          {/* Gallery + Highlights */}
+          <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
+            <SectionReveal className="xl:col-span-7">
+              <ProjectGallery items={project.gallery} />
+            </SectionReveal>
 
-        {/* Gallery + Highlights */}
-        <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
-          <SectionReveal className="xl:col-span-7">
-            <ProjectGallery items={project.gallery} />
-          </SectionReveal>
+            <SectionReveal className="xl:col-span-5" delay={0.08}>
+              <ProjectHighlights items={project.highlights} />
+            </SectionReveal>
+          </div>
 
-          <SectionReveal className="xl:col-span-5" delay={0.08}>
-            <ProjectHighlights items={project.highlights} />
-          </SectionReveal>
-        </div>
-
-        <ProjectArchitecture
-          image={project.architectureImage}
-          summary={project.architectureSummary}
-          points={project.architecturePoints}
-        />
-
-        <ProjectReadmeSection caseStudyMdx={project.caseStudyMdx} />
-
-        <div className="grid gap-6 lg:grid-cols-2">
-          <ProjectListSection
-            title="Challenges & learnings"
-            items={project.challenges}
+          <ProjectArchitecture
+            image={project.architectureImage}
+            summary={project.architectureSummary}
+            points={project.architecturePoints}
           />
-          <ProjectListSection
-            title="Future improvements"
-            items={project.futureImprovements}
-          />
+
+          <ProjectReadmeSection caseStudyMdx={project.caseStudyMdx} />
+
+          <div className="grid gap-6 lg:grid-cols-2">
+            <ProjectListSection
+              title="Challenges & learnings"
+              items={project.challenges}
+              icon={Mountain}
+              marker="dot"
+              accent="cool"
+            />
+            <ProjectListSection
+              title="Future improvements"
+              items={project.futureImprovements}
+              icon={TrendingUp}
+              marker="dot"
+              accent="violet"
+            />
+          </div>
         </div>
       </section>
 
@@ -295,7 +317,8 @@ export default async function ProjectDetailsPage({ params }: Props) {
           <p className="text-sm font-medium text-muted-foreground">
             Related projects
           </p>
-          <h2 className="mt-3 text-2xl font-semibold tracking-[-0.04em] text-foreground sm:text-3xl">
+          <span className="project-detail-related-accent" aria-hidden="true" />
+          <h2 className="mt-4 text-2xl font-semibold tracking-[-0.04em] text-foreground sm:text-3xl">
             More work to explore
           </h2>
         </AnimatedPageHeader>
