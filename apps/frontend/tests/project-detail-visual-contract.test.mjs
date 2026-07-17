@@ -48,6 +48,10 @@ const projectDetailCss = globalCss.slice(
   globalCss.indexOf("Project detail surfaces"),
   globalCss.indexOf("@keyframes portfolio-loading-progress"),
 );
+const projectPageCanvasCss = globalCss.slice(
+  globalCss.indexOf("Project detail page canvas"),
+  globalCss.indexOf("Project case-study preview"),
+);
 
 const hexToRgb = (hex) =>
   [1, 3, 5].map((offset) => Number.parseInt(hex.slice(offset, offset + 2), 16));
@@ -365,9 +369,36 @@ test("overview uses the restrained surface and existing detail grids remain", ()
   assert.match(projectPage, /accent="cool"/);
   assert.match(projectPage, /accent="violet"/);
   assert.match(projectPage, /className="grid gap-6 lg:grid-cols-2"/);
+});
+
+test("one bounded blue-violet-cyan canvas spans the project detail page", () => {
   assert.match(
     projectPage,
-    /aria-hidden="true"[\s\S]*pointer-events-none absolute inset-0 z-0/s,
+    /<main className="project-detail-page pb-20 sm:pb-24 lg:pb-28">/,
+  );
+  assert.equal((projectPage.match(/project-detail-page/g) ?? []).length, 1);
+  assert.doesNotMatch(projectPage, /bg-\[radial-gradient/);
+  assert.doesNotMatch(
+    projectPage,
+    /pointer-events-none absolute inset-0 z-0[\s\S]*radial-gradient/,
+  );
+
+  assert.match(projectPageCanvasCss, /--project-page-background: var\(--background\)/);
+  assert.match(projectPageCanvasCss, /--project-brand-primary-rgb: 59, 130, 246/);
+  assert.match(projectPageCanvasCss, /--project-brand-secondary-rgb: 139, 92, 246/);
+  assert.match(projectPageCanvasCss, /--project-brand-tertiary-rgb: 34, 211, 238/);
+  assert.match(projectPageCanvasCss, /--project-page-ambient-primary: 0\.1/);
+  assert.match(projectPageCanvasCss, /--project-page-ambient-secondary: 0\.11/);
+  assert.match(projectPageCanvasCss, /--project-page-ambient-tertiary: 0\.06/);
+  assert.match(projectPageCanvasCss, /--project-page-ambient-lower: 0\.02/);
+  assert.match(projectPageCanvasCss, /\.dark \.project-detail-page/);
+  assert.match(projectPageCanvasCss, /--project-page-ambient-primary: 0\.15/);
+  assert.match(projectPageCanvasCss, /--project-page-ambient-secondary: 0\.16/);
+  assert.match(projectPageCanvasCss, /--project-page-ambient-tertiary: 0\.08/);
+  assert.match(projectPageCanvasCss, /--project-page-ambient-lower: 0\.04/);
+  assert.doesNotMatch(
+    projectPageCanvasCss,
+    /245,\s*158,\s*11|amber|position:\s*(?:absolute|fixed)|background-attachment:\s*fixed|(?<!backdrop-)filter:|@keyframes|animation:/i,
   );
 });
 
@@ -400,7 +431,7 @@ test("README rendering and expansion controls remain editorial and functional", 
   assert.match(expandableDetails, /Show full details/);
   assert.match(expandableDetails, /Show less/);
   assert.match(expandableDetails, /createPortal/);
-  assert.match(expandableDetails, /mounted && expanded/);
+  assert.match(expandableDetails, /mounted && isExpanded/);
   assert.match(expandableDetails, /document\.body/);
   assert.equal((expandableDetails.match(/Show less/g) ?? []).length, 1);
   assert.match(expandableDetails, /focus\(\{ preventScroll: true \}\)/);
@@ -411,4 +442,5 @@ test("project detail visual refinements add no animation dependency", () => {
   assert.doesNotMatch(projectDetailSurface, /motion|framer-motion/);
   assert.doesNotMatch(projectDetailHeader, /motion|framer-motion/);
   assert.doesNotMatch(projectDetailCss, /@keyframes|animation:/);
+  assert.doesNotMatch(projectPageCanvasCss, /@keyframes|animation:/);
 });

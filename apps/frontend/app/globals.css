@@ -699,6 +699,112 @@
 }
 
 /* =========================
+   Project detail page canvas
+   ========================= */
+
+.project-detail-page {
+  --project-page-background: var(--background);
+  --project-brand-primary-rgb: 59, 130, 246;
+  --project-brand-secondary-rgb: 139, 92, 246;
+  --project-brand-tertiary-rgb: 34, 211, 238;
+  --project-page-ambient-primary: 0.1;
+  --project-page-ambient-secondary: 0.11;
+  --project-page-ambient-tertiary: 0.06;
+  --project-page-ambient-lower: 0.02;
+
+  background-color: var(--project-page-background);
+  background-image:
+    radial-gradient(
+      ellipse 64rem 32rem at 8% 0%,
+      rgba(
+        var(--project-brand-primary-rgb),
+        var(--project-page-ambient-primary)
+      ),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 68rem 34rem at 92% 2%,
+      rgba(
+        var(--project-brand-secondary-rgb),
+        var(--project-page-ambient-secondary)
+      ),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 42rem 24rem at 56% 9%,
+      rgba(
+        var(--project-brand-tertiary-rgb),
+        var(--project-page-ambient-tertiary)
+      ),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 52rem 22rem at 4% 45%,
+      rgba(
+        var(--project-brand-primary-rgb),
+        var(--project-page-ambient-lower)
+      ),
+      transparent 74%
+    ),
+    radial-gradient(
+      ellipse 54rem 24rem at 96% 74%,
+      rgba(
+        var(--project-brand-secondary-rgb),
+        var(--project-page-ambient-lower)
+      ),
+      transparent 74%
+    );
+}
+
+.dark .project-detail-page {
+  --project-page-ambient-primary: 0.15;
+  --project-page-ambient-secondary: 0.16;
+  --project-page-ambient-tertiary: 0.08;
+  --project-page-ambient-lower: 0.04;
+}
+
+/* =========================
+   Project case-study preview
+   ========================= */
+
+.project-case-study-preview {
+  min-width: 0;
+}
+
+.project-case-study-preview[data-state="collapsed"] {
+  max-height: 520px;
+  overflow: clip;
+}
+
+@supports (
+  (mask-image: linear-gradient(#000, transparent)) or
+    (-webkit-mask-image: linear-gradient(#000, transparent))
+) {
+  .project-case-study-preview[data-state="collapsed"] {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 calc(100% - 104px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      #000 0%,
+      #000 calc(100% - 104px),
+      transparent 100%
+    );
+  }
+}
+
+.project-case-study-preview[data-state="expanded"] {
+  max-height: none;
+  overflow: visible;
+  contain: none;
+  -webkit-mask-image: none;
+  mask-image: none;
+}
+
+/* =========================
    Project detail surfaces
    ========================= */
 

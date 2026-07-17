@@ -126,11 +126,9 @@ export default async function ProjectDetailsPage({ params }: Props) {
   );
 
   return (
-    <main className="pb-20 sm:pb-24 lg:pb-28">
+    <main className="project-detail-page pb-20 sm:pb-24 lg:pb-28">
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-border/60">
-        <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_top_left,rgba(59,130,246,0.10),transparent_22%),radial-gradient(circle_at_top_right,rgba(168,85,247,0.12),transparent_22%),radial-gradient(circle_at_bottom_center,rgba(34,211,238,0.08),transparent_28%)]" />
-
         <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
           <div className="grid gap-8 xl:grid-cols-12 xl:items-start">
             <StaggerContainer
@@ -239,13 +237,8 @@ export default async function ProjectDetailsPage({ params }: Props) {
         </div>
       </section>
 
-      <section className="relative isolate">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 z-0 bg-[radial-gradient(circle_at_8%_10%,rgba(59,130,246,0.045),transparent_38%),radial-gradient(circle_at_90%_35%,rgba(139,92,246,0.04),transparent_40%),radial-gradient(circle_at_15%_82%,rgba(245,158,11,0.025),transparent_42%)] dark:bg-[radial-gradient(circle_at_8%_10%,rgba(59,130,246,0.09),transparent_38%),radial-gradient(circle_at_90%_35%,rgba(139,92,246,0.08),transparent_40%),radial-gradient(circle_at_15%_82%,rgba(245,158,11,0.045),transparent_42%)]"
-        />
-
-        <div className="relative z-10 mx-auto max-w-7xl space-y-14 px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
+      <section>
+        <div className="mx-auto max-w-7xl space-y-14 px-4 py-14 sm:px-6 sm:py-16 lg:px-8 lg:py-20">
           {/* Overview + Tech */}
           <div className="grid gap-6 xl:grid-cols-12 xl:items-start">
             <SectionReveal className="h-full xl:col-span-5">
