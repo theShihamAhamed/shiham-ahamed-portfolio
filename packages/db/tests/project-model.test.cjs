@@ -8,7 +8,6 @@ const makeProject = (overrides = {}) =>
     title: "Project",
     slug: `project-${Math.random().toString(16).slice(2)}`,
     shortDescription: "Short description",
-    description: "Description",
     projectType: "full-stack-web-app",
     status: "completed",
     startDate: "2024-01",
@@ -74,6 +73,43 @@ test("empty end dates are unset and serializers never depend on stored year", as
   assert.equal(publicProject.startDate, "2024-01");
   assert.equal(Object.hasOwn(admin, "year"), false);
   assert.equal(Object.hasOwn(publicProject, "year"), false);
+});
+
+test("project serializers omit a legacy stored description property", async () => {
+  const project = makeProject();
+  project.set("description", "Legacy detail introduction", { strict: false });
+  await project.validate();
+
+  assert.equal(project.toObject().description, "Legacy detail introduction");
+  assert.equal(Object.hasOwn(db.serializeAdminProject(project), "description"), false);
+  assert.equal(Object.hasOwn(db.serializePublicProject(project), "description"), false);
+});
+
+test("project model enforces centralized content-density limits", async () => {
+  await makeProject({
+    shortDescription: "s".repeat(220),
+    overview: Array.from({ length: 3 }, () => "o".repeat(650)),
+    highlights: Array.from({ length: 7 }, () => "h".repeat(220)),
+    architecture: {
+      summary: "a".repeat(450),
+      points: Array.from({ length: 5 }, () => "p".repeat(180)),
+    },
+  }).validate();
+
+  const invalidProjects = [
+    makeProject({ shortDescription: "s".repeat(221) }),
+    makeProject({ overview: Array.from({ length: 4 }, () => "Overview") }),
+    makeProject({ overview: ["o".repeat(651)] }),
+    makeProject({ highlights: Array.from({ length: 8 }, () => "Highlight") }),
+    makeProject({ highlights: ["h".repeat(221)] }),
+    makeProject({ architecture: { summary: "a".repeat(451), points: [] } }),
+    makeProject({ architecture: { points: Array.from({ length: 6 }, () => "Point") } }),
+    makeProject({ architecture: { points: ["p".repeat(181)] } }),
+  ];
+
+  for (const project of invalidProjects) {
+    await assert.rejects(project.validate());
+  }
 });
 
 test("stored case study content is optional, bounded, and serialized", async () => {

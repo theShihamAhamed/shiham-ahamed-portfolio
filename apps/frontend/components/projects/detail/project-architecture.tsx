@@ -44,22 +44,22 @@ const ProjectArchitecture = ({ image, summary, points }: Props) => {
                 accent="warm"
               />
 
-              <div className="mt-5 flex flex-col gap-4">
+              <div className="mt-4 flex flex-col gap-3">
                 {summary ? (
-                  <p className="text-sm leading-7 text-muted-foreground sm:text-base">
+                  <p className="text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
                     {summary}
                   </p>
                 ) : null}
 
                 {points?.length ? (
-                  <ul className="space-y-3">
+                  <ul className="space-y-2.5">
                     {points.map((point) => (
                       <li key={point} className="flex items-start gap-3">
                         <span
                           aria-hidden="true"
                           className="project-detail-list-dot mt-[11px] size-1.5 shrink-0 rounded-full"
                         />
-                        <span className="text-sm leading-7 text-foreground">
+                        <span className="text-sm leading-6 text-foreground">
                           {point}
                         </span>
                       </li>

@@ -14,6 +14,7 @@ import {
   createEmptyTechGroup,
   createEmptyTechItem,
   createProjectDefaultValues,
+  getFirstFormErrorMessage,
   removeTechItemsAtIndexes,
   toCreateProjectInput,
   toProjectFormValues,
@@ -31,7 +32,6 @@ const formValues = {
   title: "Project",
   slug: "project",
   shortDescription: "Short project description",
-  description: "Detailed project introduction",
   projectType: "developer-tool",
   status: "in-progress",
   startDate: "2026-01",
@@ -88,6 +88,7 @@ test("create defaults contain no placeholder values or project year", () => {
   assert.equal(defaults.startDate, "");
   assert.equal(defaults.endDate, "");
   assert.equal("year" in defaults, false);
+  assert.equal("description" in defaults, false);
   assert.equal(JSON.stringify(defaults).includes("New group"), false);
 });
 
@@ -100,6 +101,7 @@ test("create adapter preserves the canonical slug and omits empty optional value
   assert.equal(input.projectType, "developer-tool");
   assert.equal(input.endDate, undefined);
   assert.equal("year" in input, false);
+  assert.equal("description" in input, false);
   assert.deepEqual(input.techStack, [
     { kind: "known", slug: "react", showOnCard: false },
   ]);
@@ -126,6 +128,7 @@ test("edit hydration and update adapter preserve values and explicit end clearin
   assert.equal(hydrated.endDate, "");
   assert.equal(hydrated.techStack[0].slug, "react");
   assert.equal("year" in hydrated, false);
+  assert.equal("description" in hydrated, false);
 
   const update = toUpdateProjectInput({
     ...hydrated,
@@ -134,6 +137,24 @@ test("edit hydration and update adapter preserve values and explicit end clearin
   assert.equal(update.endDate, "");
   assert.equal(update.projectType, "developer-tool");
   assert.equal("year" in update, false);
+  assert.equal("description" in update, false);
+});
+
+test("nested form errors resolve to the first actionable message", () => {
+  assert.equal(
+    getFirstFormErrorMessage({
+      0: { message: "First item is too long.", ref: { current: null } },
+      message: "List is invalid.",
+    }),
+    "List is invalid.",
+  );
+  assert.equal(
+    getFirstFormErrorMessage([
+      undefined,
+      { message: "Second item is too long." },
+    ]),
+    "Second item is too long.",
+  );
 });
 
 test("image validation accepts supported files and rejects type and size violations", () => {

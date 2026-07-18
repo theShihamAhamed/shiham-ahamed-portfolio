@@ -68,7 +68,6 @@ export type AdminProject = {
   title: string;
   slug: string;
   shortDescription: string;
-  description: string;
   projectType: ProjectType;
   status: ProjectStatus;
   startDate: string;
@@ -198,7 +197,6 @@ export type CreateProjectInput = {
   title: string;
   slug?: string;
   shortDescription: string;
-  description: string;
   projectType: ProjectType;
   status: ProjectStatus;
   startDate: string;
@@ -225,7 +223,6 @@ export type UpdateProjectInput = Partial<
     | "title"
     | "slug"
     | "shortDescription"
-    | "description"
     | "projectType"
     | "status"
     | "startDate"

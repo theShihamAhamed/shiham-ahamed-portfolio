@@ -1,7 +1,7 @@
 import type { ProjectStatus, ProjectType, ProjectTechStackItem, SiteSettingsEducation, SiteSettingsHero, StoredImageAsset } from "@portfolio/shared";
 
 export type ProjectEntity = {
-  title: string; slug: string; shortDescription: string; description: string; projectType: ProjectType;
+  title: string; slug: string; shortDescription: string; projectType: ProjectType;
   status: ProjectStatus; startDate: string; endDate?: string; videoUrl?: string; videoPosterUrl?: string;
   caseStudyMdx?: string;
   thumbnail: StoredImageAsset; gallery: StoredImageAsset[];

@@ -1,21 +1,41 @@
 import { model, models, Schema, type HydratedDocument, type Model } from "mongoose";
-import { CASE_STUDY_MDX_MAX_BYTES, getCaseStudyMdxValidationIssues, getProjectTimelineIssues, getUtf8ByteLength, isProjectMonth, PROJECT_TYPE_VALUES, projectStatuses, projectTechnologyListSchema, siteSettingsSingletonKey } from "@portfolio/shared";
+import { CASE_STUDY_MDX_MAX_BYTES, getCaseStudyMdxValidationIssues, getProjectTimelineIssues, getUtf8ByteLength, isProjectMonth, PROJECT_CONTENT_LIMITS, PROJECT_TYPE_VALUES, projectStatuses, projectTechnologyListSchema, siteSettingsSingletonKey } from "@portfolio/shared";
 import type { AchievementEntity, CertificationEntity, CurrentlyBuildingEntity, ProjectEntity, SiteSettingsEntity } from "./types";
 
 export const imageAssetSchema = new Schema({ url: { type: String, required: true, trim: true }, fileId: { type: String, required: true, trim: true }, alt: { type: String, required: true, trim: true }, width: { type: Number, min: 1 }, height: { type: Number, min: 1 }, name: { type: String, trim: true } }, { _id: false });
 const linksSchema = new Schema({ github: { type: String, trim: true }, liveDemo: { type: String, trim: true }, article: { type: String, trim: true } }, { _id: false });
-const architectureSchema = new Schema({ image: imageAssetSchema, summary: { type: String, trim: true }, points: [{ type: String, trim: true }] }, { _id: false });
+const architectureSchema = new Schema({
+  image: imageAssetSchema,
+  summary: {
+    type: String,
+    trim: true,
+    maxlength: [PROJECT_CONTENT_LIMITS.architectureSummary.maxCharacters, `Architecture summary must be ${PROJECT_CONTENT_LIMITS.architectureSummary.maxCharacters} characters or fewer.`],
+  },
+  points: {
+    type: [{
+      type: String,
+      required: [true, "Architecture point cannot be empty."],
+      trim: true,
+      maxlength: [PROJECT_CONTENT_LIMITS.architecturePoints.maxCharactersPerItem, `Architecture point must be ${PROJECT_CONTENT_LIMITS.architecturePoints.maxCharactersPerItem} characters or fewer.`],
+    }],
+    validate: {
+      validator: (value: unknown[]) => Array.isArray(value) && value.length <= PROJECT_CONTENT_LIMITS.architecturePoints.maxItems,
+      message: `Architecture can contain at most ${PROJECT_CONTENT_LIMITS.architecturePoints.maxItems} points.`,
+    },
+  },
+}, { _id: false });
 const techSchema = new Schema({ kind: { type: String, enum: ["known", "custom"], required: true }, slug: { type: String, required: true, trim: true }, label: { type: String, trim: true }, category: { type: String, trim: true }, color: { type: String, trim: true, match: /^#[0-9a-fA-F]{6}$/ }, showOnCard: { type: Boolean, required: true, default: false } }, { _id: false, strict: "throw" });
 const nonempty = (message: string) => ({ validator: (value: unknown[]) => Array.isArray(value) && value.length > 0, message });
+const atMost = (maximum: number, message: string) => ({ validator: (value: unknown[]) => Array.isArray(value) && value.length <= maximum, message });
 
 export const projectSchema = new Schema<ProjectEntity>({
   title: { type: String, required: true, trim: true }, slug: { type: String, required: true, unique: true, trim: true, lowercase: true },
-  shortDescription: { type: String, required: true, trim: true }, description: { type: String, required: true, trim: true }, projectType: { type: String, enum: PROJECT_TYPE_VALUES, required: true, trim: true },
+  shortDescription: { type: String, required: true, trim: true, maxlength: [PROJECT_CONTENT_LIMITS.shortDescription.maxCharacters, `Card description must be ${PROJECT_CONTENT_LIMITS.shortDescription.maxCharacters} characters or fewer.`] }, projectType: { type: String, enum: PROJECT_TYPE_VALUES, required: true, trim: true },
   status: { type: String, enum: projectStatuses, required: true }, startDate: { type: String, required: true, trim: true, validate: { validator: isProjectMonth, message: "Start date must use YYYY-MM format." } }, endDate: { type: String, trim: true, set: (value: unknown) => typeof value === "string" && value.trim().length === 0 ? undefined : value, validate: { validator: (value: unknown) => value === undefined || isProjectMonth(value), message: "End date must use YYYY-MM format." } },
   videoUrl: { type: String, trim: true }, videoPosterUrl: { type: String, trim: true }, caseStudyMdx: { type: String, trim: true, set: (value: unknown) => typeof value === "string" && value.trim().length === 0 ? undefined : value, validate: { validator: (value: unknown) => value === undefined || (typeof value === "string" && getCaseStudyMdxValidationIssues(value).length === 0), message: `Case study content must be valid restricted Markdown and at most ${CASE_STUDY_MDX_MAX_BYTES} UTF-8 bytes.` } }, thumbnail: { type: imageAssetSchema, required: true },
   gallery: { type: [imageAssetSchema], required: true, validate: nonempty("A project must have at least one gallery image") }, architecture: { type: architectureSchema, default: undefined }, links: { type: linksSchema, default: undefined },
-  techStack: { type: [techSchema], required: true, validate: [{ validator: (value: unknown[]) => Array.isArray(value) && value.length > 0, message: "A project must have at least one tech stack item" }, { validator: (value: unknown[]) => projectTechnologyListSchema.safeParse(value.map((item: any) => typeof item?.toObject === "function" ? item.toObject() : item)).success, message: "Technology stack contains invalid or duplicate items" }] }, overview: { type: [{ type: String, trim: true }], required: true, validate: nonempty("A project must have at least one overview paragraph") },
-  highlights: { type: [{ type: String, trim: true }], required: true, validate: nonempty("A project must have at least one highlight") }, challenges: [{ type: String, trim: true }], futureImprovements: [{ type: String, trim: true }],
+  techStack: { type: [techSchema], required: true, validate: [{ validator: (value: unknown[]) => Array.isArray(value) && value.length > 0, message: "A project must have at least one tech stack item" }, { validator: (value: unknown[]) => projectTechnologyListSchema.safeParse(value.map((item: any) => typeof item?.toObject === "function" ? item.toObject() : item)).success, message: "Technology stack contains invalid or duplicate items" }] }, overview: { type: [{ type: String, required: [true, "Overview paragraph cannot be empty."], trim: true, maxlength: [PROJECT_CONTENT_LIMITS.overview.maxCharactersPerItem, `Overview paragraph must be ${PROJECT_CONTENT_LIMITS.overview.maxCharactersPerItem} characters or fewer.`] }], required: true, validate: [nonempty("Add at least 1 overview paragraph."), atMost(PROJECT_CONTENT_LIMITS.overview.maxItems, `Overview can contain at most ${PROJECT_CONTENT_LIMITS.overview.maxItems} paragraphs.`)] },
+  highlights: { type: [{ type: String, required: [true, "Highlight cannot be empty."], trim: true, maxlength: [PROJECT_CONTENT_LIMITS.highlights.maxCharactersPerItem, `Highlight must be ${PROJECT_CONTENT_LIMITS.highlights.maxCharactersPerItem} characters or fewer.`] }], required: true, validate: [nonempty("Add at least 1 highlight."), atMost(PROJECT_CONTENT_LIMITS.highlights.maxItems, `Highlights can contain at most ${PROJECT_CONTENT_LIMITS.highlights.maxItems} items.`)] }, challenges: [{ type: String, trim: true }], futureImprovements: [{ type: String, trim: true }],
   isFeatured: { type: Boolean, default: false }, isVisible: { type: Boolean, default: true }, displayOrder: { type: Number, required: true },
 }, { timestamps: true, versionKey: false });
 projectSchema.pre("validate", function () {

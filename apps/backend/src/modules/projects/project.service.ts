@@ -166,7 +166,6 @@ const buildProjectFilter = (
       { title: searchRegex },
       { slug: searchRegex },
       { shortDescription: searchRegex },
-      { description: searchRegex },
       { "techStack.label": searchRegex },
     ];
   }

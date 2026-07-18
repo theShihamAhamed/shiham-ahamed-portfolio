@@ -3,6 +3,7 @@ export * from "./cache-tags";
 export * from "./case-study";
 export * from "./contracts";
 export * from "./form-schemas";
+export * from "./projects/project-content";
 export * from "./projects/project-dates";
 export * from "./projects/project-statuses";
 export * from "./projects/project-types";

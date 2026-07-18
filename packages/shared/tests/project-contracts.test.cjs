@@ -6,7 +6,6 @@ const shared = require("../dist");
 const baseProject = {
   title: "Project",
   shortDescription: "Short description",
-  description: "Description",
   projectType: "full-stack-web-app",
   status: "completed",
   startDate: "2024-01",
@@ -150,6 +149,67 @@ test("strict API schemas reject legacy year and normalize clearable end dates", 
 
   assert.equal(Object.hasOwn(cleared, "endDate"), true);
   assert.equal(cleared.endDate, undefined);
+});
+
+test("project contracts reject the removed description property", () => {
+  assert.equal(
+    shared.createProjectSchema.safeParse({
+      ...baseProject,
+      description: "Removed detail introduction",
+    }).success,
+    false,
+  );
+  assert.equal(
+    shared.updateProjectSchema.safeParse({
+      description: "Removed detail introduction",
+    }).success,
+    false,
+  );
+});
+
+test("centralized project content limits accept boundaries and reject overflow", () => {
+  const limits = shared.PROJECT_CONTENT_LIMITS;
+
+  assert.equal(limits.shortDescription.maxCharacters, 220);
+  assert.equal(limits.overview.maxItems, 3);
+  assert.equal(limits.overview.maxCharactersPerItem, 650);
+  assert.equal(limits.highlights.maxItems, 7);
+  assert.equal(limits.highlights.maxCharactersPerItem, 220);
+  assert.equal(limits.architectureSummary.maxCharacters, 450);
+  assert.equal(limits.architecturePoints.maxItems, 5);
+  assert.equal(limits.architecturePoints.maxCharactersPerItem, 180);
+
+  assert.equal(
+    shared.createProjectSchema.safeParse({
+      ...baseProject,
+      shortDescription: "s".repeat(220),
+      overview: Array.from({ length: 3 }, () => "o".repeat(650)),
+      highlights: Array.from({ length: 7 }, () => "h".repeat(220)),
+      architecture: {
+        summary: "a".repeat(450),
+        points: Array.from({ length: 5 }, () => "p".repeat(180)),
+      },
+    }).success,
+    true,
+  );
+
+  const invalidCases = [
+    { shortDescription: "s".repeat(221) },
+    { overview: Array.from({ length: 4 }, () => "Overview") },
+    { overview: ["o".repeat(651)] },
+    { highlights: Array.from({ length: 8 }, () => "Highlight") },
+    { highlights: ["h".repeat(221)] },
+    { architecture: { summary: "a".repeat(451), points: [] } },
+    { architecture: { points: Array.from({ length: 6 }, () => "Point") } },
+    { architecture: { points: ["p".repeat(181)] } },
+  ];
+
+  for (const overrides of invalidCases) {
+    assert.equal(
+      shared.createProjectSchema.safeParse({ ...baseProject, ...overrides }).success,
+      false,
+    );
+  }
 });
 
 test("media schemas reject obsolete seed identifiers and accept real file ids", () => {

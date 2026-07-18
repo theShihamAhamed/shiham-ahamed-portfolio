@@ -6,6 +6,13 @@ import {
   projectTypeSchema,
 } from "./api-schemas";
 import { compareProjectMonths, isProjectMonth } from "./projects/project-dates";
+import {
+  projectArchitecturePointsSchema,
+  projectArchitectureSummaryTextSchema,
+  projectHighlightsSchema,
+  projectOverviewSchema,
+  projectShortDescriptionSchema,
+} from "./projects/project-content";
 import { projectTechnologySchema } from "./technologies/technology-schemas";
 import { caseStudyMdxSchema } from "./case-study";
 
@@ -35,13 +42,13 @@ export const projectTechStackItemSchema = projectTechnologySchema;
 
 export const createProjectFormSchema = z.object({
   title: required("Title is required."), slug: z.preprocess(emptyToUndefined, z.string().trim().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase kebab-case.").optional()),
-  shortDescription: required("Card Description is required."), description: required("Detail Intro is required."), projectType: projectTypeSchema, status: projectStatusSchema,
+  shortDescription: projectShortDescriptionSchema, projectType: projectTypeSchema, status: projectStatusSchema,
   startDate: projectMonthSchema, endDate: optionalProjectMonth,
   videoUrl: optionalYouTubeUrl, videoPosterUrl: optionalHttpUrl, thumbnail: imageAssetSchema.optional().refine(Boolean, { message: "Thumbnail image is required." }),
   caseStudyMdx: caseStudyMdxSchema.default(""),
-  gallery: z.array(imageAssetSchema).min(1, "At least one gallery image is required."), architecture: z.object({ image: imageAssetSchema.optional(), summary: optionalString, points: stringList }),
+  gallery: z.array(imageAssetSchema).min(1, "At least one gallery image is required."), architecture: z.object({ image: imageAssetSchema.optional(), summary: z.preprocess(emptyToUndefined, projectArchitectureSummaryTextSchema.optional()), points: projectArchitecturePointsSchema }),
   links: z.object({ github: optionalHttpUrl, liveDemo: optionalHttpUrl, article: optionalHttpUrl }), techStack: z.array(projectTechStackItemSchema).min(1, "At least one tech stack item is required."),
-  overview: requiredList("At least one overview paragraph is required."), highlights: requiredList("At least one highlight is required."), challenges: stringList, futureImprovements: stringList,
+  overview: projectOverviewSchema, highlights: projectHighlightsSchema, challenges: stringList, futureImprovements: stringList,
   isFeatured: z.boolean(), isVisible: z.boolean(),
 }).superRefine((value, context) => {
   if (value.status === "completed" && !value.endDate) {
@@ -59,11 +66,11 @@ export const createProjectFormSchema = z.object({
 
 export const updateProjectFormSchema = z.object({
   title: required("Title is required."), slug: z.string().trim().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/, "Slug must be lowercase kebab-case."),
-  shortDescription: required("Card Description is required."), description: required("Detail Intro is required."), projectType: projectTypeSchema, status: projectStatusSchema,
+  shortDescription: projectShortDescriptionSchema, projectType: projectTypeSchema, status: projectStatusSchema,
   startDate: projectMonthSchema, endDate: clearableProjectMonth, videoUrl: clearableYouTubeUrl, videoPosterUrl: clearableHttpUrl,
   caseStudyMdx: caseStudyMdxSchema.default(""),
   links: z.object({ github: clearableHttpUrl, liveDemo: clearableHttpUrl, article: clearableHttpUrl }), techStack: z.array(projectTechStackItemSchema).min(1, "At least one tech stack item is required."),
-  overview: requiredList("At least one overview paragraph is required."), highlights: requiredList("At least one highlight is required."), architecture: z.object({ summary: z.string().trim(), points: stringList }), challenges: stringList, futureImprovements: stringList,
+  overview: projectOverviewSchema, highlights: projectHighlightsSchema, architecture: z.object({ summary: projectArchitectureSummaryTextSchema, points: projectArchitecturePointsSchema }), challenges: stringList, futureImprovements: stringList,
 }).superRefine((value, context) => {
   if (value.status === "completed" && !value.endDate) {
     context.addIssue({ code: "custom", path: ["endDate"], message: "End date is required for completed projects." });

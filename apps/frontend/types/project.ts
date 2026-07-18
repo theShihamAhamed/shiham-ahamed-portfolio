@@ -39,8 +39,16 @@ export type QuickFact = {
   value: string;
 };
 
-export type TechGroups = {
-  [key: string]: Array<ProjectTag | string> | undefined;
+export type ProjectTechDisplayGroup = {
+  key:
+    | "frontend"
+    | "backend"
+    | "database-storage"
+    | "cloud-platform"
+    | "languages"
+    | "tools-other";
+  label: string;
+  items: ProjectTag[];
 };
 
 export type Project = {
@@ -50,7 +58,6 @@ export type Project = {
   tagline?: string;
 
   shortDescription: string;
-  longDescription: string;
 
   thumbnail: string;
   videoUrl?: string;
@@ -73,7 +80,7 @@ export type Project = {
 
   overview: string[];
   highlights: string[];
-  techGroups: TechGroups;
+  techGroups: ProjectTechDisplayGroup[];
   gallery: ProjectGalleryItem[];
 
   architectureImage?: string;

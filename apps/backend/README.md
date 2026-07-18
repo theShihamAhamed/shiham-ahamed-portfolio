@@ -200,10 +200,19 @@ Project field usage:
 
 | Field | Usage |
 | --- | --- |
-| `shortDescription` | Project cards. |
-| `description` | Project detail intro. |
-| `overview` | Long case-study paragraphs. |
+| `shortDescription` | Project cards, project-detail hero, and SEO metadata. |
+| `overview` | Deeper project-detail explanation. |
 | `highlights` | Key feature bullets. |
+
+Project content-density limits are centralized in `@portfolio/shared` and enforced by admin forms, API schemas, and the database model:
+
+- `shortDescription`: at most 220 characters; 120–180 is recommended.
+- `overview`: 1–3 paragraphs, at most 650 characters each; 2–3 is recommended.
+- `highlights`: 1–7 items, at most 220 characters each; about 5 is recommended.
+- Architecture summary: at most 450 characters; 2–3 concise sentences are recommended.
+- Architecture points: at most 5 items and 180 characters each; 3–5 is recommended.
+
+The removed project `description` property is not accepted by strict create/update schemas and has no compatibility alias. Previously stored copies are ignored by serializers; no migration or production-data mutation is required. Audit older project content against the new limits before editing and resaving it.
 
 Project slugs are generated from `title` on create unless a valid unique slug is supplied. Slugs can be edited manually later, but changing `title` does not auto-change the slug.
 
@@ -292,7 +301,6 @@ MongoDB transactions are used where appropriate. If the local MongoDB server doe
 {
   "title": "Smart Healthcare Platform",
   "shortDescription": "A patient management dashboard for clinics.",
-  "description": "A full-stack healthcare platform with appointment and patient workflows.",
   "projectType": "full-stack-web-app",
   "status": "completed",
   "startDate": "2026-01",

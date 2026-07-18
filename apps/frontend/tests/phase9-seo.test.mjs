@@ -13,6 +13,10 @@ test("public SEO routes and canonical metadata are present", () => {
   assert.match(read("apps/frontend/app/robots.ts"), /sitemap/);
   assert.match(read("apps/frontend/app/page.tsx"), /application\/ld\+json|StructuredData/);
   assert.match(read("apps/frontend/app/projects/[slug]/page.tsx"), /generateMetadata/);
+  assert.match(
+    read("apps/frontend/app/projects/[slug]/page.tsx"),
+    /getMetadataDescription\(project\.shortDescription\)/,
+  );
 });
 
 test("SEO output excludes internal routes and admin indexing", () => {
