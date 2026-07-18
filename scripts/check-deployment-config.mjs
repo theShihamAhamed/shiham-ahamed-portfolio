@@ -12,6 +12,7 @@ const examples = {
   "apps/frontend/.env.example": [
     "MONGO_URI",
     "NEXT_PUBLIC_SITE_URL",
+    "MANUAL_REVALIDATE_URL",
     "REVALIDATE_SECRET",
     "RESEND_API_KEY",
     "CONTACT_TO_EMAIL",
@@ -21,6 +22,7 @@ const examples = {
   "apps/backend/.env.example": [
     "MONGO_URI",
     "ADMIN_FRONTEND_ORIGINS",
+    "ALLOW_VERCEL_PREVIEW_ORIGINS",
     "PUBLIC_FRONTEND_URL",
     "JWT_ACCESS_SECRET",
     "JWT_REFRESH_SECRET",
@@ -88,11 +90,16 @@ if (
 if (!/key:\s*AUTH_COOKIE_SECURE\s*\r?\n\s+value:\s*["']true["']/.test(render)) {
   fail("Render must keep AUTH_COOKIE_SECURE=true");
 }
+if (!/key:\s*ALLOW_VERCEL_PREVIEW_ORIGINS\s*\r?\n\s+sync:\s*false/.test(render)) {
+  fail("Render must leave Vercel preview-origin access deployment-specific");
+}
 
 const deploymentGuide = read("docs/deployment-guide.md");
 if (
   !deploymentGuide.includes("AUTH_COOKIE_SAME_SITE=none") ||
   !deploymentGuide.includes("AUTH_COOKIE_SAME_SITE=lax") ||
+  !deploymentGuide.includes("ALLOW_VERCEL_PREVIEW_ORIGINS") ||
+  !deploymentGuide.includes("temporary") ||
   !deploymentGuide.includes("provider-domain") ||
   !deploymentGuide.includes("custom-domain")
 ) {

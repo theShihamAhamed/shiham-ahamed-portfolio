@@ -22,6 +22,19 @@ Set `NEXT_PUBLIC_SITE_URL` to the canonical public URL. It is intentionally
 browser-readable and powers metadata, canonical links, sitemap, robots, and
 structured data.
 
+For the root manual cache command, add these server/operator-only values to the
+ignored `apps/frontend/.env.local` file:
+
+```env
+MANUAL_REVALIDATE_URL=http://localhost:3000/api/revalidate
+REVALIDATE_SECRET=<matching-local-secret>
+```
+
+With the public frontend running, `npm run cache:revalidate` invalidates every
+tag in the shared `PUBLIC_CACHE_GROUPS.all` collection. The script prints its
+target but never the secret. Pointing it at production performs a real
+production invalidation; automatic CRUD invalidation remains separate.
+
 ## Run
 
 From the repository root:

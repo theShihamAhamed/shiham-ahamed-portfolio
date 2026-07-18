@@ -26,6 +26,7 @@ The API defaults to `http://localhost:5000`.
 | `PORT` | API port. Defaults to `5000`. |
 | `MONGO_URI` | MongoDB connection string. |
 | `ADMIN_FRONTEND_ORIGINS` | Comma-separated exact browser origins allowed for credentialed admin CORS. |
+| `ALLOW_VERCEL_PREVIEW_ORIGINS` | Temporary opt-in for valid HTTPS `*.vercel.app` origins. Defaults to `false`. |
 | `PUBLIC_FRONTEND_URL` | Canonical public frontend URL used by deployment operations. |
 | `ADMIN_EMAIL` | Single admin login email. |
 | `ADMIN_PASSWORD_HASH` | Bcrypt hash for the single admin password. |
@@ -43,6 +44,19 @@ The API defaults to `http://localhost:5000`.
 | `AUTH_COOKIE_SECURE` | Must be `true` in production and whenever SameSite is `none`. |
 | `AUTH_COOKIE_DOMAIN` | Optional hostname-only cookie domain. |
 | `TRUST_PROXY` | Whether the deployed Render proxy is trusted for secure-cookie and client-IP handling. |
+
+Exact origins in `ADMIN_FRONTEND_ORIGINS` are always allowed. Setting
+`ALLOW_VERCEL_PREVIEW_ORIGINS=true` additionally allows any valid HTTPS
+subdomain with the exact `.vercel.app` hostname boundary. This broad,
+credentialed policy is an intentional temporary preview convenience and
+affects every request handled by the backend process, including production
+traffic. It should later be replaced with a narrower project/account matcher.
+The backend never uses `Access-Control-Allow-Origin: *`.
+
+Preview CORS does not change refresh-cookie behavior. A Vercel admin calling a
+Render provider domain generally needs `AUTH_COOKIE_SAME_SITE=none`,
+`AUTH_COOKIE_SECURE=true`, and no cookie domain. Browser third-party-cookie
+blocking can still prevent session restoration even when CORS succeeds.
 
 Generate strong JWT secrets:
 

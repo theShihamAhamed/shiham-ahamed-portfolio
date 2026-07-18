@@ -9,11 +9,15 @@ export {
   PUBLIC_CACHE_GROUPS,
   PUBLIC_CACHE_TAGS,
   PUBLIC_CACHE_TAG_VALUES,
+  manualPublicRevalidationRequestSchema,
+  publicRevalidationOperationSchema,
   publicRevalidationRequestSchema,
 } from "@portfolio/shared";
 export type {
+  ManualPublicRevalidationRequest,
   ProjectDetailCacheTag,
   PublicCacheGroup,
   PublicCacheTag,
+  PublicRevalidationOperation,
   PublicRevalidationRequest,
 } from "@portfolio/shared";

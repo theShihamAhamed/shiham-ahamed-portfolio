@@ -41,11 +41,14 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 - [ ] Render startup uses the pinned Node 20.20.2 build/runtime configuration and `/api/health/ready` becomes ready after cold start.
 - [ ] Allowed CORS origin succeeds with credentials.
 - [ ] Denied CORS origin is rejected.
+- [ ] With `ALLOW_VERCEL_PREVIEW_ORIGINS=false`, an unconfigured Vercel preview origin is rejected while exact origins continue to work.
+- [ ] During an approved enabled window, two HTTPS Vercel preview origins pass preflight while HTTP, custom-port, bare-provider, deceptive-suffix, malformed, and unrelated origins remain denied.
 - [ ] Cookie attributes match the selected domain mode.
 - [ ] Provider-domain mode uses the exact admin origin, `SameSite=None`, `Secure=true`, and no cookie domain.
 - [ ] Custom-domain mode uses `SameSite=Lax`, `Secure=true`, and no cookie domain unless explicitly required.
 - [ ] Login, refresh, logout, and revoked-session behavior is correct.
 - [ ] Login, page refresh, token refresh, and logout remain correct after the selected cookie mode is configured.
+- [ ] Any preview refresh failure is classified as CORS or browser third-party-cookie policy rather than conflating the two.
 - [ ] Login, refresh, admin, and upload rate limits respond safely.
 - [ ] JSON, multipart, and upload-size limits are enforced.
 - [ ] Provider failures return sanitized errors.
@@ -53,6 +56,7 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 
 ## Integration
 
+- [ ] From a non-production operator environment, `npm run cache:revalidate` reports every shared all-group tag without exposing its secret; no production target is used without approval.
 - [ ] An admin project write appears publicly after bounded revalidation.
 - [ ] Project slug changes invalidate both old and new detail URLs.
 - [ ] Home/list/detail cache refreshes after relevant mutations.
