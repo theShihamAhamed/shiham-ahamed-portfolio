@@ -95,11 +95,32 @@ const requiredWorkspaces = [
 for (const file of requiredWorkspaces) {
   if (!exists(file)) fail("Missing workspace manifest: " + file);
 }
-for (const script of ["lint", "typecheck", "test", "check:assets", "check:deployment", "build", "validate", "check:release"]) {
+for (const script of ["lint", "typecheck", "test", "check:assets", "check:deployment", "build", "validate", "check:release", "cache:revalidate"]) {
   if (typeof rootPackage.scripts?.[script] !== "string") fail("Missing root script: " + script);
 }
 if (Object.keys(rootPackage.scripts).some((name) => name.includes("seed"))) {
   fail("Obsolete root seed script remains.");
+}
+
+const manualRevalidationScript = "scripts/revalidate-public-cache.mjs";
+if (!exists(manualRevalidationScript)) {
+  fail("Missing manual public-cache revalidation script.");
+}
+if (
+  rootPackage.scripts["cache:revalidate"] !==
+  "node --env-file=apps/frontend/.env.local scripts/revalidate-public-cache.mjs"
+) {
+  fail("Manual cache command must load the ignored frontend environment file.");
+}
+for (const pattern of [
+  /MANUAL_REVALIDATE_URL/,
+  /REVALIDATE_SECRET/,
+  /group:\s*["']all["']/,
+  /redirect:\s*["']error["']/,
+]) {
+  if (!pattern.test(read(manualRevalidationScript))) {
+    fail("Manual cache script is missing a required protected request contract.");
+  }
 }
 
 const backendPackage = JSON.parse(read("apps/backend/package.json"));
@@ -202,6 +223,19 @@ for (const file of [
 }
 if (!sourceText.includes("FRONTEND_REVALIDATE_URL") || !sourceText.includes("FRONTEND_REVALIDATE_SECRET")) {
   fail("Cache revalidation environment configuration is missing from active source.");
+}
+requireText(
+  "apps/backend/src/config/env.ts",
+  /ALLOW_VERCEL_PREVIEW_ORIGINS:\s*booleanEnv\.default\(false\)/,
+  "Vercel preview-origin access must default to false.",
+);
+requireText(
+  "apps/backend/src/config/cors.ts",
+  /hostname\.endsWith\(VERCEL_PREVIEW_HOST_SUFFIX\)/,
+  "Vercel preview origins must use the hostname-boundary matcher.",
+);
+if (/origin\s*:\s*["']\*["']/.test(read("apps/backend/src/config/cors.ts"))) {
+  fail("Credentialed CORS must not use a wildcard origin.");
 }
 for (const pattern of [/raw\.githubusercontent\.com/, /\bmdxUrl\b/, /NEXT_PUBLIC_MONGO_URI/, /hardcoded-production-domain-placeholder/]) {
   if (pattern.test(sourceText)) fail("Forbidden stale/release-risk source match: " + pattern);

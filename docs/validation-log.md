@@ -794,3 +794,11 @@ Read-only file/package/source searches and final docs-only consistency checks
 - Confirmed PR #2’s remaining deployment issue: Render hardcoded `AUTH_COOKIE_SAME_SITE=lax` while the current Vercel-to-Render provider domains are cross-site.
 - Changed the Blueprint to `AUTH_COOKIE_SAME_SITE: sync: false` while retaining `AUTH_COOKIE_SECURE=true`, allowing provider-domain `none` and future custom-domain `lax` configuration without hardcoding either deployment permanently.
 - Added deployment regression checks and explicit provider/custom-domain documentation covering exact origins, no wildcards, no trailing slash, Secure cookies, unset cookie domain, and authentication smoke tests.
+
+## Manual cache revalidation and temporary Vercel preview CORS
+
+- Local runtime: Node `22.16.0`, npm `10.9.2`. No installed Node-version manager was available, and the Docker daemon was stopped, so exact local Node 20.20.2 execution was unavailable; GitHub Actions remains the authoritative supported-Node gate.
+- Focused validation passed: shared 27/27; backend 33/33, including existing automatic cache invalidation and mutation-controller coverage; frontend cache/CLI contract 23/23. Deployment, release-candidate, public-asset, full typecheck, and full lint checks passed.
+- `npm run build` passed all package, public frontend, admin frontend, and backend builds. Public page generation logged local MongoDB DNS lookup failures and rendered the existing fallback states; the build exited successfully.
+- `npm run validate` passed all typechecks, all lints, shared 27/27, and DB 7/7 before the unchanged Node 22/`tsx` named-export loader mismatch stopped the admin suite at 8/9. The separate full frontend suite reached 46/48 before the same known loader mismatch affected `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs`.
+- No production cache request or live manual cache request was sent. No environment file/provider value, database record, migration, deployment, production data, or authentication cookie policy was changed. Browser CORS/authentication and localhost manual-network QA remain pending.

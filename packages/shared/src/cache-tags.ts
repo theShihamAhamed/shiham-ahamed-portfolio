@@ -130,12 +130,35 @@ export type PublicRevalidationRequest = z.infer<
   typeof publicRevalidationRequestSchema
 >;
 
+export const manualPublicRevalidationRequestSchema = z
+  .object({
+    group: z.literal("all"),
+  })
+  .strict();
+
+export type ManualPublicRevalidationRequest = z.infer<
+  typeof manualPublicRevalidationRequestSchema
+>;
+
+export const publicRevalidationOperationSchema = z.union([
+  publicRevalidationRequestSchema,
+  manualPublicRevalidationRequestSchema,
+]);
+
+export type PublicRevalidationOperation = z.infer<
+  typeof publicRevalidationOperationSchema
+>;
+
 const unique = (tags: PublicCacheTag[]): PublicCacheTag[] =>
   Array.from(new Set(tags));
 
 export const getPublicCacheTagsForRevalidation = (
-  request: PublicRevalidationRequest,
+  request: PublicRevalidationOperation,
 ): PublicCacheTag[] => {
+  if ("group" in request) {
+    return unique([...PUBLIC_CACHE_GROUPS[request.group]]);
+  }
+
   switch (request.entity) {
     case "project": {
       const detailTags = [

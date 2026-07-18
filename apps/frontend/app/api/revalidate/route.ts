@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getRevalidateSecret } from "@/lib/server/env";
 import {
   getPublicCacheTagsForRevalidation,
-  publicRevalidationRequestSchema,
+  publicRevalidationOperationSchema,
 } from "@/lib/server/cache/cache-tags";
 
 export const runtime = "nodejs";
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     return jsonError(400, "INVALID_JSON", "Please send a valid JSON body.");
   }
 
-  const parsed = publicRevalidationRequestSchema.safeParse(body);
+  const parsed = publicRevalidationOperationSchema.safeParse(body);
   if (!parsed.success) {
     return NextResponse.json(
       {
@@ -107,22 +107,34 @@ export async function POST(request: NextRequest) {
     const tags = getPublicCacheTagsForRevalidation(parsed.data);
     tags.forEach((tag) => revalidateTag(tag, { expire: 0 }));
 
+    const operationMetadata = "group" in parsed.data
+      ? { group: parsed.data.group }
+      : {
+          entity: parsed.data.entity,
+          action: parsed.data.action,
+        };
+
     return NextResponse.json(
       {
         success: true,
         revalidated: {
-          entity: parsed.data.entity,
-          action: parsed.data.action,
+          ...operationMetadata,
           tags,
         },
       },
       { headers: noStoreHeaders },
     );
   } catch (error) {
+    const operationMetadata = "group" in parsed.data
+      ? { group: parsed.data.group }
+      : {
+          entity: parsed.data.entity,
+          action: parsed.data.action,
+        };
+
     console.error("Public cache revalidation failed internally", {
       event: "public_cache_invalidation",
-      entity: parsed.data.entity,
-      action: parsed.data.action,
+      ...operationMetadata,
       error: error instanceof Error ? error.name : "unknown_error",
     });
     return jsonError(

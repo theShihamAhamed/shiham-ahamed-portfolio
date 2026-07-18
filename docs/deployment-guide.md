@@ -54,8 +54,10 @@ root lockfile. Public server-only values belong only to the public project:
 project must never receive MongoDB, JWT, ImageKit private, or revalidation
 secrets.
 
-Preview deployments should use explicit preview origins and a non-production
-canonical URL policy. Do not allow arbitrary `*.vercel.app` origins.
+Preview deployments should use a non-production canonical URL policy. Keep the
+permanent admin origin explicit; a temporary backend flag can additionally
+allow valid HTTPS `*.vercel.app` preview origins when that accepted trade-off is
+needed.
 
 ## Render backend
 
@@ -67,6 +69,8 @@ dependencies are therefore available for the build while the compiled backend
 starts with `npm run start --workspace=@portfolio/backend`. Configure the exact
 admin origin list, public URL, secrets, ImageKit values, and matching
 revalidation values in Render. The health check is `/api/health/ready`.
+`ALLOW_VERCEL_PREVIEW_ORIGINS` remains deployment-specific (`sync: false`) and
+defaults to disabled in application code.
 
 Production backend startup requires both `FRONTEND_REVALIDATE_URL` and
 `FRONTEND_REVALIDATE_SECRET`. The URL must be HTTP(S) and end at
@@ -83,7 +87,16 @@ Render proxy; local development remains false.
 
 Set `ADMIN_FRONTEND_ORIGINS` to comma-separated exact origins, including
 protocol and port where applicable. Credentials are enabled only for those
-origins. Wildcards and arbitrary provider subdomains are not accepted.
+origins. Exact origins remain the permanent baseline and are always evaluated.
+
+`ALLOW_VERCEL_PREVIEW_ORIGINS=false` preserves that exact-only behavior. When
+temporarily set to `true`, the same credentialed backend process additionally
+accepts any valid HTTPS origin whose hostname has the exact `.vercel.app`
+boundary. HTTP, custom ports, bare `vercel.app`, deceptive suffixes, and
+unrelated domains remain denied. This intentionally broad policy affects all
+traffic handled by the shared backend, including production traffic; it should
+later be replaced with a narrower project/account matcher. CORS never uses
+`origin: "*"`.
 
 The Render Blueprint leaves `AUTH_COOKIE_SAME_SITE` as `sync: false` so the
 deployment owner selects the mode for the active domains. For the current
@@ -92,13 +105,17 @@ API), configure:
 
 ```env
 ADMIN_FRONTEND_ORIGINS=https://<exact-admin-vercel-domain>
+ALLOW_VERCEL_PREVIEW_ORIGINS=false
 AUTH_COOKIE_SAME_SITE=none
 AUTH_COOKIE_SECURE=true
 AUTH_COOKIE_DOMAIN=
 ```
 
-The exact admin origin is required: do not use a `*.vercel.app` wildcard and do
-not include a trailing slash. `SameSite=None` requires `Secure=true`.
+Keep the exact production admin origin without a trailing slash. Enable the
+preview flag only for a controlled preview window and disable it afterward.
+`SameSite=None` requires `Secure=true`. Browser third-party-cookie blocking can
+still prevent refresh-cookie restoration even when CORS is configured
+correctly; diagnose that separately from a failed CORS preflight.
 
 For the future custom-domain deployment, configure:
 
@@ -112,6 +129,24 @@ AUTH_COOKIE_DOMAIN=
 Change the cookie mode when moving between provider-domain and custom-domain
 deployments. Leave `AUTH_COOKIE_DOMAIN` unset unless a shared cookie domain is
 explicitly required.
+
+## Manual public-cache revalidation
+
+For local operator use, place these values only in the ignored
+`apps/frontend/.env.local` file:
+
+```env
+MANUAL_REVALIDATE_URL=http://localhost:3000/api/revalidate
+REVALIDATE_SECRET=<matching-local-secret>
+```
+
+Start the public frontend, then run `npm run cache:revalidate` from the
+repository root. The command sends strict `{ "group": "all" }` input and the
+frontend derives the returned tags from `PUBLIC_CACHE_GROUPS.all`; it does not
+accept arbitrary tags or paths. The script prints the target and invalidated
+tags without printing the secret. Deliberately review the target because a
+production URL performs real production cache invalidation. Automatic backend
+CRUD invalidation remains on the existing entity/action contract.
 
 ## MongoDB Atlas
 
@@ -170,8 +205,9 @@ plan exists.
   access, and the public server logs.
 - Admin login blocked: compare the exact admin origin, cookie mode, secure flag,
   proxy trust, API URL, and browser credentials behavior.
-- Stale public content: inspect the revalidation URL/secret pair and the
-  operation-specific endpoint response; do not use arbitrary tag invalidation.
+- Stale public content: inspect the revalidation URL/secret pair and the strict
+  automatic or manual-group endpoint response; do not use arbitrary tag/path
+  invalidation.
 - Upload failures: check ImageKit keys, folder permissions, MIME/size limits,
   and the backend logs without printing request bodies or keys.
 

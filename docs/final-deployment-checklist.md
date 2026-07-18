@@ -54,7 +54,8 @@ during Phase 10. Do not place credentials in this file.
 - [ ] Confirm the exact build command is `npm ci --include=dev && npm run build:packages && npm run build:backend`.
 - [ ] Confirm `NODE_VERSION=20.20.2` is set before `NODE_ENV=production`.
 - [ ] Configure the exact ADMIN_FRONTEND_ORIGINS list.
-- [ ] For the current provider-domain deployment, set the exact admin Vercel origin with no wildcard or trailing slash and use `AUTH_COOKIE_SAME_SITE=none`.
+- [ ] Confirm `ALLOW_VERCEL_PREVIEW_ORIGINS=false` unless a controlled temporary preview window explicitly requires broad HTTPS `*.vercel.app` access.
+- [ ] For the current provider-domain deployment, set the exact admin Vercel origin with no trailing slash and use `AUTH_COOKIE_SAME_SITE=none`.
 - [ ] For the future custom-domain deployment, use `https://admin.shihamahamed.dev` and `AUTH_COOKIE_SAME_SITE=lax` instead.
 - [ ] Configure production MongoDB, admin hash, JWT, ImageKit, and revalidation secrets.
 - [ ] Set both `FRONTEND_REVALIDATE_URL=https://<public-host>/api/revalidate` and a matching `FRONTEND_REVALIDATE_SECRET` of at least 32 characters; never set only one.
@@ -69,7 +70,7 @@ during Phase 10. Do not place credentials in this file.
 - [ ] Configure the approved public, admin, and API domains.
 - [ ] Add DNS records and verify TLS certificates.
 - [ ] Confirm the final origins exactly match CORS and cookie configuration.
-- [ ] Confirm no provider-domain wildcard is permitted.
+- [ ] Confirm exact origins remain configured and any temporary preview-origin flag is approved, time-bounded, and scheduled for removal.
 
 ## Authentication
 
@@ -98,6 +99,9 @@ during Phase 10. Do not place credentials in this file.
 ## Cache revalidation
 
 - [ ] Verify the exact frontend/backend revalidation URL and shared secret.
+- [ ] Configure `MANUAL_REVALIDATE_URL` and the matching `REVALIDATE_SECRET` only in the ignored local frontend environment when operator revalidation is needed.
+- [ ] With the intended non-production frontend running, verify `npm run cache:revalidate` prints every `PUBLIC_CACHE_GROUPS.all` tag without printing the secret.
+- [ ] Review the printed target and do not invoke the manual command against production without explicit operational approval.
 - [ ] Test project create/update/delete and slug-change invalidation.
 - [ ] Test certification, achievement, currently-building, and settings updates.
 - [ ] Confirm old and new project slugs are invalidated.
@@ -116,6 +120,7 @@ during Phase 10. Do not place credentials in this file.
 
 - [ ] Confirm HTTPS everywhere.
 - [ ] Confirm exact-origin CORS allowed/denied behavior.
+- [ ] With preview access disabled, confirm an unconfigured Vercel preview is denied; if temporarily enabled, confirm only valid HTTPS `.vercel.app` subdomains are added and the shared-backend impact is accepted.
 - [ ] Confirm Secure/httpOnly cookie attributes.
 - [ ] Confirm request, upload, rate-limit, and error-sanitization behavior.
 - [ ] Review headers and make the final deployed CSP decision.

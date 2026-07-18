@@ -37,6 +37,19 @@ npm run dev:backend
 
 The development scripts build the required internal package foundations before starting the selected application.
 
+To invalidate every public frontend cache during local development, keep the
+public frontend running and configure `MANUAL_REVALIDATE_URL` plus the matching
+`REVALIDATE_SECRET` in the ignored `apps/frontend/.env.local` file, then run:
+
+```powershell
+npm run cache:revalidate
+```
+
+The command sends the strict manual `{ "group": "all" }` operation. Changing
+the URL to a deployed frontend performs a real cache invalidation there, so
+review the target printed by the command. Automatic admin CRUD invalidation
+continues to use the separate entity/action contract.
+
 ## Content and media
 
 Portfolio content is managed through the protected admin dashboard and stored
@@ -66,6 +79,7 @@ Targeted scripts such as `lint:frontend`, `typecheck:admin`, `build:backend`, `b
 Phase 9 deployment, security, SEO, CI, and operational setup is documented in
 [docs/deployment-guide.md](docs/deployment-guide.md). It covers the Vercel
 public/admin projects, Render backend, exact-origin CORS, cookie modes,
+optional temporary Vercel preview CORS,
 MongoDB/ImageKit/Resend preparation, health checks, rollback, and smoke tests.
 It does not perform a live deployment or provision external services.
 

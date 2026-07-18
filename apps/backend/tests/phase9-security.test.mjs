@@ -29,8 +29,17 @@ for (const [key, value] of Object.entries(testEnvironment)) {
 
 const { parseBackendEnv } = await import("../dist/config/env.js");
 const { createRefreshCookieOptions } = await import("../dist/config/cookies.js");
+const { createCorsOptions, isVercelPreviewOrigin } = await import(
+  "../dist/config/cors.js"
+);
 const { parseOriginList } = await import("../dist/config/origins.js");
 const uploadValidation = await import("../dist/modules/uploads/uploads.validation.js");
+
+const evaluateCorsOrigin = (options, origin) =>
+  new Promise((resolve) => {
+    assert.equal(typeof options.origin, "function");
+    options.origin(origin, (error, allowed) => resolve({ allowed, error }));
+  });
 
 test("environment validation accepts development and secure production modes", () => {
   const development = parseBackendEnv(testEnvironment);
@@ -38,6 +47,7 @@ test("environment validation accepts development and secure production modes", (
     "http://localhost:3000",
     "https://admin.example.test",
   ]);
+  assert.equal(development.ALLOW_VERCEL_PREVIEW_ORIGINS, false);
 
   const production = parseBackendEnv({
     ...testEnvironment,
@@ -49,6 +59,35 @@ test("environment validation accepts development and secure production modes", (
   });
   assert.equal(production.AUTH_COOKIE_SECURE, true);
   assert.equal(production.FRONTEND_REVALIDATE_URL, "https://shihamahamed.dev/api/revalidate");
+});
+
+test("Vercel preview origin flag parses strictly and defaults off", () => {
+  assert.equal(
+    parseBackendEnv(testEnvironment).ALLOW_VERCEL_PREVIEW_ORIGINS,
+    false,
+  );
+  assert.equal(
+    parseBackendEnv({
+      ...testEnvironment,
+      ALLOW_VERCEL_PREVIEW_ORIGINS: "true",
+    }).ALLOW_VERCEL_PREVIEW_ORIGINS,
+    true,
+  );
+  assert.equal(
+    parseBackendEnv({
+      ...testEnvironment,
+      ALLOW_VERCEL_PREVIEW_ORIGINS: "false",
+    }).ALLOW_VERCEL_PREVIEW_ORIGINS,
+    false,
+  );
+  assert.throws(
+    () =>
+      parseBackendEnv({
+        ...testEnvironment,
+        ALLOW_VERCEL_PREVIEW_ORIGINS: "yes",
+      }),
+    /ALLOW_VERCEL_PREVIEW_ORIGINS/,
+  );
 });
 
 test("environment validation rejects unsafe cookie and origin combinations", () => {
@@ -153,4 +192,76 @@ test("origin parsing is exact and seed-only upload IDs remain rejected", () => {
     uploadValidation.deleteImageParamsSchema.safeParse({ fileId: "seed:demo" }).success,
     false,
   );
+});
+
+test("CORS preserves exact origins and adds only valid opt-in Vercel previews", async () => {
+  const origins = [
+    "http://localhost:3000",
+    "https://admin.example.test",
+  ];
+  const disabled = createCorsOptions({
+    origins,
+    allowVercelPreviewOrigins: false,
+  });
+  const enabled = createCorsOptions({
+    origins,
+    allowVercelPreviewOrigins: true,
+  });
+
+  for (const origin of origins) {
+    const result = await evaluateCorsOrigin(disabled, origin);
+    assert.equal(result.error, null);
+    assert.equal(result.allowed, true);
+  }
+
+  const noOrigin = await evaluateCorsOrigin(disabled, undefined);
+  assert.equal(noOrigin.error, null);
+  assert.equal(noOrigin.allowed, true);
+
+  const disabledPreview = await evaluateCorsOrigin(
+    disabled,
+    "https://example-preview.vercel.app",
+  );
+  assert.match(disabledPreview.error.message, /CORS origin denied/);
+
+  for (const origin of [
+    "https://example-preview.vercel.app",
+    "https://admin-project-git-feature-name.vercel.app",
+  ]) {
+    assert.equal(isVercelPreviewOrigin(origin), true);
+    const result = await evaluateCorsOrigin(enabled, origin);
+    assert.equal(result.error, null);
+    assert.equal(result.allowed, true);
+  }
+
+  for (const origin of [
+    "http://example-preview.vercel.app",
+    "https://example-preview.vercel.app:8443",
+    "https://vercel.app",
+    "https://preview.vercel.app.attacker.com",
+    "https://example.vercel.com",
+    "not-a-url",
+    "https://example-preview.vercel.app/",
+    "https://example-preview.vercel.app/path",
+    "https://example-preview.vercel.app?query=1",
+    "https://example-preview.vercel.app#fragment",
+    "https://user@example-preview.vercel.app",
+    "https://admin.example.test/",
+  ]) {
+    assert.equal(isVercelPreviewOrigin(origin), false);
+    const result = await evaluateCorsOrigin(enabled, origin);
+    assert.match(result.error.message, /CORS origin denied/);
+  }
+
+  assert.equal(enabled.credentials, true);
+  assert.deepEqual(enabled.methods, [
+    "GET",
+    "POST",
+    "PUT",
+    "PATCH",
+    "DELETE",
+    "OPTIONS",
+  ]);
+  assert.deepEqual(enabled.allowedHeaders, ["Content-Type", "Authorization"]);
+  assert.equal(enabled.optionsSuccessStatus, 204);
 });

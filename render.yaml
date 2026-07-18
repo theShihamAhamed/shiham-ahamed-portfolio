@@ -17,6 +17,8 @@ services:
         sync: false
       - key: ADMIN_FRONTEND_ORIGINS
         sync: false
+      - key: ALLOW_VERCEL_PREVIEW_ORIGINS
+        sync: false
       - key: PUBLIC_FRONTEND_URL
         sync: false
       - key: ADMIN_EMAIL

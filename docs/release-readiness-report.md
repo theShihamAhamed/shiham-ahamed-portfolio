@@ -188,5 +188,11 @@ after the cleanup validation run.
 ## Provider-domain cookie configuration follow-up
 
 - The Render Blueprint leaves `AUTH_COOKIE_SAME_SITE` deployment-specific through `sync: false`; `AUTH_COOKIE_SECURE=true` remains enforced.
-- Provider-domain deployment guidance requires an exact non-wildcard admin Vercel origin, `SameSite=None`, Secure cookies, and no cookie domain. Custom-domain guidance requires `SameSite=Lax`, Secure cookies, and no cookie domain unless explicitly needed.
+- Provider-domain deployment guidance keeps an exact admin Vercel origin, `SameSite=None`, Secure cookies, and no cookie domain. A default-off temporary flag may additionally admit valid HTTPS `.vercel.app` preview origins for the complete shared backend process; it does not use a wildcard response origin. Custom-domain guidance requires `SameSite=Lax`, Secure cookies, and no cookie domain unless explicitly needed.
 - Deployment validation now rejects a hardcoded Render `lax` value and requires both documented modes. Live authentication smoke testing remains external.
+
+## Manual cache revalidation and preview CORS follow-up
+
+- Repository contracts now distinguish automatic entity/action invalidation from the strict operator-only `{ group: "all" }` operation. The all-group tags remain centralized in `PUBLIC_CACHE_GROUPS.all`, and arbitrary tags and paths remain rejected.
+- The native root command validates its target and response, rejects redirects, applies a bounded timeout, and avoids secret output. No production cache invocation is part of repository validation.
+- `ALLOW_VERCEL_PREVIEW_ORIGINS` defaults to false. Enabling it is an accepted temporary broad HTTPS `.vercel.app` trust decision; exact origins and credential behavior remain intact, while cookie and browser third-party-cookie requirements remain separate deployment checks.

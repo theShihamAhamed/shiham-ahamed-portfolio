@@ -55,6 +55,14 @@ Because the access token is memory-only, a page refresh relies on the refresh
 cookie. If the refresh cookie is missing or expired, protected routes redirect
 to login.
 
+Vercel preview deployments still require backend CORS and cookie configuration.
+Keep permanent origins in `ADMIN_FRONTEND_ORIGINS`; the backend's temporary
+`ALLOW_VERCEL_PREVIEW_ORIGINS=true` mode additionally accepts valid HTTPS
+`*.vercel.app` origins for the entire shared backend process. Provider-domain
+refresh cookies generally require `SameSite=None`, `Secure=true`, and no cookie
+domain. Browser third-party-cookie blocking is separate from CORS and can still
+prevent session restoration after a reload.
+
 ## Admin Routes
 
 ```txt

@@ -99,6 +99,7 @@ This is the append-only decision record for the complete refactor. Approved entr
 - **Consequences:** Cache ownership and invalidation semantics stay centralized and testable; project rename invalidation is explicit. Mutation responses do not wait indefinitely for public cache freshness.
 - **Risks:** A deployment with missing or mismatched revalidation configuration will serve data until normal cache expiry; this is bounded and logged without exposing secrets.
 - **Follow-up actions:** Verify deployed secret/origin configuration and run authenticated mutation-to-public-cache smoke tests during deployment readiness.
+- **2026-07-18 amendment:** Preserve the backend-only entity/action request type and add a separate strict frontend-boundary operation union for the operator-only `{ group: "all" }` request. The all-group tag set is derived from `PUBLIC_CACHE_GROUPS.all`, remains tag-based, and does not permit caller-provided tags or paths. A native root command provides guarded manual access without replacing automatic mutation invalidation.
 
 ## ADR-009 - Environment-driven deployment security policy
 
@@ -111,6 +112,7 @@ This is the append-only decision record for the complete refactor. Approved entr
 - **Consequences:** The same code supports local, custom-domain, and provider-domain modes without silently weakening security. Deployment configuration must be completed accurately before launch, and preview origins must be explicitly managed.
 - **Risks:** Incorrect provider origin/cookie settings can prevent admin login; in-memory rate limits are instance-local; final CSP and deployed browser behavior require Phase 10 verification.
 - **Follow-up actions:** Configure exact provider values without committing them, verify health/readiness and authenticated cookie/CORS behavior, and complete deployed smoke tests in Phase 10.
+- **2026-07-18 amendment:** Exact configured origins remain the permanent policy. A default-off `ALLOW_VERCEL_PREVIEW_ORIGINS` flag may temporarily add any valid HTTPS `.vercel.app` subdomain to credentialed CORS for the shared backend process. This broad provider trust is explicitly accepted for preview convenience, does not use a wildcard response origin, does not alter cookie policy, and should later be replaced with project/account-scoped matching.
 
 - **2026-07-14 - Phase 5:** ADR-007 fully covers the canonical registry, stable known slugs, registry-resolved presentation metadata, and validated custom fallback. The discriminated union and neutral custom badge treatment were implemented under that decision; no additional ADR was required.
 

@@ -41,6 +41,7 @@ const envSchema = z.object({
   PORT: z.coerce.number().int().min(1).max(65_535).default(5000),
   MONGO_URI: z.string().trim().min(1, "MONGO_URI is required"),
   ADMIN_FRONTEND_ORIGINS: z.string().trim().min(1, "ADMIN_FRONTEND_ORIGINS is required"),
+  ALLOW_VERCEL_PREVIEW_ORIGINS: booleanEnv.default(false),
   PUBLIC_FRONTEND_URL: urlEnv("PUBLIC_FRONTEND_URL must be a valid URL").default("http://localhost:3000"),
   ADMIN_EMAIL: z.string().trim().email("ADMIN_EMAIL must be a valid email address"),
   ADMIN_PASSWORD_HASH: z.string().trim().min(1, "ADMIN_PASSWORD_HASH is required"),

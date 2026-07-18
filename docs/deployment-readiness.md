@@ -48,7 +48,7 @@ This is a living checklist, not a claim of readiness. An unchecked item is outst
 - [ ] Production Mongo configuration set securely.
 - [ ] Strong JWT access/refresh secrets configured.
 - [ ] Admin credentials/setup documented and secured.
-- [ ] Exact allowed admin origin configured; no unnecessary wildcard CORS.
+- [ ] Exact allowed admin origin configured; temporary preview-origin access is disabled unless explicitly approved, and wildcard response origins remain prohibited.
 - [ ] Production cookie strategy matches confirmed domains.
 - [ ] ImageKit keys/endpoint and upload validation configured.
 - [ ] Frontend revalidation URL/secret configured and tested.
@@ -64,7 +64,7 @@ This is a living checklist, not a claim of readiness. An unchecked item is outst
 - [ ] **Option A:** same-site custom subdomains selected and documented; or
 - [ ] **Option B:** cross-site cookies with `SameSite=None; Secure` selected and documented.
 - [ ] Cookie domain/path/HTTP-only/secure/expiry behavior verified.
-- [ ] CORS credentials and exact origins match the chosen strategy.
+- [ ] CORS credentials, exact origins, and the default-off Vercel preview flag match the chosen strategy.
 
 Neither option is complete until domains are confirmed and behavior is tested.
 
@@ -149,7 +149,7 @@ Neither option is complete until domains are confirmed and behavior is tested.
 ## Phase 9 readiness review - 2026-07-14
 
 - [x] Deployment architecture, Vercel/Render roots and commands, provider-domain limitations, and environment ownership are documented without secrets.
-- [x] Backend environment validation, exact-origin CORS, configurable secure cookies, Render proxy trust, bounded request parsing/uploads, layered rate limiting, safe errors, readiness, and graceful shutdown are implemented.
+- [x] Backend environment validation, exact-origin CORS with a default-off temporary Vercel preview policy, configurable secure cookies, Render proxy trust, bounded request parsing/uploads, layered rate limiting, safe errors, readiness, and graceful shutdown are implemented.
 - [x] Public canonical metadata, dynamic project metadata, sitemap, environment-aware robots, structured data, security headers, and admin noindex protection are implemented.
 - [x] Read-only GitHub Actions CI and a secret-free Render blueprint are present; CI has no deployment or database operation.
 - [x] Narrow Next/Multer security updates were applied and residual audit findings are documented in `docs/dependency-security-review.md`.
@@ -311,5 +311,11 @@ authoritative current classification for release readiness.
 ## Provider-domain cookie configuration follow-up
 
 - Render no longer hardcodes `AUTH_COOKIE_SAME_SITE=lax`; the Blueprint uses `sync: false` so deployment configuration selects the active domain mode.
-- The current provider-domain setup requires the exact admin Vercel origin, `AUTH_COOKIE_SAME_SITE=none`, `AUTH_COOKIE_SECURE=true`, and an unset cookie domain. The future custom-domain setup uses `AUTH_COOKIE_SAME_SITE=lax` with Secure cookies.
+- The current provider-domain setup requires the exact admin Vercel origin, `AUTH_COOKIE_SAME_SITE=none`, `AUTH_COOKIE_SECURE=true`, and an unset cookie domain. `ALLOW_VERCEL_PREVIEW_ORIGINS` defaults to false and may temporarily add valid HTTPS `.vercel.app` subdomains to the shared backend; browser third-party-cookie behavior remains a separate authentication gate. The future custom-domain setup uses `AUTH_COOKIE_SAME_SITE=lax` with Secure cookies.
 - Deployment validation checks both modes in the guide and preserves the existing Node 20.20.2, build-order, backend-start, and readiness checks. Login, refresh, token refresh, and logout remain staged smoke-test requirements.
+
+## Manual cache and preview-CORS readiness follow-up
+
+- The manual `{ group: "all" }` operation derives its ordered, deduplicated tag list from `PUBLIC_CACHE_GROUPS.all`; backend mutation callers retain their strict entity/action input type.
+- `npm run cache:revalidate` loads ignored frontend-local configuration, rejects redirects and malformed responses, and does not log the Bearer secret. A live local or deployed request remains operator-owned manual QA.
+- The preview-origin flag is an intentional temporary broad trust decision affecting the complete backend process. Exact origins remain configured separately, wildcard response origins are not used, and narrowing the matcher remains future hardening.
