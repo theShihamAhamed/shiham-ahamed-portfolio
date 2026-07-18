@@ -36,6 +36,29 @@ export const areEmptyTechGroupsValid = (
   groups: EmptyTechStackGroup[],
 ): boolean => groups.every((group) => Boolean(group.name.trim()));
 
+export const getFirstFormErrorMessage = (error: unknown): string | undefined => {
+  const visited = new WeakSet<object>();
+
+  const visit = (value: unknown): string | undefined => {
+    if (typeof value === "string") return value;
+    if (!value || typeof value !== "object" || visited.has(value)) return undefined;
+
+    visited.add(value);
+    const record = value as Record<string, unknown>;
+    if (typeof record.message === "string") return record.message;
+
+    for (const [key, child] of Object.entries(record)) {
+      if (key === "ref") continue;
+      const message = visit(child);
+      if (message) return message;
+    }
+
+    return undefined;
+  };
+
+  return visit(error);
+};
+
 export const removeTechItemsAtIndexes = (
   items: ProjectTechStackItem[],
   indexes: number[],
@@ -48,7 +71,6 @@ export const createProjectDefaultValues = (): CreateProjectFormValues => ({
   title: "",
   slug: "",
   shortDescription: "",
-  description: "",
   projectType: "full-stack-web-app",
   status: "completed",
   startDate: "",
@@ -112,7 +134,6 @@ export const toCreateProjectInput = (
     title: values.title,
     ...(values.slug ? { slug: values.slug } : {}),
     shortDescription: values.shortDescription,
-    description: values.description,
     projectType: values.projectType,
     status: values.status,
     startDate: values.startDate,
@@ -142,7 +163,6 @@ export const toProjectFormValues = (
   title: project.title,
   slug: project.slug,
   shortDescription: project.shortDescription,
-  description: project.description,
   projectType: project.projectType,
   status: project.status,
   startDate: project.startDate,
@@ -172,7 +192,6 @@ export const toUpdateProjectInput = (
   title: values.title,
   slug: values.slug,
   shortDescription: values.shortDescription,
-  description: values.description,
   projectType: values.projectType,
   status: values.status,
   startDate: values.startDate,

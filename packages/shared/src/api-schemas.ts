@@ -7,6 +7,13 @@ import {
   isProjectMonth,
 } from "./projects/project-dates";
 import { PROJECT_TYPE_VALUES } from "./projects/project-types";
+import {
+  projectArchitecturePointsSchema,
+  projectArchitectureSummaryTextSchema,
+  projectHighlightsSchema,
+  projectOverviewSchema,
+  projectShortDescriptionSchema,
+} from "./projects/project-content";
 import { slugPattern } from "./slug";
 import { projectTechnologyListSchema } from "./technologies/technology-schemas";
 import { optionalCaseStudyMdxSchema } from "./case-study";
@@ -41,8 +48,12 @@ export const projectMonthSchema = z.string().trim().refine(isProjectMonth, {
 const projectOptionalUrl = optionalUrl("Must be a valid URL", true);
 const projectLinksSchema = z.object({ github: projectOptionalUrl, liveDemo: projectOptionalUrl, article: projectOptionalUrl }).strict();
 const projectTechSchema = projectTechnologyListSchema.element;
-const projectArchitectureCreateSchema = z.object({ image: apiImageAssetSchema.optional(), summary: optionalString, points: optionalStringArray }).strict();
-const projectArchitectureUpdateSchema = z.object({ summary: optionalString, points: optionalStringArray }).strict();
+const optionalProjectArchitectureSummary = z.preprocess(
+  emptyStringToUndefined,
+  projectArchitectureSummaryTextSchema.optional(),
+);
+const projectArchitectureCreateSchema = z.object({ image: apiImageAssetSchema.optional(), summary: optionalProjectArchitectureSummary, points: projectArchitecturePointsSchema.optional() }).strict();
+const projectArchitectureUpdateSchema = z.object({ summary: optionalProjectArchitectureSummary, points: projectArchitecturePointsSchema.optional() }).strict();
 const slugSchema = z.string().trim().regex(slugPattern, "Slug must be lowercase kebab-case");
 const optionalProjectMonthSchema = z.preprocess(
   emptyStringToUndefined,
@@ -50,14 +61,14 @@ const optionalProjectMonthSchema = z.preprocess(
 );
 
 export const createProjectSchema = z.object({
-  title: requiredString, slug: slugSchema.optional(), shortDescription: requiredString,
-  description: requiredString, projectType: projectTypeSchema, status: projectStatusSchema,
+  title: requiredString, slug: slugSchema.optional(), shortDescription: projectShortDescriptionSchema,
+  projectType: projectTypeSchema, status: projectStatusSchema,
   startDate: projectMonthSchema, endDate: optionalProjectMonthSchema, videoUrl: projectOptionalUrl,
   videoPosterUrl: projectOptionalUrl, thumbnail: apiImageAssetSchema,
   caseStudyMdx: optionalCaseStudyMdxSchema,
   gallery: z.array(apiImageAssetSchema).min(1), architecture: projectArchitectureCreateSchema.optional(),
   links: projectLinksSchema.optional(), techStack: projectTechnologyListSchema,
-  overview: requiredStringArray, highlights: requiredStringArray, challenges: optionalStringArray,
+  overview: projectOverviewSchema, highlights: projectHighlightsSchema, challenges: optionalStringArray,
   futureImprovements: optionalStringArray, isFeatured: z.boolean().optional(), isVisible: z.boolean().optional(),
 }).strict().superRefine((value, context) => {
   for (const issue of getProjectTimelineIssues(value)) {
@@ -66,11 +77,11 @@ export const createProjectSchema = z.object({
 });
 
 export const updateProjectSchema = z.object({
-  title: requiredString.optional(), slug: slugSchema.optional(), shortDescription: requiredString.optional(),
-  description: requiredString.optional(), projectType: projectTypeSchema.optional(), status: projectStatusSchema.optional(),
+  title: requiredString.optional(), slug: slugSchema.optional(), shortDescription: projectShortDescriptionSchema.optional(),
+  projectType: projectTypeSchema.optional(), status: projectStatusSchema.optional(),
   startDate: projectMonthSchema.optional(), endDate: optionalProjectMonthSchema, videoUrl: projectOptionalUrl,
   videoPosterUrl: projectOptionalUrl, caseStudyMdx: optionalCaseStudyMdxSchema, links: projectLinksSchema.optional(), techStack: projectTechnologyListSchema.optional(),
-  overview: requiredStringArray.optional(), highlights: requiredStringArray.optional(), architecture: projectArchitectureUpdateSchema.optional(),
+  overview: projectOverviewSchema.optional(), highlights: projectHighlightsSchema.optional(), architecture: projectArchitectureUpdateSchema.optional(),
   challenges: optionalStringArray, futureImprovements: optionalStringArray,
 }).strict().refine((value) => Object.keys(value).length > 0, { message: "At least one project field is required" }).superRefine((value, context) => {
   if (value.startDate && value.endDate && compareProjectMonths(value.endDate, value.startDate) < 0) {

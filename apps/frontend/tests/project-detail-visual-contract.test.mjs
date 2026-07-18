@@ -185,17 +185,17 @@ test("technology inventory formats neutral semantic legend groups", () => {
   assert.match(techGroups, /aria-labelledby/);
   assert.match(techGroups, /<ul/);
   assert.match(techGroups, /<li/);
-  assert.match(techGroups, /formatTechnologyGroupLabel\(group\.title\)/);
-  assert.match(techGroups, /technologyGroupLabelOverrides/);
-  assert.match(techGroups, /api: "API"/);
-  assert.match(techGroups, /devops: "DevOps"/);
+  assert.match(techGroups, /title="Technology stack"/);
+  assert.match(techGroups, /\{group\.label\}/);
+  assert.match(techGroups, /project-technology-group-\$\{group\.key\}/);
+  assert.doesNotMatch(techGroups, /formatTechnologyGroupLabel|technologyGroupLabelOverrides/);
   assert.doesNotMatch(legendLabel, /aria-hidden|rounded-full|size-\[5px\]/);
   assert.match(techGroups, /project-detail-tech-legend/);
-  assert.match(techGroups, /grid gap-x-5 gap-y-7 md:grid-cols-2/);
+  assert.match(techGroups, /mt-4 grid gap-x-6 gap-y-4 sm:grid-cols-2/);
   assert.match(projectDetailCss, /border: 1\.5px dashed/);
-  assert.match(legendStyles, /padding: 17px 16px/);
+  assert.match(legendStyles, /padding: 14px/);
   assert.match(legendStyles, /position: static/);
-  assert.match(legendStyles, /margin-bottom: 12px/);
+  assert.match(legendStyles, /margin-bottom: 8px/);
   assert.match(legendStyles, /background: transparent/);
   assert.doesNotMatch(
     legendStyles,
@@ -227,6 +227,8 @@ test("technology items use decorative non-final dividers without bullets", () =>
   assert.doesNotMatch(technologyList, /<button|<a\s|onClick|hover:|TechTag/);
   assert.match(technologyListCss, /height: 15px/);
   assert.match(technologyListCss, /width: 1px/);
+  assert.match(technologyListCss, /row-gap: 6px/);
+  assert.match(technologyListCss, /margin-inline: 10px/);
   assert.match(technologyListCss, /background: var\(--border\)/);
   assert.doesNotMatch(
     technologyListCss,
@@ -243,6 +245,8 @@ test("detail facts share semantic editorial lists without item cards", () => {
   assert.match(projectList, /<ul/);
   assert.match(projectList, /<li/);
   assert.match(projectList, /divide-y divide-border\/40/);
+  assert.match(projectList, /py-2\.5/);
+  assert.match(projectList, /text-sm leading-6 text-foreground/);
   assert.match(projectList, /aria-hidden="true"/);
   assert.doesNotMatch(
     projectList,
@@ -269,6 +273,9 @@ test("architecture points are semantic while image lightbox behavior remains", (
   assert.match(architecture, /hasText && image && "xl:grid-cols-12 xl:items-start"/);
   assert.match(architectureText, /<ul/);
   assert.match(architectureText, /<li/);
+  assert.match(architectureText, /mt-4 flex flex-col gap-3/);
+  assert.match(architectureText, /space-y-2\.5/);
+  assert.match(architectureText, /text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7/);
   assert.doesNotMatch(
     architectureText,
     /radial-gradient|backdrop-blur|shadow|rounded-\[1\.25rem\]|bg-background\/70/,
@@ -361,7 +368,15 @@ test("overview uses the restrained surface and existing detail grids remain", ()
   assert.match(overview, /accent="warm"/);
   assert.match(overview, /title="Overview"/);
   assert.match(overview, /icon=\{FileText\}/);
+  assert.match(overview, /mt-4 space-y-3/);
+  assert.match(overview, /text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7/);
   assert.doesNotMatch(overview, /TechTag|backdrop-blur|shadow/);
+  assert.match(
+    projectPage,
+    /mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7/,
+  );
+  assert.match(projectPage, /\{project\.shortDescription\}/);
+  assert.doesNotMatch(projectPage, /longDescription/);
   assert.match(projectPage, /title="Challenges & learnings"/);
   assert.match(projectPage, /title="Future improvements"/);
   assert.match(projectPage, /icon=\{Mountain\}/);

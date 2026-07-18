@@ -162,8 +162,8 @@ export default async function ProjectDetailsPage({ params }: Props) {
                   {project.title}
                 </h1>
 
-                <p className="mt-5 max-w-2xl text-base leading-8 text-muted-foreground sm:text-lg">
-                  {project.longDescription}
+                <p className="mt-4 max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
+                  {project.shortDescription}
                 </p>
                 </div>
               </StaggerItem>
@@ -255,11 +255,11 @@ export default async function ProjectDetailsPage({ params }: Props) {
                   accent="warm"
                 />
 
-                <div className="mt-5 space-y-4">
+                <div className="mt-4 space-y-3">
                   {project.overview.map((paragraph, index) => (
                     <p
                       key={index}
-                      className="text-sm leading-7 text-muted-foreground sm:text-base"
+                      className="text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7"
                     >
                       {paragraph}
                     </p>

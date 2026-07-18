@@ -3,6 +3,7 @@
 import {
   getProjectStatus,
   isProjectType,
+  PROJECT_CONTENT_LIMITS,
   PROJECT_STATUSES,
   PROJECT_TYPES,
   type ProjectStatus,
@@ -38,7 +39,6 @@ export type ProjectFormFieldErrors = Partial<{
   startDate: string;
   endDate: string;
   shortDescription: string;
-  description: string;
   videoUrl: string;
   videoPosterUrl: string;
   github: string;
@@ -49,6 +49,7 @@ export type ProjectFormFieldErrors = Partial<{
   overview: string;
   highlights: string;
   architectureSummary: string;
+  architecturePoints: string;
 }>;
 
 type ProjectFormFieldsProps = {
@@ -60,7 +61,6 @@ type ProjectFormFieldsProps = {
     startDate: FieldRegistration;
     endDate: FieldRegistration;
     shortDescription: FieldRegistration;
-    description: FieldRegistration;
     videoUrl: FieldRegistration;
     videoPosterUrl: FieldRegistration;
     github: FieldRegistration;
@@ -73,6 +73,8 @@ type ProjectFormFieldsProps = {
   projectType: ProjectType;
   status: ProjectStatus;
   startDate: string;
+  shortDescription: string;
+  architectureSummary: string;
   onProjectTypeChange: (value: ProjectType) => void;
   onStatusChange: (value: ProjectStatus) => void;
   techStack: ProjectTechStackItem[];
@@ -109,6 +111,8 @@ export function ProjectFormFields({
   projectType,
   status,
   startDate,
+  shortDescription,
+  architectureSummary,
   onProjectTypeChange,
   onStatusChange,
   techStack,
@@ -190,40 +194,21 @@ export function ProjectFormFields({
             id="shortDescription"
             className="mt-2 min-h-24"
             disabled={disabled}
+            maxLength={PROJECT_CONTENT_LIMITS.shortDescription.maxCharacters}
             placeholder="A concise summary for project cards"
             aria-invalid={errors.shortDescription ? true : undefined}
-            aria-describedby={describedBy(
-              "shortDescription",
-              Boolean(errors.shortDescription),
-            )}
+            aria-describedby={`shortDescription-help shortDescription-count${errors.shortDescription ? " shortDescription-error" : ""}`}
             {...registrations.shortDescription}
           />
-          <p id="shortDescription-help" className="mt-1 text-xs text-[var(--admin-muted)]">
-            Used on project cards and compact project lists.
-          </p>
+          <div className="mt-1 flex flex-wrap items-start justify-between gap-2 text-xs text-[var(--admin-muted)]">
+            <p id="shortDescription-help" className="leading-5">
+              Aim for 120–180 characters. Maximum 220. Used on project cards, the detail-page hero, and SEO metadata.
+            </p>
+            <p id="shortDescription-count" className="shrink-0 tabular-nums">
+              {shortDescription.trim().length} / {PROJECT_CONTENT_LIMITS.shortDescription.maxCharacters} characters
+            </p>
+          </div>
           <FieldError id="shortDescription-error" message={errors.shortDescription} />
-        </div>
-
-        <div>
-          <label
-            className="text-sm font-medium text-[var(--admin-text)]"
-            htmlFor="description"
-          >
-            Detail introduction <span className="text-red-700">*</span>
-          </label>
-          <Textarea
-            id="description"
-            className="mt-2 min-h-28"
-            disabled={disabled}
-            placeholder="Introduce the project, problem, and outcome"
-            aria-invalid={errors.description ? true : undefined}
-            aria-describedby={describedBy("description", Boolean(errors.description))}
-            {...registrations.description}
-          />
-          <p id="description-help" className="mt-1 text-xs text-[var(--admin-muted)]">
-            Used as the opening text on the project detail page.
-          </p>
-          <FieldError id="description-error" message={errors.description} />
         </div>
       </FormSection>
 
@@ -366,6 +351,14 @@ export function ProjectFormFields({
             onChange={(value) => onListChange("overview", value)}
             placeholder="Add an overview paragraph"
             minItems={1}
+            maxItems={PROJECT_CONTENT_LIMITS.overview.maxItems}
+            maxLength={PROJECT_CONTENT_LIMITS.overview.maxCharactersPerItem}
+            helpText="Use 2–3 concise paragraphs; one is allowed for small playground projects. Maximum 3 paragraphs and 650 characters each."
+            showCharacterCount
+            countLabel="paragraphs"
+            multiline
+            errorMessage={errors.overview}
+            disabled={disabled}
           />
           <DynamicStringListInput
             label="Highlights"
@@ -373,6 +366,13 @@ export function ProjectFormFields({
             onChange={(value) => onListChange("highlights", value)}
             placeholder="Add a project highlight"
             minItems={1}
+            maxItems={PROJECT_CONTENT_LIMITS.highlights.maxItems}
+            maxLength={PROJECT_CONTENT_LIMITS.highlights.maxCharactersPerItem}
+            helpText="Aim for about 5 detailed highlights. Maximum 7 items and 220 characters each."
+            showCharacterCount
+            countLabel="highlights"
+            errorMessage={errors.highlights}
+            disabled={disabled}
           />
           <DynamicStringListInput
             label="Challenges"
@@ -380,6 +380,7 @@ export function ProjectFormFields({
             onChange={(value) => onListChange("challenges", value)}
             placeholder="Add an implementation challenge"
             emptyMessage="No challenges added yet."
+            disabled={disabled}
           />
           <DynamicStringListInput
             label="Future improvements"
@@ -387,10 +388,9 @@ export function ProjectFormFields({
             onChange={(value) => onListChange("futureImprovements", value)}
             placeholder="Add a future improvement"
             emptyMessage="No future improvements added yet."
+            disabled={disabled}
           />
         </div>
-        <FieldError message={errors.overview} />
-        <FieldError message={errors.highlights} />
         <CaseStudyEditorField
           value={caseStudyMdx}
           registration={registrations.caseStudyMdx}
@@ -476,11 +476,20 @@ export function ProjectFormFields({
               id="architectureSummary"
               className="mt-2 min-h-28"
               disabled={disabled}
+              maxLength={PROJECT_CONTENT_LIMITS.architectureSummary.maxCharacters}
               placeholder="Explain the system design at a glance"
               aria-invalid={errors.architectureSummary ? true : undefined}
-              aria-describedby={errors.architectureSummary ? "architectureSummary-error" : undefined}
+              aria-describedby={`architectureSummary-help architectureSummary-count${errors.architectureSummary ? " architectureSummary-error" : ""}`}
               {...registrations.architectureSummary}
             />
+            <div className="mt-1 flex flex-wrap items-start justify-between gap-2 text-xs text-[var(--admin-muted)]">
+              <p id="architectureSummary-help" className="leading-5">
+                Use 2–3 concise sentences. Maximum 450 characters.
+              </p>
+              <p id="architectureSummary-count" className="shrink-0 tabular-nums">
+                {architectureSummary.trim().length} / {PROJECT_CONTENT_LIMITS.architectureSummary.maxCharacters} characters
+              </p>
+            </div>
             <FieldError id="architectureSummary-error" message={errors.architectureSummary} />
           </div>
           <DynamicStringListInput
@@ -489,6 +498,13 @@ export function ProjectFormFields({
             onChange={(value) => onListChange("architecture.points", value)}
             placeholder="Add an architecture point"
             emptyMessage="No architecture points added yet."
+            maxItems={PROJECT_CONTENT_LIMITS.architecturePoints.maxItems}
+            maxLength={PROJECT_CONTENT_LIMITS.architecturePoints.maxCharactersPerItem}
+            helpText="List 3–5 major architectural decisions. Maximum 5 points and 180 characters each."
+            showCharacterCount
+            countLabel="points"
+            errorMessage={errors.architecturePoints}
+            disabled={disabled}
           />
         </div>
       </FormSection>

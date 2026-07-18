@@ -45,7 +45,7 @@ const ProjectListSection = ({
         {items.map((item) => (
           <li
             key={item}
-            className="flex items-start gap-3 py-3 first:pt-0 last:pb-0"
+            className="flex items-start gap-3 py-2.5 first:pt-0 last:pb-0"
           >
             {marker === "check" ? (
               <Check
@@ -58,7 +58,7 @@ const ProjectListSection = ({
                 className="project-detail-list-dot mt-[11px] size-1.5 shrink-0 rounded-full"
               />
             )}
-            <span className="text-sm leading-7 text-foreground">{item}</span>
+            <span className="text-sm leading-6 text-foreground">{item}</span>
           </li>
         ))}
       </ul>

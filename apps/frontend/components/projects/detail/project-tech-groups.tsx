@@ -2,54 +2,14 @@ import { Code2 } from "lucide-react";
 
 import ProjectDetailSectionHeader from "@/components/projects/detail/project-detail-section-header";
 import ProjectDetailSurface from "@/components/projects/detail/project-detail-surface";
-import type { ProjectTag, TechGroups } from "@/types/project";
+import type { ProjectTechDisplayGroup } from "@/types/project";
 
 type Props = {
-  techGroups: TechGroups;
-};
-
-const technologyGroupLabelOverrides: Record<string, string> = {
-  ai: "AI",
-  api: "API",
-  cdn: "CDN",
-  "ci/cd": "CI/CD",
-  cms: "CMS",
-  css: "CSS",
-  devops: "DevOps",
-  html: "HTML",
-  ide: "IDE",
-  ml: "ML",
-  orm: "ORM",
-  qa: "QA",
-  sdk: "SDK",
-  ui: "UI",
-  "ui/ux": "UI/UX",
-  ux: "UX",
-};
-
-export const formatTechnologyGroupLabel = (value: string) => {
-  return value
-    .trim()
-    .replace(/([a-z0-9])([A-Z])/g, "$1 $2")
-    .split(/[\s_-]+/)
-    .filter(Boolean)
-    .map((word) => {
-      const normalizedWord = word.toLowerCase();
-
-      return (
-        technologyGroupLabelOverrides[normalizedWord] ??
-        `${normalizedWord.charAt(0).toUpperCase()}${normalizedWord.slice(1)}`
-      );
-    })
-    .join(" ");
+  techGroups: ProjectTechDisplayGroup[];
 };
 
 const ProjectTechGroups = ({ techGroups }: Props) => {
-  const groups = Object.entries(techGroups)
-    .map(([title, items]) => ({ title, items }))
-    .filter((group): group is { title: string; items: Array<ProjectTag | string> } =>
-      Boolean(group.items?.length),
-    );
+  if (!techGroups.length) return null;
 
   return (
     <ProjectDetailSurface
@@ -60,18 +20,18 @@ const ProjectTechGroups = ({ techGroups }: Props) => {
     >
       <ProjectDetailSectionHeader
         id="project-technologies-heading"
-        title="Technologies, frameworks, and tools"
+        title="Technology stack"
         icon={Code2}
         accent="violet"
       />
 
-      <div className="mt-5 grid gap-x-5 gap-y-7 md:grid-cols-2">
-        {groups.map((group, index) => {
-          const headingId = `project-technology-group-${index}`;
+      <div className="mt-4 grid gap-x-6 gap-y-4 sm:grid-cols-2">
+        {techGroups.map((group) => {
+          const headingId = `project-technology-group-${group.key}`;
 
           return (
             <section
-              key={group.title}
+              key={group.key}
               aria-labelledby={headingId}
               className="project-detail-tech-legend"
             >
@@ -79,12 +39,12 @@ const ProjectTechGroups = ({ techGroups }: Props) => {
                 id={headingId}
                 className="project-detail-tech-legend-label"
               >
-                {formatTechnologyGroupLabel(group.title)}
+                {group.label}
               </h3>
 
               <ul className="project-detail-tech-list">
                 {group.items.map((item, itemIndex) => {
-                  const label = typeof item === "string" ? item : item.label;
+                  const label = item.label;
 
                   return (
                     <li key={label} className="project-detail-tech-item">

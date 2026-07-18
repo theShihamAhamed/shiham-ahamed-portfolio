@@ -131,3 +131,15 @@ This is the append-only decision record for the complete refactor. Approved entr
 - **Alternatives considered:** Suppress the warning with `ignoreDeprecations`; use `bundler` for Node packages; change package output to ESM; put NodeNext globally in the shared base config.
 - **Consequences:** Node packages use a TypeScript 7-compatible resolution strategy without changing runtime format or public package boundaries. Effective configs, emitted output, exports, and runtime checks remain part of validation.
 - **Follow-up actions:** Revisit package `type`/ESM adoption only as a separate architecture change; complete deployed and interactive verification in Phase 10.
+
+## ADR-011 - Use one concise project summary and bounded detail content
+
+- **Status:** Approved
+- **Date:** 2026-07-18
+- **Phase:** Project-detail content-density cleanup
+- **Context:** Projects duplicated introductory content across `shortDescription`, `description`, and `overview`, while unconstrained overview, highlight, and architecture fields could create inconsistent admin and public layouts. Public technology groups also mirrored an expanding persistence taxonomy too literally.
+- **Decision:** Remove only the project-specific `description` property from shared contracts, API schemas, database models, serializers, backend search, admin forms, and the public viewer. Use `shortDescription` for cards, the project-detail hero, and SEO; reserve `overview` for deeper explanation. Enforce centralized UTF-16 JavaScript string-length and item-count limits across shared schemas, admin controls, and Mongoose. Present technologies in six fixed frontend-only display groups without changing registry categories or persisted entries.
+- **Alternatives considered:** Keep the duplicate introduction as a deprecated alias; derive one introduction from another only in the viewer; constrain content only in the admin; change persisted technology categories; truncate public content defensively.
+- **Consequences:** Project create/update payloads are smaller and strict schemas reject `description` as unknown. Admin guidance and counters match backend limits. Public grouping stays stable as the registry grows, while source order and the first normalized technology slug are preserved. Cards, SEO, case studies, galleries, architecture media, and video behavior retain their existing ownership.
+- **Risks:** Existing stored `description` values remain in MongoDB until separately cleaned but are ignored and never serialized. Previously stored content beyond the new limits can still be read, but should be audited before an edit that validates and resaves the complete project. No migration or production-data mutation is part of this decision.
+- **Follow-up actions:** Keep boundary tests aligned with the shared constants; verify representative create/edit flows and project-detail layouts in the preview deployment before merge; plan any production content cleanup as a separately approved operation.

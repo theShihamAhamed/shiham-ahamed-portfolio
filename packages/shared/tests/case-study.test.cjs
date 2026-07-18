@@ -130,7 +130,6 @@ test("project API and form contracts keep external articles separate", () => {
   const base = {
     title: "Project",
     shortDescription: "Short",
-    description: "Description",
     projectType: "full-stack-web-app",
     status: "completed",
     startDate: "2024-01",

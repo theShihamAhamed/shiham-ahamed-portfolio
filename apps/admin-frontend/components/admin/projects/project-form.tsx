@@ -14,6 +14,7 @@ import {
 } from "@/components/admin/projects/project-form-fields";
 import {
   createProjectDefaultValues,
+  getFirstFormErrorMessage,
   toCreateProjectInput,
 } from "@/components/admin/projects/project-form.utils";
 import { FieldError } from "@/components/forms/field-error";
@@ -44,9 +45,6 @@ import type {
   CreateProjectInput,
   ProjectTechStackItem,
 } from "@/types/project";
-
-const getMessage = (message: unknown) =>
-  typeof message === "string" ? message : undefined;
 
 type UploadedImageAsset = ImageAsset & { fileId: string };
 
@@ -118,11 +116,18 @@ export function ProjectForm({ mode }: ProjectFormProps) {
   const projectType = useWatch({ control, name: "projectType" });
   const status = useWatch({ control, name: "status" });
   const startDate = useWatch({ control, name: "startDate" });
+  const shortDescription = useWatch({ control, name: "shortDescription" }) ?? "";
   const thumbnail = useWatch({ control, name: "thumbnail" });
   const gallery = useWatch({ control, name: "gallery" }) ?? [];
   const architectureImage = useWatch({ control, name: "architecture.image" });
   const architecturePoints =
     useWatch({ control, name: "architecture.points" }) ?? [];
+  const watchedArchitectureSummary = useWatch({
+    control,
+    name: "architecture.summary",
+  });
+  const architectureSummary =
+    typeof watchedArchitectureSummary === "string" ? watchedArchitectureSummary : "";
   const techStack =
     (useWatch({ control, name: "techStack" }) ?? []) as ProjectTechStackItem[];
   const overview = useWatch({ control, name: "overview" }) ?? [];
@@ -224,24 +229,24 @@ export function ProjectForm({ mode }: ProjectFormProps) {
   };
 
   const fieldErrors: ProjectFormFieldErrors = {
-    title: getMessage(errors.title?.message),
-    slug: getMessage(errors.slug?.message),
-    projectType: getMessage(errors.projectType?.message),
-    status: getMessage(errors.status?.message),
-    startDate: getMessage(errors.startDate?.message),
-    endDate: getMessage(errors.endDate?.message),
-    shortDescription: getMessage(errors.shortDescription?.message),
-    description: getMessage(errors.description?.message),
-    videoUrl: getMessage(errors.videoUrl?.message),
-    videoPosterUrl: getMessage(errors.videoPosterUrl?.message),
-    github: getMessage(errors.links?.github?.message),
-    liveDemo: getMessage(errors.links?.liveDemo?.message),
-    article: getMessage(errors.links?.article?.message),
-    caseStudyMdx: getMessage(errors.caseStudyMdx?.message),
-    techStack: getMessage(errors.techStack?.message),
-    overview: getMessage(errors.overview?.message),
-    highlights: getMessage(errors.highlights?.message),
-    architectureSummary: getMessage(errors.architecture?.summary?.message),
+    title: getFirstFormErrorMessage(errors.title),
+    slug: getFirstFormErrorMessage(errors.slug),
+    projectType: getFirstFormErrorMessage(errors.projectType),
+    status: getFirstFormErrorMessage(errors.status),
+    startDate: getFirstFormErrorMessage(errors.startDate),
+    endDate: getFirstFormErrorMessage(errors.endDate),
+    shortDescription: getFirstFormErrorMessage(errors.shortDescription),
+    videoUrl: getFirstFormErrorMessage(errors.videoUrl),
+    videoPosterUrl: getFirstFormErrorMessage(errors.videoPosterUrl),
+    github: getFirstFormErrorMessage(errors.links?.github),
+    liveDemo: getFirstFormErrorMessage(errors.links?.liveDemo),
+    article: getFirstFormErrorMessage(errors.links?.article),
+    caseStudyMdx: getFirstFormErrorMessage(errors.caseStudyMdx),
+    techStack: getFirstFormErrorMessage(errors.techStack),
+    overview: getFirstFormErrorMessage(errors.overview),
+    highlights: getFirstFormErrorMessage(errors.highlights),
+    architectureSummary: getFirstFormErrorMessage(errors.architecture?.summary),
+    architecturePoints: getFirstFormErrorMessage(errors.architecture?.points),
   };
 
   return (
@@ -277,7 +282,6 @@ export function ProjectForm({ mode }: ProjectFormProps) {
             startDate: register("startDate"),
             endDate: register("endDate"),
             shortDescription: register("shortDescription"),
-            description: register("description"),
             videoUrl: register("videoUrl"),
             videoPosterUrl: register("videoPosterUrl"),
             github: register("links.github"),
@@ -290,6 +294,8 @@ export function ProjectForm({ mode }: ProjectFormProps) {
           projectType={projectType}
           status={status}
           startDate={startDate}
+          shortDescription={shortDescription}
+          architectureSummary={architectureSummary}
           onProjectTypeChange={(value) =>
             setValue("projectType", value, { shouldDirty: true, shouldValidate: true })
           }
@@ -347,7 +353,7 @@ export function ProjectForm({ mode }: ProjectFormProps) {
                 removeLabel="Remove thumbnail"
                 confirmRemoveMessage="Remove this uploaded thumbnail? A thumbnail is required before the project can be created."
               />
-              <FieldError message={getMessage(errors.thumbnail?.message)} />
+              <FieldError message={getFirstFormErrorMessage(errors.thumbnail)} />
 
               <MultiImageUploader
                 folder="projects-gallery"
@@ -363,7 +369,7 @@ export function ProjectForm({ mode }: ProjectFormProps) {
                   )
                 }
               />
-              <FieldError message={getMessage(errors.gallery?.message)} />
+              <FieldError message={getFirstFormErrorMessage(errors.gallery)} />
               <GalleryManager images={gallery} onDelete={removeGalleryImage} />
 
               <ImageUploader
