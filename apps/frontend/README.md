@@ -47,6 +47,18 @@ Real portfolio records and media are created through the protected admin
 dashboard and backend API. Do not run a seed command; no seed command is part
 of the workspace anymore.
 
+## Currently Building and certifications
+
+Currently Building cards always show the presentation-owned `In progress`
+badge. Current focus, Topics (received through `techStack`), and Highlights are
+rendered only when populated, so a title-and-description-only record remains a
+complete public card.
+
+Certification cards keep their title, provider, note, certificate preview, and
+optional Verify action in a responsive top section. Optional Skills render
+beneath that section across the full card width; the certificate button remains
+keyboard accessible and has an explicit pointer affordance.
+
 ## Checks
 
 ```bash

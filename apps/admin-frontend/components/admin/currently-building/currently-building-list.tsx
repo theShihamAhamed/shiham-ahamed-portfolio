@@ -40,7 +40,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -98,36 +97,6 @@ const removeItemFromList = (
   items: AdminCurrentlyBuildingItem[] | undefined,
   itemId: string,
 ) => items?.filter((item) => item.id !== itemId);
-
-const statusBadgeVariant = (
-  status: string,
-): "green" | "cyan" | "amber" | "neutral" => {
-  const normalizedStatus = status.toLowerCase();
-
-  if (
-    normalizedStatus.includes("complete") ||
-    normalizedStatus.includes("ship")
-  ) {
-    return "green";
-  }
-
-  if (
-    normalizedStatus.includes("progress") ||
-    normalizedStatus.includes("active")
-  ) {
-    return "cyan";
-  }
-
-  if (
-    normalizedStatus.includes("plan") ||
-    normalizedStatus.includes("pause") ||
-    normalizedStatus.includes("hold")
-  ) {
-    return "amber";
-  }
-
-  return "neutral";
-};
 
 type SortableCurrentlyBuildingRowProps = {
   item: AdminCurrentlyBuildingItem;
@@ -203,11 +172,8 @@ function SortableCurrentlyBuildingRow({
         </p>
       </TableCell>
       <TableCell>
-        <Badge variant={statusBadgeVariant(item.status)}>{item.status}</Badge>
-      </TableCell>
-      <TableCell>
         <p className="line-clamp-2 min-w-64 text-sm leading-6 text-[var(--admin-muted)]">
-          {item.currentFocus}
+          {item.currentFocus ?? "Not set"}
         </p>
       </TableCell>
       <TableCell>
@@ -220,10 +186,13 @@ function SortableCurrentlyBuildingRow({
           {item.techStack.length > 4 ? (
             <Badge variant="neutral">+{item.techStack.length - 4}</Badge>
           ) : null}
+          {item.techStack.length === 0 ? (
+            <span className="text-sm text-[var(--admin-muted)]">No topics</span>
+          ) : null}
         </div>
       </TableCell>
       <TableCell>
-        <Badge variant="neutral">{item.highlights.length} bullets</Badge>
+        <Badge variant="neutral">{item.highlights.length} highlights</Badge>
       </TableCell>
       <TableCell>
         <VisibilityToggle
@@ -254,24 +223,20 @@ function SortableCurrentlyBuildingRow({
 export function CurrentlyBuildingList() {
   const queryClient = useQueryClient();
   const [search, setSearch] = useState("");
-  const [status, setStatus] = useState("");
   const [visibility, setVisibility] = useState<VisibilityFilterValue>("all");
   const [itemToDelete, setItemToDelete] =
     useState<AdminCurrentlyBuildingItem | null>(null);
   const deferredSearch = useDeferredValue(search);
-  const deferredStatus = useDeferredValue(status);
 
   const filters = useMemo<CurrentlyBuildingFilters>(() => {
     return {
       ...(deferredSearch.trim() ? { search: deferredSearch.trim() } : {}),
-      ...(deferredStatus.trim() ? { status: deferredStatus.trim() } : {}),
       ...(visibility !== "all" ? { isVisible: visibility === "visible" } : {}),
     };
-  }, [deferredSearch, deferredStatus, visibility]);
+  }, [deferredSearch, visibility]);
 
   const hasActiveFilters =
     search.trim().length > 0 ||
-    status.trim().length > 0 ||
     visibility !== "all";
 
   const itemsQuery = useQuery({
@@ -463,7 +428,6 @@ export function CurrentlyBuildingList() {
 
   const clearFilters = () => {
     setSearch("");
-    setStatus("");
     setVisibility("all");
   };
 
@@ -492,7 +456,7 @@ export function CurrentlyBuildingList() {
     <section className="mx-auto flex w-full max-w-7xl flex-col gap-5">
       <AdminPageHeader
         title="Currently Building"
-        description="Manage active work, status, focus, stack, visibility, and ordering."
+        description="Manage active work, optional topics and highlights, visibility, and ordering."
         badge="Currently Building"
         actions={
           <Link
@@ -510,29 +474,21 @@ export function CurrentlyBuildingList() {
         searchPlaceholder="Search currently building"
         onSearchChange={setSearch}
         filters={
-          <>
-            <Input
-              value={status}
-              placeholder="Status"
-              className="w-40"
-              onChange={(event) => setStatus(event.target.value)}
-            />
-            <Select
-              value={visibility}
-              onValueChange={(value) =>
-                setVisibility(value as VisibilityFilterValue)
-              }
-            >
-              <SelectTrigger className="w-36">
-                <SelectValue placeholder="Visibility" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All</SelectItem>
-                <SelectItem value="visible">Visible</SelectItem>
-                <SelectItem value="hidden">Hidden</SelectItem>
-              </SelectContent>
-            </Select>
-          </>
+          <Select
+            value={visibility}
+            onValueChange={(value) =>
+              setVisibility(value as VisibilityFilterValue)
+            }
+          >
+            <SelectTrigger className="w-36">
+              <SelectValue placeholder="Visibility" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All</SelectItem>
+              <SelectItem value="visible">Visible</SelectItem>
+              <SelectItem value="hidden">Hidden</SelectItem>
+            </SelectContent>
+          </Select>
         }
         actions={
           <Button variant="secondary" disabled>
@@ -627,9 +583,8 @@ export function CurrentlyBuildingList() {
                       <TableHead className="w-12 pr-0">Order</TableHead>
                       <TableHead>Title</TableHead>
                       <TableHead>Description</TableHead>
-                      <TableHead>Status</TableHead>
                       <TableHead>Current Focus</TableHead>
-                      <TableHead>Tech Stack</TableHead>
+                      <TableHead>Topics</TableHead>
                       <TableHead>Highlights</TableHead>
                       <TableHead>Visibility</TableHead>
                       <TableHead className="text-right">Actions</TableHead>

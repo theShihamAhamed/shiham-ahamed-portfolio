@@ -15,7 +15,6 @@ type CurrentlyBuildingItemResponse = {
 
 export type CurrentlyBuildingFilters = {
   search?: string;
-  status?: string;
   isVisible?: boolean;
 };
 

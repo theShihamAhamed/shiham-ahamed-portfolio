@@ -9,6 +9,8 @@ function serializeImage(image: StoredImageAsset, includeFileId: boolean): ImageA
 const links = (value: ProjectDocument["links"]) => value ? ({ ...(value.github ? { github: value.github } : {}), ...(value.liveDemo ? { liveDemo: value.liveDemo } : {}), ...(value.article ? { article: value.article } : {}) }) : undefined;
 const architecture = (value: ProjectDocument["architecture"], includeFileId: boolean) => { if (!value) return undefined; const result = { ...(value.image ? { image: includeFileId ? serializeImage(value.image, true) : serializeImage(value.image, false) } : {}), ...(value.summary ? { summary: value.summary } : {}), ...(value.points?.length ? { points: value.points } : {}) }; return Object.keys(result).length ? result : undefined; };
 const tech = (items: ProjectDocument["techStack"]) => items.map((item) => ({ ...item, showOnCard: item.showOnCard ?? false }));
+const optionalTrimmedString = (value: unknown): string | undefined => typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
+const normalizedStringList = (value: unknown): string[] => Array.isArray(value) ? value.filter((item): item is string => typeof item === "string").map((item) => item.trim()).filter(Boolean) : [];
 
 export const serializeAdminProject = (project: ProjectDocument): AdminProject => {
   const item = project.toObject();
@@ -67,7 +69,13 @@ export const serializePublicCertification = (value: CertificationDocument): Publ
 export const serializeAdminAchievement = (value: AchievementDocument): AdminAchievement => { const doc = value.toObject(); return { id: doc._id.toString(), title: doc.title, note: doc.note, ...(doc.event ? { event: doc.event } : {}), ...(doc.result ? { result: doc.result } : {}), ...(doc.date ? { date: doc.date } : {}), ...(doc.year ? { year: doc.year } : {}), ...(doc.icon ? { icon: doc.icon } : {}), isVisible: doc.isVisible, displayOrder: doc.displayOrder, createdAt: doc.createdAt.toISOString(), updatedAt: doc.updatedAt.toISOString() }; };
 export const serializePublicAchievement = (value: AchievementDocument): PublicAchievement => { const { isVisible: _isVisible, displayOrder: _displayOrder, ...publicValue } = serializeAdminAchievement(value); return publicValue; };
 
-export const serializeAdminCurrentlyBuilding = (value: CurrentlyBuildingDocument): AdminCurrentlyBuildingItem => { const doc = value.toObject(); return { id: doc._id.toString(), title: doc.title, description: doc.description, status: doc.status, currentFocus: doc.currentFocus, techStack: doc.techStack, highlights: doc.highlights, ...(doc.link ? { link: doc.link } : {}), isVisible: doc.isVisible, displayOrder: doc.displayOrder, createdAt: doc.createdAt.toISOString(), updatedAt: doc.updatedAt.toISOString() }; };
+export const serializeAdminCurrentlyBuilding = (value: CurrentlyBuildingDocument): AdminCurrentlyBuildingItem => {
+  const doc = value.toObject();
+  const currentFocus = optionalTrimmedString(doc.currentFocus);
+  const link = optionalTrimmedString(doc.link);
+
+  return { id: doc._id.toString(), title: doc.title, description: doc.description, ...(currentFocus ? { currentFocus } : {}), techStack: normalizedStringList(doc.techStack), highlights: normalizedStringList(doc.highlights), ...(link ? { link } : {}), isVisible: doc.isVisible, displayOrder: doc.displayOrder, createdAt: doc.createdAt.toISOString(), updatedAt: doc.updatedAt.toISOString() };
+};
 export const serializePublicCurrentlyBuilding = (value: CurrentlyBuildingDocument): PublicCurrentlyBuildingItem => { const { isVisible: _isVisible, displayOrder: _displayOrder, ...publicValue } = serializeAdminCurrentlyBuilding(value); return publicValue; };
 
 export const serializeSiteSettings = (value: SiteSettingsDocument): AdminSiteSettings & PublicSiteSettings => { const item = value.toObject(); return { id: item._id.toString(), name: item.name, targetRole: item.targetRole, email: item.email, githubUrl: item.githubUrl, linkedinUrl: item.linkedinUrl, resumeUrl: item.resumeUrl, hero: { badge: item.hero.badge, title: item.hero.title, highlightedPhrase: item.hero.highlightedPhrase, description: item.hero.description }, education: { institution: item.education.institution, degree: item.education.degree, specialization: item.education.specialization, expectedGraduation: item.education.expectedGraduation }, createdAt: item.createdAt.toISOString(), updatedAt: item.updatedAt.toISOString() }; };

@@ -147,8 +147,7 @@ export type AdminCurrentlyBuildingItem = {
   id: string;
   title: string;
   description: string;
-  status: string;
-  currentFocus: string;
+  currentFocus?: string;
   techStack: string[];
   highlights: string[];
   link?: string;
@@ -264,10 +263,15 @@ export type UpdateAchievementInput = Partial<
   Omit<CreateAchievementInput, "isVisible">
 >;
 
-export type CreateCurrentlyBuildingInput = Omit<
-  AdminCurrentlyBuildingItem,
-  "id" | "createdAt" | "updatedAt" | "displayOrder" | "isVisible"
-> & { isVisible?: boolean };
+export type CreateCurrentlyBuildingInput = {
+  title: string;
+  description: string;
+  currentFocus?: string;
+  techStack?: string[];
+  highlights?: string[];
+  link?: string;
+  isVisible?: boolean;
+};
 export type UpdateCurrentlyBuildingInput = Partial<
   Omit<CreateCurrentlyBuildingInput, "isVisible">
 >;

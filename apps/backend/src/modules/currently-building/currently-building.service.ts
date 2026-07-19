@@ -92,15 +92,10 @@ const buildCurrentlyBuildingFilter = (
     filter.$or = [
       { title: searchRegex },
       { description: searchRegex },
-      { status: searchRegex },
       { currentFocus: searchRegex },
       { techStack: searchRegex },
       { highlights: searchRegex },
     ];
-  }
-
-  if (query.status) {
-    filter.status = query.status;
   }
 
   if (typeof query.isVisible === "boolean") {

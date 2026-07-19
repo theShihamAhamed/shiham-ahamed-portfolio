@@ -234,13 +234,20 @@ Project slugs are generated from `title` on create unless a valid unique slug is
 
 | Method | Route |
 | --- | --- |
-| `GET` | `/api/currently-building?search=&status=&isVisible=` |
+| `GET` | `/api/currently-building?search=&isVisible=` |
 | `GET` | `/api/currently-building/:id` |
 | `POST` | `/api/currently-building` |
 | `PATCH` | `/api/currently-building/:id` |
 | `DELETE` | `/api/currently-building/:id` |
 | `PATCH` | `/api/currently-building/:id/visibility` |
 | `PATCH` | `/api/currently-building/reorder` |
+
+Currently Building requires only `title` and `description`. `currentFocus`,
+`techStack`, `highlights`, `link`, and `isVisible` are optional. For this
+content type, `techStack` is the compatibility property used for
+general-purpose Topics such as technologies, platforms, development areas,
+engineering concepts, or project categories. The strict API no longer accepts
+`status`; public presentation owns the fixed `In progress` label.
 
 ### Certification Admin Routes
 
@@ -357,16 +364,14 @@ MongoDB transactions are used where appropriate. If the local MongoDB server doe
 
 ```json
 {
-  "title": "AI Portfolio Admin",
-  "description": "An admin dashboard for managing portfolio content.",
-  "status": "In progress",
-  "currentFocus": "Backend content APIs",
-  "techStack": ["Express", "MongoDB", "React"],
-  "highlights": ["Auth-protected editing", "Drag-and-drop ordering"],
-  "link": "https://example.com",
-  "isVisible": true
+  "title": "Exploring React Native with Expo",
+  "description": "Learning mobile application development by building cross-platform interfaces and exploring Expo workflows."
 }
 ```
+
+Optional properties are `currentFocus`, `techStack` (displayed as Topics),
+`highlights`, `link`, and `isVisible`. Topics and highlights may be omitted or
+sent as empty arrays.
 
 ### Certification
 

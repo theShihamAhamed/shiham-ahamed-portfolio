@@ -95,7 +95,10 @@ Projects:
 
 Currently Building:
 
-- Manage active-work title, description, status, focus, stack, and highlights.
+- Only Title and Description are required; Status is not edited.
+- Current focus, Link, Topics, and Highlights are optional.
+- Topics are general-purpose strings stored through the existing `techStack`
+  property; public cards always display `In progress`.
 - Toggle visibility and reorder the full unfiltered list.
 
 Certifications:

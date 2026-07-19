@@ -7,10 +7,7 @@ export const mapPublicCurrentlyBuildingToCurrentProject = (
   id: item.id,
   title: item.title,
   description: item.description,
-  status: item.status,
-  tech: item.techStack,
-  stack: item.techStack,
-  focus: item.currentFocus,
-  link: item.link,
-  highlights: item.highlights,
+  topics: item.techStack ?? [],
+  ...(item.currentFocus ? { focus: item.currentFocus } : {}),
+  highlights: item.highlights ?? [],
 });

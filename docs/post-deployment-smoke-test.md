@@ -11,6 +11,11 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 - [ ] Completed, in-progress, planned, hidden, and unknown-slug behavior is correct.
 - [ ] Project detail renders safe media, technologies, timeline, and sanitized GitHub README-style case-study content.
 - [ ] Empty projects, certifications, achievements, currently-building, and settings states are intentional.
+- [ ] A minimum Currently Building record with only Title and Description renders a balanced card with the fixed `In progress` badge and no empty optional wrappers.
+- [ ] Full Currently Building cards conditionally render Current focus, Topics, and Highlights in stored order; hidden-item filtering and display ordering remain correct.
+- [ ] Currently Building cards retain animation/hover behavior and have no overflow at mobile, tablet, or desktop widths in light and dark themes.
+- [ ] Certification Skills span the full card width below the top content row across responsive widths, including long titles, notes, and many skills.
+- [ ] The certificate preview button shows a pointer cursor, is reachable by Tab, opens with Enter/Space, closes with Escape or its close button, and restores focus without adding a pointer cursor to non-interactive card areas.
 - [ ] About page, skills, institution/profile assets, and quick navigation work.
 - [ ] Contact validation, honeypot, success, failure, and configured links work.
 - [ ] sitemap.xml contains only public visible routes/projects.
@@ -31,6 +36,9 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 - [ ] Media upload, replacement, removal, retry, and confirmation work.
 - [ ] Case-study Edit/Preview tabs, safe README HTML, code-copy controls, edit/clear flow, and validation errors work.
 - [ ] Certifications, achievements, currently-building, and site settings CRUD work.
+- [ ] Currently Building creation succeeds with only Title and Description and separately with every optional field populated.
+- [ ] A legacy Currently Building record containing stored status can be edited without exposing status; Current focus, Link, all Topics, and all Highlights can each be cleared.
+- [ ] Currently Building visibility toggles, pointer/keyboard reorder, filtered reorder restriction, optional-field guidance, and mobile form/list layouts work.
 - [ ] Admin routes remain noindex.
 - [ ] Failed API/backend connections remain usable and sanitized.
 
