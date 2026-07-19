@@ -73,6 +73,7 @@ test("aurora CSS preserves the inspected gradients and animation mechanics", () 
   assert.doesNotMatch(fieldRule, /background(?:-image|-size)?\s*:/);
   assert.match(stripRule, /background-image: var\(--aurora-lights\), var\(--aurora-gaps\)/);
   assert.match(stripRule, /background-size: 100%, 100%/);
+  assert.match(stripRule, /display: block/);
   assert.match(stripRule, /width: 300%/);
   assert.match(stripRule, /height: 100%/);
   assert.match(stripRule, /mix-blend-mode: difference/);

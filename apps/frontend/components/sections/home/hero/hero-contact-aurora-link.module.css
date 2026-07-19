@@ -111,6 +111,7 @@
 }
 
 .strip {
+  display: block;
   width: 300%;
   height: 100%;
   background-image: var(--aurora-lights), var(--aurora-gaps);
