@@ -96,7 +96,7 @@
 
 .mask {
   position: absolute;
-  inset: 0;
+  inset: 0 -32px;
   overflow: hidden;
   opacity: 0.45;
   border-radius: inherit;
@@ -106,8 +106,6 @@
   position: absolute;
   inset: -10px -200px -10px -40px;
   overflow: hidden;
-  background-image: var(--aurora-lights), var(--aurora-gaps);
-  background-size: 120%, 200%;
   filter: blur(12px) invert(0);
   opacity: 0.7;
 }

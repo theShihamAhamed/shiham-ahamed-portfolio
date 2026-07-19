@@ -15,6 +15,16 @@ const styles = read(
   "components/sections/home/hero/hero-contact-aurora-link.module.css",
 );
 const hero = read("components/sections/home/hero/hero-section.tsx");
+const rule = (selector) => {
+  const match = styles.match(new RegExp(`\\.${selector}\\s*\\{([^}]*)\\}`));
+
+  assert.ok(match, `Expected .${selector} CSS rule`);
+  return match[1];
+};
+
+const fieldRule = rule("field");
+const maskRule = rule("mask");
+const stripRule = rule("strip");
 
 test("hero aurora contact link keeps one server-rendered semantic target", () => {
   assert.match(component, /import Link from "next\/link"/);
@@ -53,18 +63,24 @@ test("aurora CSS preserves the inspected gradients and animation mechanics", () 
     assert.match(styles, new RegExp(color));
   }
   assert.equal((styles.match(/repeating-linear-gradient\(\s*110deg/g) ?? []).length, 2);
-  assert.match(styles, /background-size: 120%, 200%/);
-  assert.match(styles, /background-size: 100%, 100%/);
-  assert.match(styles, /width: 300%/);
-  assert.match(styles, /mix-blend-mode: difference/);
+  assert.doesNotMatch(fieldRule, /background(?:-image|-size)?\s*:/);
+  assert.match(stripRule, /background-image: var\(--aurora-lights\), var\(--aurora-gaps\)/);
+  assert.match(stripRule, /background-size: 100%, 100%/);
+  assert.match(stripRule, /width: 300%/);
+  assert.match(stripRule, /height: 100%/);
+  assert.match(stripRule, /mix-blend-mode: difference/);
+  assert.match(stripRule, /animation-name: aurora-shift/);
+  assert.match(stripRule, /animation-play-state: paused/);
 });
 
 test("aurora layers preserve exact glow and glass contracts", () => {
   assert.match(styles, /height: 80px/);
   assert.match(styles, /transition: opacity 0\.5s/);
-  assert.match(styles, /inset: -10px -200px -10px -40px/);
-  assert.match(styles, /filter: blur\(12px\) invert\(0\)/);
-  assert.match(styles, /opacity: 0\.7/);
+  assert.match(maskRule, /inset: 0 -32px/);
+  assert.match(fieldRule, /inset: -10px -200px -10px -40px/);
+  assert.match(fieldRule, /overflow: hidden/);
+  assert.match(fieldRule, /filter: blur\(12px\) invert\(0\)/);
+  assert.match(fieldRule, /opacity: 0\.7/);
   assert.match(styles, /-webkit-mask-image: radial-gradient\([\s\S]*?ellipse at 50% 82%[\s\S]*?#000 27%[\s\S]*?transparent 70%/);
   assert.match(styles, /(?<!-webkit-)mask-image: radial-gradient\([\s\S]*?ellipse at 50% 82%[\s\S]*?#000 27%[\s\S]*?transparent 70%/);
   assert.match(styles, /-webkit-backdrop-filter: blur\(20px\) brightness\(1\.3\) saturate\(1\.5\)/);
