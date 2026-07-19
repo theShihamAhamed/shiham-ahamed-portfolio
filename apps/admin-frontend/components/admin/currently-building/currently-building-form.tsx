@@ -63,7 +63,6 @@ type CurrentlyBuildingFormProps =
 const createDefaultValues: CreateCurrentlyBuildingFormValues = {
   title: "",
   description: "",
-  status: "",
   currentFocus: "",
   techStack: [],
   highlights: [],
@@ -79,10 +78,9 @@ const toEditValues = (
 ): UpdateCurrentlyBuildingFormValues => ({
   title: item.title,
   description: item.description,
-  status: item.status,
-  currentFocus: item.currentFocus,
-  techStack: item.techStack,
-  highlights: item.highlights,
+  currentFocus: item.currentFocus ?? "",
+  techStack: item.techStack ?? [],
+  highlights: item.highlights ?? [],
   link: item.link ?? "",
 });
 
@@ -91,10 +89,9 @@ const toCreateInput = (
 ): CreateCurrentlyBuildingInput => ({
   title: values.title,
   description: values.description,
-  status: values.status,
-  currentFocus: values.currentFocus,
-  techStack: values.techStack,
-  highlights: values.highlights,
+  ...(values.currentFocus ? { currentFocus: values.currentFocus } : {}),
+  ...(values.techStack.length ? { techStack: values.techStack } : {}),
+  ...(values.highlights.length ? { highlights: values.highlights } : {}),
   ...(values.link ? { link: values.link } : {}),
   isVisible: values.isVisible,
 });
@@ -104,7 +101,6 @@ const toUpdateInput = (
 ): UpdateCurrentlyBuildingInput => ({
   title: values.title,
   description: values.description,
-  status: values.status,
   currentFocus: values.currentFocus,
   techStack: values.techStack,
   highlights: values.highlights,
@@ -286,8 +282,8 @@ function CurrentlyBuildingFormShell<TFormValues extends FieldValues>({
         title={mode === "create" ? "New Currently Building" : item?.title ?? "Edit Item"}
         description={
           mode === "create"
-            ? "Create an active-work entry with focus, stack, highlights, and visibility."
-            : "Edit active-work metadata. Visibility stays on the list page."
+            ? "Create an active-work entry. Only the title and description are required."
+            : "Edit active-work content. Visibility stays on the list page."
         }
         badge={mode === "create" ? "Create" : "Edit"}
       />
@@ -304,28 +300,14 @@ function CurrentlyBuildingFormShell<TFormValues extends FieldValues>({
 
         <FormSection
           title="Core Details"
-          description="Describe what is actively being built and its current state."
+          description="Describe what is actively being built and add optional supporting details."
         >
-          <div className="grid gap-4 md:grid-cols-2">
-            <div>
-              <label className="text-sm font-medium text-[var(--admin-text)]" htmlFor="title">
-                Title <span className="text-red-700">*</span>
-              </label>
-              <Input id="title" className="mt-2" {...register(field("title"))} />
-              <FieldError message={getMessage(errors.title?.message)} />
-            </div>
-            <div>
-              <label className="text-sm font-medium text-[var(--admin-text)]" htmlFor="status">
-                Status <span className="text-red-700">*</span>
-              </label>
-              <Input
-                id="status"
-                className="mt-2"
-                placeholder="In progress"
-                {...register(field("status"))}
-              />
-              <FieldError message={getMessage(errors.status?.message)} />
-            </div>
+          <div>
+            <label className="text-sm font-medium text-[var(--admin-text)]" htmlFor="title">
+              Title <span className="text-red-700">*</span>
+            </label>
+            <Input id="title" className="mt-2" {...register(field("title"))} />
+            <FieldError message={getMessage(errors.title?.message)} />
           </div>
 
           <div>
@@ -348,7 +330,7 @@ function CurrentlyBuildingFormShell<TFormValues extends FieldValues>({
               className="text-sm font-medium text-[var(--admin-text)]"
               htmlFor="currentFocus"
             >
-              Current focus <span className="text-red-700">*</span>
+              Current focus <span className="text-[var(--admin-muted)]">optional</span>
             </label>
             <Textarea
               id="currentFocus"
@@ -373,29 +355,29 @@ function CurrentlyBuildingFormShell<TFormValues extends FieldValues>({
         </FormSection>
 
         <FormSection
-          title="Tech Stack"
-          description="Add at least one technology currently involved."
+          title="Topics"
+          description="Add optional topics such as technologies, platforms, development areas, engineering concepts, or project categories."
         >
           <DynamicStringListInput
-            label="Tech stack"
+            label="Topics"
             value={techStack}
             onChange={(value) => setStringListValue("techStack", value)}
-            minItems={1}
-            placeholder="Next.js"
-            addLabel="Add tech"
+            placeholder="React Native"
+            addLabel="Add topic"
+            emptyMessage="No topics added yet."
           />
           <FieldError message={getMessage(errors.techStack?.message)} />
         </FormSection>
 
         <FormSection
           title="Highlights"
-          description="Add at least one key bullet about this active work."
+          description="Add optional short highlights about this active work."
         >
           <DynamicStringListInput
             label="Highlights"
             value={highlights}
             onChange={(value) => setStringListValue("highlights", value)}
-            minItems={1}
+            emptyMessage="No highlights added yet."
           />
           <FieldError message={getMessage(errors.highlights?.message)} />
         </FormSection>

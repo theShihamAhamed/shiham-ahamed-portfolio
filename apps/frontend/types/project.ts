@@ -97,10 +97,7 @@ export type CurrentProject = {
   id?: number | string;
   title: string;
   description: string;
-  status: string;
-  tech?: string[];
-  stack: string[];
-  focus: string;
-  link?: string;
+  topics: string[];
+  focus?: string;
   highlights: string[];
 };

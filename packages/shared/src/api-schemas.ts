@@ -128,12 +128,12 @@ export const achievementReorderSchema = orderedIdsSchema;
 export const adminAchievementQuerySchema = z.object({ search: optionalString, isVisible: booleanQuery }).strict();
 
 const currentlyBuildingOptionalUrl = optionalUrl();
-export const createCurrentlyBuildingSchema = z.object({ title: requiredString, description: requiredString, status: requiredString, currentFocus: requiredString, techStack: requiredStringArray, highlights: requiredStringArray, link: currentlyBuildingOptionalUrl, isVisible: z.boolean().optional() }).strict();
-export const updateCurrentlyBuildingSchema = z.object({ title: requiredString.optional(), description: requiredString.optional(), status: requiredString.optional(), currentFocus: requiredString.optional(), techStack: requiredStringArray.optional(), highlights: requiredStringArray.optional(), link: currentlyBuildingOptionalUrl }).strict().refine((value) => Object.keys(value).length > 0, { message: "At least one currently-building field is required" });
+export const createCurrentlyBuildingSchema = z.object({ title: requiredString, description: requiredString, currentFocus: optionalString, techStack: optionalStringArray, highlights: optionalStringArray, link: currentlyBuildingOptionalUrl, isVisible: z.boolean().optional() }).strict();
+export const updateCurrentlyBuildingSchema = z.object({ title: requiredString.optional(), description: requiredString.optional(), currentFocus: optionalString, techStack: optionalStringArray, highlights: optionalStringArray, link: currentlyBuildingOptionalUrl }).strict().refine((value) => Object.keys(value).length > 0, { message: "At least one currently-building field is required" });
 export const currentlyBuildingIdParamSchema = z.object({ id: objectIdSchema });
 export const toggleCurrentlyBuildingVisibilitySchema = z.object({ isVisible: z.boolean() }).strict();
 export const currentlyBuildingReorderSchema = orderedIdsSchema;
-export const adminCurrentlyBuildingQuerySchema = z.object({ search: optionalString, status: optionalString, isVisible: booleanQuery }).strict();
+export const adminCurrentlyBuildingQuerySchema = z.object({ search: optionalString, isVisible: booleanQuery }).strict();
 
 const requiredMessage = (message: string) => z.string().trim().min(1, message);
 const settingsHeroSchema = z.object({ badge: requiredMessage("Hero badge is required"), title: requiredMessage("Hero title is required"), highlightedPhrase: requiredMessage("Hero highlighted phrase is required"), description: requiredMessage("Hero description is required") }).strict();

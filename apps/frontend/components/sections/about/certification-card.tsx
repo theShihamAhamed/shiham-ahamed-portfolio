@@ -21,8 +21,8 @@ type Props = {
 const CertificationCard = ({ item }: Props) => {
   return (
     <article className="rounded-2xl border border-border/60 bg-background/80 p-4 shadow-sm backdrop-blur-xl transition-all duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_16px_40px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_16px_40px_rgba(255,255,255,0.03)] sm:px-5 sm:py-2">
-      <div className="grid gap-4 sm:grid-cols-[1fr_120px] sm:items-start">
-        <div>
+      <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_120px] sm:items-start">
+        <div className="min-w-0">
           <h3 className="mt-2 text-lg font-semibold tracking-[-0.03em] text-foreground">
             {item.title}
           </h3>
@@ -35,35 +35,21 @@ const CertificationCard = ({ item }: Props) => {
             {item.note}
           </p>
 
-          {/* Skills tags */}
-          {item.skills && item.skills.length > 0 && (
-            <div className="mt-3 flex flex-wrap gap-2">
-              {item.skills.map((skill) => (
-                <span
-                  key={skill}
-                  className="inline-flex items-center rounded-full border border-border/60 bg-accent/30 px-2.5 py-1 text-xs font-medium text-foreground/80"
-                >
-                  {skill}
-                </span>
-              ))}
-            </div>
-          )}
-
         </div>
 
-        <div className="flex flex-col gap-3">
+        <div className="flex min-w-0 flex-col gap-3">
           <Dialog>
             <DialogTrigger asChild>
               <button
-                className="group relative overflow-hidden rounded-xl border border-border/60 bg-muted/20 shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/25"
+                className="group relative w-full cursor-pointer overflow-hidden rounded-xl border border-border/60 bg-muted/20 shadow-sm transition-all duration-300 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-foreground/25"
                 aria-label={`Preview ${item.title} certificate`}
               >
-                <div className="relative aspect-[4/3] w-full sm:w-[120px]">
+                <div className="relative aspect-[4/3] w-full">
                   <Image
                     src={item.image}
                     alt={item.imageAlt || item.title}
                     fill
-                    sizes="120px"
+                    sizes="(min-width: 640px) 120px, calc(100vw - 2rem)"
                     className="object-cover transition-transform duration-300 group-hover:scale-[1.02]"
                   />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-all duration-300 group-hover:bg-black/50 group-focus-visible:bg-black/50">
@@ -111,6 +97,19 @@ const CertificationCard = ({ item }: Props) => {
           ) : null}
         </div>
       </div>
+
+      {item.skills && item.skills.length > 0 ? (
+        <div className="mt-4 flex flex-wrap gap-2">
+          {item.skills.map((skill) => (
+            <span
+              key={skill}
+              className="inline-flex items-center rounded-full border border-border/60 bg-accent/30 px-2.5 py-1 text-xs font-medium text-foreground/80"
+            >
+              {skill}
+            </span>
+          ))}
+        </div>
+      ) : null}
     </article>
   );
 };

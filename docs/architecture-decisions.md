@@ -145,3 +145,14 @@ This is the append-only decision record for the complete refactor. Approved entr
 - **Consequences:** Project create/update payloads are smaller and strict schemas reject `description` as unknown. Admin guidance and counters match backend limits. Public grouping stays stable as the registry grows, while source order and the first normalized technology slug are preserved. Cards, SEO, case studies, galleries, architecture media, and video behavior retain their existing ownership.
 - **Risks:** Existing stored `description` values remain in MongoDB until separately cleaned but are ignored and never serialized. Previously stored content beyond the new limits can still be read, but should be audited before an edit that validates and resaves the complete project. No migration or production-data mutation is part of this decision.
 - **Follow-up actions:** Keep boundary tests aligned with the shared constants; verify representative create/edit flows and project-detail layouts in the preview deployment before merge; plan any production content cleanup as a separately approved operation.
+
+## ADR-012 - Make Currently Building status presentation-owned
+
+- **Status:** Approved
+- **Date:** 2026-07-19
+- **Context:** Every Currently Building item is inherently in progress, so a stored and editable status duplicated presentation state while making otherwise useful focus, topic, and highlight content unnecessarily mandatory.
+- **Decision:** Require only title and description. Remove status from active schemas, contracts, serializers, admin controls, search, and public data; render the fixed `In progress` label in the public card. Retain the internal `techStack` property for compatibility but present it as optional general-purpose Topics. Keep Topics and Highlights as simple string arrays with safe empty defaults, and make current focus and link optional.
+- **Alternatives considered:** Retain a one-value status selector; migrate existing documents; rename the persisted `techStack` property; introduce a structured topic taxonomy.
+- **Consequences:** The contract is smaller and minimum-content cards are supported. Strict new API requests reject legacy `status`, while explicit serializers ignore any old stored value. New admin and backend versions should be released together because old admin clients still send status.
+- **Risks:** A legacy physical status index can remain until separately approved maintenance. Rolling back the backend after creating status-less records is less safe than rolling forward.
+- **Follow-up actions:** Perform admin/public responsive browser QA and representative legacy-record editing before production release. No migration, cleanup script, production index removal, or production-data change is part of this decision.

@@ -802,3 +802,20 @@ Read-only file/package/source searches and final docs-only consistency checks
 - `npm run build` passed all package, public frontend, admin frontend, and backend builds. Public page generation logged local MongoDB DNS lookup failures and rendered the existing fallback states; the build exited successfully.
 - `npm run validate` passed all typechecks, all lints, shared 27/27, and DB 7/7 before the unchanged Node 22/`tsx` named-export loader mismatch stopped the admin suite at 8/9. The separate full frontend suite reached 46/48 before the same known loader mismatch affected `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs`.
 - No production cache request or live manual cache request was sent. No environment file/provider value, database record, migration, deployment, production data, or authentication cookie policy was changed. Browser CORS/authentication and localhost manual-network QA remain pending.
+
+## Currently Building contract simplification and certification layout
+
+- Baseline: fetched and fast-forwarded `main` to `3e52849d4dd7b1ed2bae6c34a09e5d34322a14b1`, then created `refactor/simplify-currently-building-content` from that clean source-of-truth baseline.
+- Local runtime: Node `22.16.0`, npm `10.9.2`. No `nvm`, `fnm`, or Volta executable was available, and the Docker daemon was stopped, so local Node 20.20.2 execution was unavailable. GitHub Actions on the supported Node runtime remains authoritative for the aggregate test gate.
+- `npm.cmd run test:shared`: passed 32/32, including 5 new Currently Building schema/contract tests.
+- `npm.cmd run test:db`: passed 11/11, including 4 new model, index-declaration, legacy-hydration, serializer, normalization, and non-mutation tests.
+- `npm.cmd run test:backend`: passed 36/36, including 3 new route/service/cache-preservation contract tests and all existing cache/mutation coverage.
+- `npm.cmd run test:admin`: 13/14 passed; all 5 new Currently Building tests passed. The unchanged `project-form-and-upload.test.mjs` could not load a named TypeScript export under local Node 22/`tsx`; this is the established loader/runtime mismatch rather than an application assertion failure.
+- `npm.cmd run test:frontend`: 51/53 passed; all 4 new Currently Building/certification tests passed. The unchanged technology display-group and section-navigation files hit the same local Node 22/`tsx` named-export loader mismatch.
+- `node --import=tsx --test tests/currently-building-and-certification-contract.test.mjs` from `apps/frontend`: passed 4/4.
+- The first `npm.cmd run lint` found one `no-undef` issue in the new backend test's use of `process`. After importing `node:process`, the repeated `npm.cmd run lint` passed all workspace lint and package/client-boundary checks.
+- `npm.cmd run typecheck`, `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release`: passed.
+- `npm.cmd run build`: passed shared, DB, public frontend, admin frontend, and backend builds. Public static generation logged local MongoDB SRV `ENOTFOUND` fallback messages; the build completed successfully.
+- `npm.cmd run validate`: typecheck, lint, shared 32/32, and DB 11/11 passed before aggregate execution stopped at admin 13/14 on the same unchanged Node 22 loader mismatch. Commands after that short-circuit were run separately and passed where listed above.
+- Browser/manual QA was not performed. The admin create/edit/clear/reorder flows, legacy-record edit, responsive public card variants, light/dark modes, and certification dialog/cursor/focus behavior remain preview-environment gates.
+- No migration, cleanup script, `syncIndexes`, physical index removal, production-data mutation, environment/provider change, deployment, merge, cache-policy change, or dependency/lockfile change was performed.

@@ -35,7 +35,6 @@ const clearableProjectMonth = z
   .trim()
   .refine((value) => !value || isProjectMonth(value), "Use YYYY-MM format.");
 const stringList = z.array(z.string()).transform((items) => items.map((item) => item.trim()).filter(Boolean));
-const requiredList = (message: string) => stringList.pipe(z.array(z.string().min(1)).min(1, message));
 
 export const imageAssetSchema = z.object({ url: z.string().url(), fileId: z.string().min(1), alt: z.string().trim().min(1), width: z.number().int().positive().optional(), height: z.number().int().positive().optional(), name: z.string().trim().min(1).optional() });
 export const projectTechStackItemSchema = projectTechnologySchema;
@@ -97,7 +96,14 @@ const achievementBase = z.object({ title: required("Title is required."), note: 
 export const createAchievementFormSchema = achievementBase.extend({ isVisible: z.boolean() });
 export const updateAchievementFormSchema = achievementBase;
 
-const currentlyBuildingBase = z.object({ title: required("Title is required."), description: required("Description is required."), status: required("Status is required."), currentFocus: required("Current focus is required."), techStack: requiredList("At least one tech stack item is required."), highlights: requiredList("At least one highlight is required."), link: clearableUrl });
+const currentlyBuildingBase = z.object({
+  title: required("Title is required."),
+  description: required("Description is required."),
+  currentFocus: z.string().trim().default(""),
+  techStack: stringList.default([]),
+  highlights: stringList.default([]),
+  link: clearableUrl.default(""),
+});
 export const createCurrentlyBuildingFormSchema = currentlyBuildingBase.extend({ isVisible: z.boolean() });
 export const updateCurrentlyBuildingFormSchema = currentlyBuildingBase;
 
