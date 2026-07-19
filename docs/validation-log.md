@@ -819,3 +819,82 @@ Read-only file/package/source searches and final docs-only consistency checks
 - `npm.cmd run validate`: typecheck, lint, shared 32/32, and DB 11/11 passed before aggregate execution stopped at admin 13/14 on the same unchanged Node 22 loader mismatch. Commands after that short-circuit were run separately and passed where listed above.
 - Browser/manual QA was not performed. The admin create/edit/clear/reorder flows, legacy-record edit, responsive public card variants, light/dark modes, and certification dialog/cursor/focus behavior remain preview-environment gates.
 - No migration, cleanup script, `syncIndexes`, physical index removal, production-data mutation, environment/provider change, deployment, merge, cache-policy change, or dependency/lockfile change was performed.
+
+## Hero Contact aurora animation
+
+- Baseline: fetched `origin` and verified `feat/hero-contact-aurora` was clean, based directly on `origin/main` at `d49debdb323a89ece47c2938ad8ec2b42c4f4590`, and `0 0` ahead/behind before implementation.
+- Focused contract test: the first `node --import=tsx --test tests/hero-contact-aurora-contract.test.mjs` run reached 4/5 because a new source-contract assertion expected compact JSX whitespace around the unchanged `View Projects` text. Only that brittle assertion was corrected. The final exact-source run passed 5/5.
+- `npm.cmd run typecheck:frontend` and `npm.cmd run lint:frontend`: passed. The frontend client-boundary check passed for 163 source files.
+- `npm.cmd run test:frontend`: 56/58 passed. The two unchanged failures were `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs`, both blocked by the established local Node 22.16.0/`tsx` named-export loader mismatch. All five new hero aurora tests passed; no unrelated source or test was changed to suppress the local runtime mismatch.
+- `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release`: passed.
+- The first restricted `npm.cmd run build:frontend` attempt could not fetch the existing Geist and Geist Mono Google Fonts. The approved-network retry passed against the final CSS. Static generation logged the existing local MongoDB SRV `ENOTFOUND` fallback messages and completed successfully.
+- `npm.cmd run build`: passed shared, DB, public frontend, admin frontend, and backend builds. The public build emitted the same expected local MongoDB DNS fallback messages and completed successfully.
+- `npm.cmd run validate`: all workspace typechecks, lints, shared tests (32/32), and DB tests (11/11) passed before aggregate execution stopped at admin 13/14 on the unchanged local Node 22/`tsx` named-export loader mismatch in `project-form-and-upload.test.mjs` for `IMAGE_UPLOAD_MAX_FILES`. Supported Node 20 GitHub Actions remains the authoritative aggregate gate after push.
+- `git diff --check`: passed. Scope review found no dependency, lockfile, backend, admin, database, shared-contract, global Button, global CSS, environment, migration, generated-output, or unrelated hero changes.
+- Local browser inspection was attempted with the frontend development server, but the in-app browser could not initialize because its sandbox metadata was unavailable. No manual browser QA or cross-browser result is claimed. Stationary hover, pause/resume, focus-visible, reduced motion, light/dark themes, mobile touch, adjacent CTA usability, and document-overflow checks remain preview QA gates.
+- No deployment, provider operation, production mutation, merge, or ready-for-review transition was performed.
+
+### Full-field motion correction
+
+- Root cause: `.field` painted the same teal/blue/purple/pink/amber gradients as its animated `.strip` at field opacity `0.7`. Because the parent gradient was stationary while only the child translated, the stationary paint could dominate the composited glow and make the hover effect appear fixed.
+- CSS correction: removed `background-image` and its now-unused `background-size` from `.field`; the field retains the exact oversized inset, containment, `blur(12px) invert(0)`, and `0.7` opacity. The animated `.strip` remains the sole gradient owner and retains both exact gradients, 300% width, full height, difference blend, and the complete paused/running animation contract. The inspected mask extent was restored to `inset: 0 -32px`.
+- Focused `node --import=tsx --test tests/hero-contact-aurora-contract.test.mjs`: passed 5/5. Coverage now rejects a field-level duplicate background, requires both strip gradients and strip-owned animation, checks the mask extent, and preserves hover, focus-visible, paused-default, no-JavaScript, and reduced-motion contracts.
+- `npm.cmd run test:frontend`: 56/58 passed, including all five corrected aurora tests. Only the unchanged `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs` named-export loader failures remain under local Node 22.16.0/`tsx`.
+- `npm.cmd run typecheck:frontend` and `npm.cmd run lint:frontend`: passed; frontend client boundaries passed for 163 source files.
+- `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release`: passed.
+- `npm.cmd run build:frontend`: passed all 15 public routes. `npm.cmd run build`: passed shared, DB, public frontend, admin frontend, and backend builds. Public static generation logged the existing local MongoDB SRV `ENOTFOUND` fallback messages and completed successfully.
+- `npm.cmd run validate`: all workspace typechecks and lints, shared 32/32, and DB 11/11 passed before aggregate execution stopped at admin 13/14 on the unchanged local Node 22/`tsx` named-export mismatch for `IMAGE_UPLOAD_MAX_FILES` in `project-form-and-upload.test.mjs`.
+- Browser QA: the local frontend reached `127.0.0.1:3000`, but the in-app browser still could not initialize because required sandbox metadata was unavailable. No visual motion, overflow, keyboard, or cross-browser result is claimed, and `window.matchMedia("(prefers-reduced-motion: reduce)").matches` could not be evaluated. Stationary eight-second hover, every-colour travel, absence of fixed colour, pause/resume, focus-visible, reduced motion, adjacent CTA, and horizontal-overflow checks remain preview QA gates.
+- No dependency, lockfile, backend, admin, database, shared-contract, environment, provider, deployment, production-data, merge, or ready-for-review change was made.
+
+### Direct-hover visibility correction
+
+- Root causes confirmed in source: every hover surface/glow/animation selector was nested inside `(hover: hover) and (pointer: fine)`, so environments that did not match both capabilities received no hover state at all. Independently, `.glow` used `z-index: -1` inside the isolated component stacking context, allowing the aurora to paint behind the surrounding hero surface.
+- CSS correction: restored `.link:hover`, both hover pseudo-elements, `.link:hover ~ .glow`, and `.link:hover ~ .glow .strip` as direct selectors with their existing values. The glow now uses `z-index: 0`, while the link remains `z-index: 1` and the root remains isolated. Focus-visible and active behavior remain independent, and no pointer media query, JavaScript animation, event handler, state, timer, or diagnostic `!important` was added.
+- Focused `node --import=tsx --test tests/hero-contact-aurora-contract.test.mjs`: passed 5/5. Coverage now rejects pointer-gated hover activation and negative glow stacking while requiring direct hover opacity/play-state rules, link/glow z-index ordering, focus-visible activation, strip-only gradients, exact motion values, and reduced-motion static positioning.
+- `npm.cmd run test:frontend`: 56/58 passed, including all five corrected aurora tests. The only failures remain the unchanged local Node 22.16.0/`tsx` named-export loader cases in `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs`.
+- `npm.cmd run typecheck:frontend`, `npm.cmd run lint:frontend`, `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release`: passed. Frontend client boundaries passed for 163 source files.
+- `npm.cmd run build:frontend`: passed all 15 public routes. `npm.cmd run build`: passed shared, DB, public frontend, admin frontend, and backend builds.
+- `npm.cmd run validate`: all workspace typechecks and lints, shared 32/32, and DB 11/11 passed before execution stopped at admin 13/14 on the unchanged local Node 22/`tsx` named-export mismatch for `IMAGE_UPLOAD_MAX_FILES` in `project-form-and-upload.test.mjs`.
+- Browser QA: the local frontend reached a listening state, but the in-app browser again could not initialize because required sandbox metadata was unavailable. No computed hover, pseudo-element, glow, animation, media-query, visual-motion, or overflow values are claimed. The three `matchMedia` diagnostics could not be evaluated. Hard-refresh and preview checks for immediate glass/glow visibility, eight-second colour travel, pause/resume, keyboard focus, light/dark themes, adjacent CTAs, and horizontal overflow remain pending.
+- The temporary local Next.js process was stopped after the failed browser connection. No dependency, lockfile, backend, admin, database, shared-contract, environment, provider, deployment, production-data, merge, or ready-for-review change was made.
+
+### Paintable aurora strip correction
+
+- Source-confirmed defect: the empty `.strip` span remained a non-replaced inline element, so its declared `width: 300%`, `height: 100%`, gradients, and transform animation did not establish the intended painted animation surface. Added only `display: block` beside the existing strip geometry; no gradient, animation, stacking, mask, blur, opacity, interaction, reduced-motion, link, or layout value changed.
+- Focused `node --import=tsx --test tests/hero-contact-aurora-contract.test.mjs`: passed 5/5. The contract now requires the strip to generate a block box while preserving both gradients, 300% width, full height, strip-owned paused animation, hover/focus-visible running states, reduced-motion behavior, and the no-JavaScript contract.
+- `npm.cmd run test:frontend`: 56/58 passed, including all five aurora tests. The only failures remain the unchanged local Node 22.16.0/`tsx` named-export loader cases in `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs`.
+- `npm.cmd run typecheck:frontend`, `npm.cmd run lint:frontend`, `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release`: passed. Frontend client boundaries passed for 163 source files.
+- The first restricted `npm.cmd run build:frontend` attempt could not fetch the existing Geist and Geist Mono Google Fonts. The network-enabled retry passed all 15 public routes. `npm.cmd run build` then passed shared, DB, public frontend, admin frontend, and backend builds.
+- `npm.cmd run validate`: all workspace typechecks and lints, shared 32/32, and DB 11/11 passed before execution stopped at admin 13/14 on the unchanged local Node 22/`tsx` named-export mismatch for `IMAGE_UPLOAD_MAX_FILES` in `project-form-and-upload.test.mjs`.
+- Browser QA remains pending. The in-app browser connection could not initialize because required sandbox metadata was unavailable, so no computed display, dimensions, hover play state, transform samples, or visual result is claimed. The newest preview remains the runtime acceptance gate.
+- No dependency, lockfile, backend, admin, database, shared-contract, environment, provider, deployment, production-data, merge, or ready-for-review change was made.
+
+### Vercel aurora composition fidelity correction
+
+- Visibility had been restored by making the empty moving `.strip` block-level, but fidelity remained incorrect because the stationary `.field` gradients had been removed. The result was a single moving halo instead of the original stationary-field plus difference-blended moving-strip interference effect.
+- Restored `.field` ownership of both aurora gradient variables with `background-size: 120%, 200%`, while preserving the paintable 300%-wide `.strip`, its two gradients at `100%, 100%`, and `mix-blend-mode: difference`.
+- Removed the ordinary `::before` and `::after` colour-mixed background fills so their existing border and backdrop filters reveal the internal aurora. The active-only `rgba(255, 255, 255, 0.1)` press surface remains unchanged.
+- Removed the hover-only `translateY(-2px)` and `var(--shadow-md)` so the button remains positionally stable and aurora movement is the primary effect. External geometry was not adapted: browser instrumentation remained unavailable, so the original `mask` and `field` insets were preserved instead of applying unverified proportional values.
+- Focused `node --import=tsx --test tests/hero-contact-aurora-contract.test.mjs`: passed 5/5. Coverage requires both gradient layers, the block-level strip, transparent ordinary glass surfaces, active-only pressed fill, stable hover geometry, exact motion values, reduced motion, and the no-JavaScript contract.
+- `npm.cmd run test:frontend`: 56/58 passed, including all five aurora tests. Only the unchanged local Node 22.16.0/`tsx` named-export loader failures in `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs` remain.
+- `npm.cmd run typecheck:frontend`, `npm.cmd run lint:frontend`, `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release`: passed. Frontend client boundaries passed for 163 source files.
+- The restricted `npm.cmd run build:frontend` attempt stopped only at the existing Geist font network fetch. Its network-enabled retry passed all 15 public routes. `npm.cmd run build` passed shared, DB, public frontend, admin frontend, and backend builds.
+- `npm.cmd run validate`: all workspace typechecks and lints, shared 32/32, and DB 11/11 passed before stopping at admin 13/14 on the unchanged local Node 22/`tsx` named-export mismatch for `IMAGE_UPLOAD_MAX_FILES`.
+- Browser QA remains pending. No eight-second colour-motion comparison, interior/warm-colour visibility, neighbouring-CTA bloom assessment, theme, reduced-motion, or document-overflow result is claimed. The newest Vercel frontend preview is the visual acceptance gate.
+- No dependency, lockfile, backend, admin, database, shared-contract, environment, provider, production-data, merge, ready-for-review, or manual deployment change was made.
+
+### Hero Contact Aurora CTA balance finalization - 2026-07-20
+
+- Baseline: branch `feat/hero-contact-aurora`, old `HEAD` `84084f289f59d6f5077bb67ceb20fafccf0b096b`, clean starting scope containing only the three approved Aurora files, and `origin/main` `d49debdb323a89ece47c2938ad8ec2b42c4f4590`. The safety patches were verified outside the repository.
+- The user reported that the final local CTA hierarchy, dimensions, responsive behavior, and Contact Me aurora appearance were visually approved.
+- Focused `node --import=tsx --test tests/hero-contact-aurora-contract.test.mjs`: passed 6/6.
+- `npm.cmd run typecheck:frontend`: passed.
+- `npm.cmd run lint:frontend`: passed; frontend client boundaries passed for 163 source files.
+- `npm.cmd run test:frontend`: 57/59 passed. All six CTA-balance tests passed. The two unchanged failures were the known local Node 22.16.0/tsx named-export loader mismatches in `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs`.
+- `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release`: passed.
+- Restricted `npm.cmd run build:frontend`: failed only because Next.js could not fetch the existing Google Fonts. The approved network-enabled retry passed all 15 public routes.
+- `npm.cmd run build`: passed the shared, DB, public frontend, admin frontend, and backend builds.
+- `npm.cmd run validate`: stopped with the established unchanged Node 22.16.0/tsx admin loader mismatch in `project-form-and-upload.test.mjs` after shared 32/32, DB 11/11, admin 13/14, and all typecheck/lint stages passed. No CTA-related failure occurred.
+- `git diff --check`: passed. Codex did not perform browser QA or cross-browser testing; the visual approval statement above is user-reported.
+- No dependency, lockfile, shared Button, global CSS, backend, admin, database, environment, migration, provider, or production-data change was made.

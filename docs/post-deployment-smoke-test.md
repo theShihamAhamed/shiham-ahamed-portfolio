@@ -6,6 +6,11 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 ## Public
 
 - [ ] Home loads with populated content and no console/runtime error.
+- [ ] Hero CTA hierarchy is clear: View Projects is primary, Contact Me is secondary at rest, and Resume is tertiary; the three actions appear as one centered group.
+- [ ] After a hard refresh, all three actions share a 44px interaction height; Contact Me is approximately 176px wide on desktop, full width below 640px, and has a restrained bordered resting surface rather than a competing solid-white surface.
+- [ ] Hovering Contact Me reveals its transparent/glass surface and verified aurora; every teal, blue, purple, pink, and amber region travels during a six-second stationary hover, exit pauses motion, and re-hover resumes it without button translation or scale.
+- [ ] Contact Me focus-visible shows the same aurora plus a clear focus ring; keyboard order is View Projects → Contact Me → Resume, reduced-motion output is static, touch behavior is usable, light/dark themes remain readable, and the glow does not overlap neighboring CTAs.
+- [ ] At 320px, 375px, 640px, 768px, and desktop widths, the action group remains aligned, usable, and free of horizontal overflow.
 - [ ] Projects page loads and filters by canonical project type.
 - [ ] Project cards link to valid visible slugs.
 - [ ] Completed, in-progress, planned, hidden, and unknown-slug behavior is correct.
