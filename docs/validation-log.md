@@ -883,3 +883,18 @@ Read-only file/package/source searches and final docs-only consistency checks
 - `npm.cmd run validate`: all workspace typechecks and lints, shared 32/32, and DB 11/11 passed before stopping at admin 13/14 on the unchanged local Node 22/`tsx` named-export mismatch for `IMAGE_UPLOAD_MAX_FILES`.
 - Browser QA remains pending. No eight-second colour-motion comparison, interior/warm-colour visibility, neighbouring-CTA bloom assessment, theme, reduced-motion, or document-overflow result is claimed. The newest Vercel frontend preview is the visual acceptance gate.
 - No dependency, lockfile, backend, admin, database, shared-contract, environment, provider, production-data, merge, ready-for-review, or manual deployment change was made.
+
+### Hero Contact Aurora CTA balance finalization - 2026-07-20
+
+- Baseline: branch `feat/hero-contact-aurora`, old `HEAD` `84084f289f59d6f5077bb67ceb20fafccf0b096b`, clean starting scope containing only the three approved Aurora files, and `origin/main` `d49debdb323a89ece47c2938ad8ec2b42c4f4590`. The safety patches were verified outside the repository.
+- The user reported that the final local CTA hierarchy, dimensions, responsive behavior, and Contact Me aurora appearance were visually approved.
+- Focused `node --import=tsx --test tests/hero-contact-aurora-contract.test.mjs`: passed 6/6.
+- `npm.cmd run typecheck:frontend`: passed.
+- `npm.cmd run lint:frontend`: passed; frontend client boundaries passed for 163 source files.
+- `npm.cmd run test:frontend`: 57/59 passed. All six CTA-balance tests passed. The two unchanged failures were the known local Node 22.16.0/tsx named-export loader mismatches in `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs`.
+- `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release`: passed.
+- Restricted `npm.cmd run build:frontend`: failed only because Next.js could not fetch the existing Google Fonts. The approved network-enabled retry passed all 15 public routes.
+- `npm.cmd run build`: passed the shared, DB, public frontend, admin frontend, and backend builds.
+- `npm.cmd run validate`: stopped with the established unchanged Node 22.16.0/tsx admin loader mismatch in `project-form-and-upload.test.mjs` after shared 32/32, DB 11/11, admin 13/14, and all typecheck/lint stages passed. No CTA-related failure occurred.
+- `git diff --check`: passed. Codex did not perform browser QA or cross-browser testing; the visual approval statement above is user-reported.
+- No dependency, lockfile, shared Button, global CSS, backend, admin, database, environment, migration, provider, or production-data change was made.

@@ -99,11 +99,11 @@ const HeroSection = ({ settings, error }: Props) => {
                 <Button
                   asChild
                   size="lg"
-                  className="group h-11 w-full rounded-xl bg-foreground px-7 text-sm font-medium text-background shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:opacity-90 hover:shadow-md sm:w-auto"
+                  className="group h-11 w-full gap-2 rounded-xl bg-foreground px-7 text-sm font-medium text-background shadow-sm transition-all duration-200 ease-out hover:-translate-y-0.5 hover:opacity-90 hover:shadow-md sm:w-auto"
                 >
                   <Link href="/projects">
                     View Projects
-                    <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
+                    <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                   </Link>
                 </Button>
 
@@ -114,14 +114,14 @@ const HeroSection = ({ settings, error }: Props) => {
                     asChild
                     variant="ghost"
                     size="lg"
-                    className="h-11 w-full rounded-xl px-6 text-sm font-medium text-muted-foreground transition-all duration-200 ease-out hover:bg-accent/60 hover:text-foreground sm:w-auto"
+                    className="h-11 w-full gap-2 rounded-xl px-5 text-sm font-medium text-muted-foreground transition-all duration-200 ease-out hover:bg-accent/60 hover:text-foreground sm:w-auto"
                   >
                     <Link
                       href={profile.resumeUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <Download className="mr-2 h-4 w-4" />
+                      <Download className="h-4 w-4" />
                       Resume
                     </Link>
                   </Button>
