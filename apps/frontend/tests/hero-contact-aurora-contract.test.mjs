@@ -23,6 +23,8 @@ const rule = (selector) => {
 };
 
 const fieldRule = rule("field");
+const glowRule = rule("glow");
+const linkRule = rule("link");
 const maskRule = rule("mask");
 const stripRule = rule("strip");
 
@@ -57,7 +59,12 @@ test("aurora CSS preserves the inspected gradients and animation mechanics", () 
   assert.match(styles, /animation-fill-mode: none/);
   assert.match(styles, /animation-play-state: paused/);
   assert.match(styles, /\.link:focus-visible ~ \.glow \.strip[\s\S]*?animation-play-state: running/);
-  assert.match(styles, /@media \(hover: hover\) and \(pointer: fine\)[\s\S]*?\.link:hover ~ \.glow \.strip[\s\S]*?animation-play-state: running/);
+  assert.doesNotMatch(styles, /@media\s*\(hover:\s*hover\)[\s\S]*?pointer:\s*fine/);
+  assert.match(styles, /\.link:hover\s*\{[^}]*background-color: transparent[^}]*transform: translateY\(-2px\)/);
+  assert.match(styles, /\.link:hover::before\s*\{[^}]*opacity: 0\.7/);
+  assert.match(styles, /\.link:hover::after\s*\{[^}]*opacity: 1/);
+  assert.match(styles, /\.link:hover ~ \.glow\s*\{[^}]*opacity: 1/);
+  assert.match(styles, /\.link:hover ~ \.glow \.strip\s*\{[^}]*animation-play-state: running/);
 
   for (const color of ["#085e53", "#0072f5", "#8e4ec6", "#ea3e83", "#ffb224"]) {
     assert.match(styles, new RegExp(color));
@@ -76,6 +83,9 @@ test("aurora CSS preserves the inspected gradients and animation mechanics", () 
 test("aurora layers preserve exact glow and glass contracts", () => {
   assert.match(styles, /height: 80px/);
   assert.match(styles, /transition: opacity 0\.5s/);
+  assert.match(linkRule, /z-index: 1/);
+  assert.match(glowRule, /z-index: 0/);
+  assert.doesNotMatch(glowRule, /z-index:\s*-/);
   assert.match(maskRule, /inset: 0 -32px/);
   assert.match(fieldRule, /inset: -10px -200px -10px -40px/);
   assert.match(fieldRule, /overflow: hidden/);

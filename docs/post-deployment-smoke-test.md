@@ -7,7 +7,7 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 
 - [ ] Home loads with populated content and no console/runtime error.
 - [ ] Hero CTA hierarchy remains View Projects, Contact Me, then Resume; Contact Me is visually secondary at rest and adjacent actions remain usable.
-- [ ] On a fine pointer, every teal, blue, purple, pink, and amber Contact Me region travels horizontally while the pointer remains stationary for at least eight seconds; no coloured layer remains fixed, motion does not follow cursor coordinates, exit pauses it, and the next hover resumes it.
+- [ ] After a hard refresh, hovering Contact Me immediately reveals its transparent/glass surface and aurora regardless of reported hover/pointer capability media values; every teal, blue, purple, pink, and amber region travels horizontally during an eight-second stationary hover, no coloured layer remains fixed, exit pauses motion, and the next hover resumes it.
 - [ ] Contact Me focus-visible shows the same aurora state plus a clear focus ring; Enter navigation, reduced-motion static aurora, touch active feedback, light/dark themes, responsive full/auto widths, and document overflow are correct.
 - [ ] Projects page loads and filters by canonical project type.
 - [ ] Project cards link to valid visible slugs.
