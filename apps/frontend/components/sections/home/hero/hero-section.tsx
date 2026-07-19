@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ArrowRight, Download } from "lucide-react";
 
 import CopyEmail from "@/components/sections/contact/copy-email";
+import { HeroContactAuroraLink } from "@/components/sections/home/hero/hero-contact-aurora-link";
 import { HeroEntrance } from "@/components/sections/home/hero/hero-entrance";
 import { Button } from "@/components/ui/button";
 import { Spotlight } from "@/components/ui/spotlight-new";
@@ -106,14 +107,7 @@ const HeroSection = ({ settings, error }: Props) => {
                   </Link>
                 </Button>
 
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="h-11 w-full rounded-xl border-border/70 bg-background/70 px-7 text-sm font-medium text-foreground shadow-sm backdrop-blur transition-all duration-200 ease-out hover:-translate-y-0.5 hover:bg-accent hover:text-foreground sm:w-auto"
-                >
-                  <Link href="/contact">Contact Me</Link>
-                </Button>
+                <HeroContactAuroraLink />
 
                 {profile.resumeUrl ? (
                   <Button

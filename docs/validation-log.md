@@ -819,3 +819,17 @@ Read-only file/package/source searches and final docs-only consistency checks
 - `npm.cmd run validate`: typecheck, lint, shared 32/32, and DB 11/11 passed before aggregate execution stopped at admin 13/14 on the same unchanged Node 22 loader mismatch. Commands after that short-circuit were run separately and passed where listed above.
 - Browser/manual QA was not performed. The admin create/edit/clear/reorder flows, legacy-record edit, responsive public card variants, light/dark modes, and certification dialog/cursor/focus behavior remain preview-environment gates.
 - No migration, cleanup script, `syncIndexes`, physical index removal, production-data mutation, environment/provider change, deployment, merge, cache-policy change, or dependency/lockfile change was performed.
+
+## Hero Contact aurora animation
+
+- Baseline: fetched `origin` and verified `feat/hero-contact-aurora` was clean, based directly on `origin/main` at `d49debdb323a89ece47c2938ad8ec2b42c4f4590`, and `0 0` ahead/behind before implementation.
+- Focused contract test: the first `node --import=tsx --test tests/hero-contact-aurora-contract.test.mjs` run reached 4/5 because a new source-contract assertion expected compact JSX whitespace around the unchanged `View Projects` text. Only that brittle assertion was corrected. The final exact-source run passed 5/5.
+- `npm.cmd run typecheck:frontend` and `npm.cmd run lint:frontend`: passed. The frontend client-boundary check passed for 163 source files.
+- `npm.cmd run test:frontend`: 56/58 passed. The two unchanged failures were `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs`, both blocked by the established local Node 22.16.0/`tsx` named-export loader mismatch. All five new hero aurora tests passed; no unrelated source or test was changed to suppress the local runtime mismatch.
+- `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release`: passed.
+- The first restricted `npm.cmd run build:frontend` attempt could not fetch the existing Geist and Geist Mono Google Fonts. The approved-network retry passed against the final CSS. Static generation logged the existing local MongoDB SRV `ENOTFOUND` fallback messages and completed successfully.
+- `npm.cmd run build`: passed shared, DB, public frontend, admin frontend, and backend builds. The public build emitted the same expected local MongoDB DNS fallback messages and completed successfully.
+- `npm.cmd run validate`: all workspace typechecks, lints, shared tests (32/32), and DB tests (11/11) passed before aggregate execution stopped at admin 13/14 on the unchanged local Node 22/`tsx` named-export loader mismatch in `project-form-and-upload.test.mjs` for `IMAGE_UPLOAD_MAX_FILES`. Supported Node 20 GitHub Actions remains the authoritative aggregate gate after push.
+- `git diff --check`: passed. Scope review found no dependency, lockfile, backend, admin, database, shared-contract, global Button, global CSS, environment, migration, generated-output, or unrelated hero changes.
+- Local browser inspection was attempted with the frontend development server, but the in-app browser could not initialize because its sandbox metadata was unavailable. No manual browser QA or cross-browser result is claimed. Stationary hover, pause/resume, focus-visible, reduced motion, light/dark themes, mobile touch, adjacent CTA usability, and document-overflow checks remain preview QA gates.
+- No deployment, provider operation, production mutation, merge, or ready-for-review transition was performed.
