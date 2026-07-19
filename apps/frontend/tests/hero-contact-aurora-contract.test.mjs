@@ -25,6 +25,9 @@ const rule = (selector) => {
 const fieldRule = rule("field");
 const glowRule = rule("glow");
 const linkRule = rule("link");
+const linkAfterRule = rule("link::after");
+const linkBeforeRule = rule("link::before");
+const linkHoverRule = rule("link:hover");
 const maskRule = rule("mask");
 const stripRule = rule("strip");
 
@@ -60,7 +63,9 @@ test("aurora CSS preserves the inspected gradients and animation mechanics", () 
   assert.match(styles, /animation-play-state: paused/);
   assert.match(styles, /\.link:focus-visible ~ \.glow \.strip[\s\S]*?animation-play-state: running/);
   assert.doesNotMatch(styles, /@media\s*\(hover:\s*hover\)[\s\S]*?pointer:\s*fine/);
-  assert.match(styles, /\.link:hover\s*\{[^}]*background-color: transparent[^}]*transform: translateY\(-2px\)/);
+  assert.match(linkHoverRule, /background-color: transparent/);
+  assert.doesNotMatch(linkHoverRule, /box-shadow\s*:/);
+  assert.doesNotMatch(linkHoverRule, /transform\s*:/);
   assert.match(styles, /\.link:hover::before\s*\{[^}]*opacity: 0\.7/);
   assert.match(styles, /\.link:hover::after\s*\{[^}]*opacity: 1/);
   assert.match(styles, /\.link:hover ~ \.glow\s*\{[^}]*opacity: 1/);
@@ -70,7 +75,8 @@ test("aurora CSS preserves the inspected gradients and animation mechanics", () 
     assert.match(styles, new RegExp(color));
   }
   assert.equal((styles.match(/repeating-linear-gradient\(\s*110deg/g) ?? []).length, 2);
-  assert.doesNotMatch(fieldRule, /background(?:-image|-size)?\s*:/);
+  assert.match(fieldRule, /background-image: var\(--aurora-lights\), var\(--aurora-gaps\)/);
+  assert.match(fieldRule, /background-size: 120%, 200%/);
   assert.match(stripRule, /background-image: var\(--aurora-lights\), var\(--aurora-gaps\)/);
   assert.match(stripRule, /background-size: 100%, 100%/);
   assert.match(stripRule, /display: block/);
@@ -98,7 +104,9 @@ test("aurora layers preserve exact glow and glass contracts", () => {
   assert.match(styles, /(?<!-webkit-)backdrop-filter: blur\(20px\) brightness\(1\.3\) saturate\(1\.5\)/);
   assert.match(styles, /-webkit-backdrop-filter: blur\(16px\)/);
   assert.match(styles, /(?<!-webkit-)backdrop-filter: blur\(16px\)/);
-  assert.match(styles, /background: rgba\(255, 255, 255, 0\.1\)/);
+  assert.doesNotMatch(linkBeforeRule, /background(?:-color|-image)?\s*:/);
+  assert.doesNotMatch(linkAfterRule, /background(?:-color|-image)?\s*:/);
+  assert.match(styles, /\.link:active::after\s*{[^}]*background: rgba\(255, 255, 255, 0\.1\)/);
 });
 
 test("aurora CSS keeps interaction accessible, contained, and motion-aware", () => {
