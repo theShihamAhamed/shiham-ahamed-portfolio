@@ -20,7 +20,11 @@ test("technology selector stays search-first and bounded for the expanded regist
 
 test("technology selector preserves typed known, custom, duplicate, and card behavior", () => {
   assert.match(source, /type TechnologySlug/);
+  assert.match(source, /findTechnologyBySlug/);
   assert.match(source, /addKnown = \(slug: TechnologySlug\)/);
+  assert.match(source, /findTechnologyBySlug\(item\.slug\)/);
+  assert.doesNotMatch(source, /searchTechnologies\(item\.slug\)\[0\]/);
+  assert.match(source, /searchTechnologies\(query\)/);
   assert.match(source, /if \(selected\.has\(slug\)\) return/);
   assert.match(source, /disabled=\{selected\.has\(entry\.slug\)\}/);
   assert.match(source, /findTechnologyByNameOrAlias\(label\)/);

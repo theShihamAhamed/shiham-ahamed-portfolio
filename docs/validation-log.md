@@ -898,3 +898,16 @@ Read-only file/package/source searches and final docs-only consistency checks
 - `npm.cmd run validate`: stopped with the established unchanged Node 22.16.0/tsx admin loader mismatch in `project-form-and-upload.test.mjs` after shared 32/32, DB 11/11, admin 13/14, and all typecheck/lint stages passed. No CTA-related failure occurred.
 - `git diff --check`: passed. Codex did not perform browser QA or cross-browser testing; the visual approval statement above is user-reported.
 - No dependency, lockfile, shared Button, global CSS, backend, admin, database, environment, migration, provider, or production-data change was made.
+
+### Technology selector canonical-resolution fix - 2026-07-20
+
+- Baseline: branch `fix/technology-selector-canonical-resolution`, based on clean `main` at `69e5ad626f3ceda64917438d4b6d0103167b614c`; `origin/main` remained unchanged.
+- Selected known technologies now resolve through exact canonical slugs, while typed dropdown queries retain ranked fuzzy search.
+- Search ranking now prioritizes exact normalized labels, exact normalized slugs, exact normalized aliases, label prefixes, and general substrings in that order.
+- Full-registry regression coverage confirms every canonical slug is returned as the first result for its own slug.
+- `npm.cmd run build:packages`, `npm.cmd run test:shared` (32/32), focused admin selector tests (2/2), admin typecheck, admin lint, backend tests (36/36), asset checks, deployment checks, release checks, and `npm.cmd run build` passed.
+- `npm.cmd run test:admin` passed 13/14; the unchanged `project-form-and-upload.test.mjs` remains affected by the known local Node 22/tsx named-export loader mismatch. `npm.cmd run test:frontend` passed 57/59 with the same known mismatch in two unrelated tests.
+- `npm.cmd run validate` stopped at the same unchanged admin loader mismatch after all typecheck/lint stages, shared 32/32, and DB 11/11 passed. No technology-selector failure occurred.
+- `git diff --check` passed. No browser or deployment QA was performed by Codex.
+- The user reported that Next.js, Drizzle ORM, nextjs-toploader, and Drizzle Kit were manually verified in the local admin Technology Stack selector.
+- No registry entry, alias, dependency, lockfile, backend, database, environment, migration, provider, deployment, or production-data change was made.

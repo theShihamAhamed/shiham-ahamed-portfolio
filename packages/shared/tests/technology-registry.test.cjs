@@ -101,9 +101,29 @@ test("technology lookup normalizes meaningful punctuation and search ordering", 
     assert.equal(shared.findTechnologyByNameOrAlias(broadAlias), undefined);
   }
   assert.equal(shared.searchTechnologies("next")[0].slug, "nextjs");
+  assert.equal(shared.searchTechnologies("nextjs")[0].slug, "nextjs");
+  assert.equal(shared.searchTechnologies("nextjs")[0].label, "Next.js");
+  assert.equal(shared.searchTechnologies("drizzle")[0].slug, "drizzle");
+  assert.equal(shared.searchTechnologies("drizzle")[0].label, "Drizzle ORM");
+  assert.equal(shared.searchTechnologies("next js")[0].slug, "nextjs");
+  assert.equal(shared.searchTechnologies("next.js")[0].slug, "nextjs");
+  assert.equal(shared.searchTechnologies("nextjs-toploader")[0].slug, "nextjs-toploader");
+  assert.equal(shared.searchTechnologies("next top loader")[0].slug, "nextjs-toploader");
+  assert.equal(shared.searchTechnologies("nextjs", "frontend")[0].slug, "nextjs");
+  assert.equal(shared.searchTechnologies("nextjs", "ui")[0].slug, "nextjs-toploader");
+  assert.equal(shared.findTechnologyBySlug("nextjs").label, "Next.js");
+  assert.equal(shared.findTechnologyBySlug("drizzle").label, "Drizzle ORM");
   assert.equal(shared.searchTechnologies("rtk")[0].slug, "redux-toolkit");
+  assert.equal(shared.searchTechnologies("remote")[0].slug, "next-mdx-remote");
   assert.equal(shared.searchTechnologies("", "mobile").length > 0, true);
   assert.equal(shared.searchTechnologies("", "backend").length > 0, true);
+  for (const entry of shared.TECHNOLOGY_REGISTRY) {
+    assert.equal(
+      shared.searchTechnologies(entry.slug)[0]?.slug,
+      entry.slug,
+      `canonical slug ${entry.slug} should resolve to itself`,
+    );
+  }
   assert.equal(shared.findTechnologyByNameOrAlias("not-real"), undefined);
 });
 
