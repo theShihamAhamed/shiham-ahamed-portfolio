@@ -29,7 +29,7 @@ export default async function Home() {
     : [];
 
   return (
-    <div className="">
+    <div className="home-page">
       <StructuredData
         value={{
           "@context": "https://schema.org",

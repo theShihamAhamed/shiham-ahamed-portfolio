@@ -40,37 +40,37 @@ const QuickIntroSection = () => {
           staggerChildren={0.035}
         >
           <StaggerItem className="md:col-span-5 md:row-span-2">
-            <BentoGridItem className="h-full">
+            <BentoGridItem className="h-full border-[var(--home-border-quiet)] bg-[var(--home-surface-quiet)]">
               <AboutCard />
             </BentoGridItem>
           </StaggerItem>
 
           <StaggerItem className="md:col-span-3 md:row-span-1">
-            <BentoGridItem className="h-full">
+            <BentoGridItem className="h-full border-[var(--home-border-quiet)] bg-[var(--home-surface-quiet)]">
               <FocusCard />
             </BentoGridItem>
           </StaggerItem>
 
           <StaggerItem className="md:col-span-3 md:row-span-1">
-            <BentoGridItem className="h-full">
+            <BentoGridItem className="h-full border-[var(--home-border-quiet)] bg-[var(--home-surface-quiet)]">
               <StackCard />
             </BentoGridItem>
           </StaggerItem>
 
           <StaggerItem className="md:col-span-3 md:row-span-1">
-            <BentoGridItem className="h-full">
+            <BentoGridItem className="h-full border-[var(--home-border-quiet)] bg-[var(--home-surface-quiet)]">
               <CurrentlyBuildingCard />
             </BentoGridItem>
           </StaggerItem>
 
           <StaggerItem className="md:col-span-5 md:row-span-2">
-            <BentoGridItem className="h-full">
+            <BentoGridItem className="h-full border-[var(--home-border-quiet)] bg-[var(--home-surface-quiet)]">
               <ApproachCard />
             </BentoGridItem>
           </StaggerItem>
 
           <StaggerItem className="md:col-span-3 md:row-span-1">
-            <BentoGridItem className="h-full">
+            <BentoGridItem className="h-full border-[var(--home-border-quiet)] bg-[var(--home-surface-quiet)]">
               <LearningJourneyCard />
             </BentoGridItem>
           </StaggerItem>

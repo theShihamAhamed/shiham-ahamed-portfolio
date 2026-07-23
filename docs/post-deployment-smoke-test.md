@@ -11,6 +11,33 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 - [ ] Hovering Contact Me reveals its transparent/glass surface and verified aurora; every teal, blue, purple, pink, and amber region travels during a six-second stationary hover, exit pauses motion, and re-hover resumes it without button translation or scale.
 - [ ] Contact Me focus-visible shows the same aurora plus a clear focus ring; keyboard order is View Projects → Contact Me → Resume, reduced-motion output is static, touch behavior is usable, light/dark themes remain readable, and the glow does not overlap neighboring CTAs.
 - [ ] At 320px, 375px, 640px, 768px, and desktop widths, the action group remains aligned, usable, and free of horizontal overflow.
+
+### Homepage hierarchy and interactions
+
+- [ ] The homepage uses the approved neutral canvas in light and dark themes, with no section-wide neon colour wash.
+- [ ] Bento, Skills and tools, and Currently Building cards have visible restrained borders and resting elevation; Contact has the stronger approved elevation without looking neon.
+- [ ] Bento cards retain the pointer-following highlight, border glow, geometry, blend mode, masks, hover lift, and hover shadow.
+- [ ] Skills and tools cards retain their existing hover interaction and remain visually distinct from the canvas.
+- [ ] Currently Building cards retain their existing hover interaction and remain visually distinct from the canvas.
+- [ ] The Contact section remains the homepage emphasis card without overpowering the Hero or Featured Projects.
+- [ ] The Hero, its CTA hierarchy, and the Contact Me aurora remain visually and behaviorally unchanged.
+- [ ] Reduced-motion preferences suppress non-essential movement without removing necessary focus or state feedback.
+- [ ] Quick navigation remains fixed, usable, and visually unchanged across the homepage.
+- [ ] The homepage has no horizontal overflow and no empty scrollable range after the footer.
+
+### Projects filter disclosure
+
+- [ ] The initial Projects toolbar shows Search and Filters without exposing the advanced controls.
+- [ ] At desktop widths of 1024px and above, Filters reveals the advanced controls inline.
+- [ ] Below 1024px, Filters opens the advanced controls in a Sheet with correct focus trapping, Escape behavior, close behavior, and trigger-focus restoration.
+- [ ] The Filters badge counts only active type, technology, and status filters; search and sort do not increase the badge.
+- [ ] A non-default sort choice is represented by its own removable active-filter chip.
+- [ ] Reset filters and sort restores default filters and sort while preserving search; Reset all also clears search.
+- [ ] Search and advanced filter state survive reload through the canonical URL, with default values omitted.
+- [ ] Browser Back and Forward restore the expected search, filters, sort, and disclosure state without stale delayed search updates.
+- [ ] Reduced-motion preferences preserve usable disclosure and Sheet transitions.
+- [ ] Search, inline controls, Sheet content, chips, and result summaries remain usable at mobile, tablet, and desktop widths without horizontal overflow.
+
 - [ ] Projects page loads and filters by canonical project type.
 - [ ] Project cards link to valid visible slugs.
 - [ ] Completed, in-progress, planned, hidden, and unknown-slug behavior is correct.

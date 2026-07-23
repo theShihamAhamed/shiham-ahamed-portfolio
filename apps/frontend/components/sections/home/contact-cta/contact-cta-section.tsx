@@ -14,7 +14,7 @@ const ContactCTASection = () => {
       className="scroll-target relative py-20 sm:py-24 lg:py-28"
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <SectionReveal className="relative overflow-hidden rounded-2xl border border-border/60 bg-background/80 px-6 py-10 shadow-sm backdrop-blur-xl sm:px-10 sm:py-12 lg:px-14 lg:py-16">
+        <SectionReveal className="relative overflow-hidden rounded-2xl border border-[var(--home-border-strong)] bg-[var(--home-surface-emphasis)] px-6 py-10 shadow-[var(--home-shadow-emphasis)] backdrop-blur-xl sm:px-10 sm:py-12 lg:px-14 lg:py-16">
 
           {/* Subtle bg glow */}
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(99,102,241,0.08),transparent_45%),radial-gradient(ellipse_at_bottom_left,rgba(59,130,246,0.06),transparent_45%)]" />
