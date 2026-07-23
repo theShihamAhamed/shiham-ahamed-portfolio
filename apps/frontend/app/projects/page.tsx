@@ -1,6 +1,11 @@
 import type { Metadata } from "next";
 import { SectionReveal } from "@/components/motion/motion-primitives";
 import ProjectsPageClient from "@/components/projects/listing/project-catalog";
+import {
+  getProjectCatalogOptions,
+  parseProjectCatalogState,
+  type ProjectCatalogSearchParams,
+} from "@/components/projects/listing/project-catalog-state";
 import { mapPublicProjectToViewerProject } from "@/lib/mappers/projects";
 import { getProjectsPageData } from "@/lib/server/queries/get-projects-page-data";
 import type { Project } from "@/types/project";
@@ -44,8 +49,19 @@ const getProjects = async (): Promise<ProjectsPageState> => {
   }
 };
 
-export default async function ProjectsPage() {
-  const { projects, error } = await getProjects();
+type ProjectsPageProps = {
+  searchParams: Promise<ProjectCatalogSearchParams>;
+};
+
+export default async function ProjectsPage({ searchParams }: ProjectsPageProps) {
+  const [{ projects, error }, resolvedSearchParams] = await Promise.all([
+    getProjects(),
+    searchParams,
+  ]);
+  const initialState = parseProjectCatalogState(
+    resolvedSearchParams,
+    getProjectCatalogOptions(projects),
+  );
 
   return (
     <main className="pb-20 sm:pb-24 lg:pb-28">
@@ -68,7 +84,10 @@ export default async function ProjectsPage() {
             </div>
           </SectionReveal>
         ) : (
-          <ProjectsPageClient projects={projects} />
+          <ProjectsPageClient
+            projects={projects}
+            initialState={initialState}
+          />
         )}
       </div>
     </main>

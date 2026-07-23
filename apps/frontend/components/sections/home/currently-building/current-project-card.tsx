@@ -11,8 +11,9 @@ const CurrentProjectCard = ({ project }: Props) => {
   return (
     <article
       className={cn(
-        "group relative overflow-hidden rounded-2xl border border-border/60 bg-background/80 p-6 shadow-sm backdrop-blur-xl transition-all duration-200 ease-out",
+        "group relative overflow-hidden rounded-2xl border border-[var(--home-border-quiet)] bg-[var(--home-surface-quiet)] p-6 shadow-[var(--home-shadow-quiet)] backdrop-blur-xl transition-all duration-200 ease-out motion-reduce:transition-none",
         "hover:-translate-y-0.5 hover:border-border hover:shadow-[0_18px_48px_rgba(0,0,0,0.08)] dark:hover:shadow-[0_18px_48px_rgba(255,255,255,0.035)]",
+        "motion-reduce:hover:translate-y-0",
         "sm:p-7",
       )}
     >

@@ -55,21 +55,21 @@ export const BentoGridItem = ({
     <div
       onMouseMove={interactiveHeader ? undefined : handleMouseMove}
       className={cn(
-        "group/bento relative row-span-1 overflow-hidden rounded-2xl border border-border bg-background/80 shadow-sm backdrop-blur-xl transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(0,0,0,0.07)] dark:hover:shadow-[0_14px_34px_rgba(255,255,255,0.025)] flex flex-col",
+        "group/bento relative row-span-1 flex flex-col overflow-hidden rounded-2xl border border-border bg-background/80 shadow-[var(--home-shadow-quiet)] backdrop-blur-xl transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-[0_14px_34px_rgba(0,0,0,0.07)] motion-reduce:transition-none motion-reduce:hover:translate-y-0 dark:hover:shadow-[0_14px_34px_rgba(255,255,255,0.025)]",
         className,
       )}
     >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-background/10 to-background/80 dark:to-background/85 z-0" />
 
       <div
-        className="pointer-events-none absolute inset-0 z-[25] rounded-2xl opacity-0 mix-blend-multiply transition-opacity duration-250 group-hover/bento:opacity-100 dark:hidden"
+        className="pointer-events-none absolute inset-0 z-[25] rounded-2xl opacity-0 mix-blend-multiply transition-opacity duration-250 group-hover/bento:opacity-100 motion-reduce:transition-none dark:hidden"
         style={{
           background: cursorGlow,
         }}
       />
 
       <div
-        className="pointer-events-none absolute inset-0 z-[24] rounded-2xl opacity-0 mix-blend-multiply transition-opacity duration-250 group-hover/bento:opacity-100 dark:hidden"
+        className="pointer-events-none absolute inset-0 z-[24] rounded-2xl opacity-0 mix-blend-multiply transition-opacity duration-250 group-hover/bento:opacity-100 motion-reduce:transition-none dark:hidden"
         style={{
           background: cursorGlowBlur,
           filter: "blur(50px)",
@@ -77,21 +77,21 @@ export const BentoGridItem = ({
       />
 
       <div
-        className="pointer-events-none absolute inset-0 z-[25] hidden rounded-2xl opacity-0 mix-blend-screen transition-opacity duration-250 group-hover/bento:opacity-100 dark:block"
+        className="pointer-events-none absolute inset-0 z-[25] hidden rounded-2xl opacity-0 mix-blend-screen transition-opacity duration-250 group-hover/bento:opacity-100 motion-reduce:transition-none dark:block"
         style={{
           background: darkCursorGlow,
         }}
       />
 
       <div
-        className="pointer-events-none absolute inset-0 z-[24] hidden rounded-2xl opacity-0 mix-blend-screen transition-opacity duration-250 group-hover/bento:opacity-100 dark:block"
+        className="pointer-events-none absolute inset-0 z-[24] hidden rounded-2xl opacity-0 mix-blend-screen transition-opacity duration-250 group-hover/bento:opacity-100 motion-reduce:transition-none dark:block"
         style={{
           background: darkCursorGlowBlur,
           filter: "blur(50px)",
         }}
       />
 
-      <div className="pointer-events-none absolute inset-0 z-30 rounded-2xl opacity-0 transition-opacity duration-250 group-hover/bento:opacity-100 dark:hidden">
+      <div className="pointer-events-none absolute inset-0 z-30 rounded-2xl opacity-0 transition-opacity duration-250 group-hover/bento:opacity-100 motion-reduce:transition-none dark:hidden">
         <div
           className="pointer-events-none absolute inset-0 rounded-2xl p-px"
           style={{
@@ -114,7 +114,7 @@ export const BentoGridItem = ({
         />
       </div>
 
-      <div className="pointer-events-none absolute inset-0 z-30 hidden rounded-2xl opacity-0 transition-opacity duration-250 group-hover/bento:opacity-100 dark:block">
+      <div className="pointer-events-none absolute inset-0 z-30 hidden rounded-2xl opacity-0 transition-opacity duration-250 group-hover/bento:opacity-100 motion-reduce:transition-none dark:block">
         <div
           className="pointer-events-none absolute inset-0 rounded-2xl p-px"
           style={{

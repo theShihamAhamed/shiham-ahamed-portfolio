@@ -911,3 +911,19 @@ Read-only file/package/source searches and final docs-only consistency checks
 - `git diff --check` passed. No browser or deployment QA was performed by Codex.
 - The user reported that Next.js, Drizzle ORM, nextjs-toploader, and Drizzle Kit were manually verified in the local admin Technology Stack selector.
 - No registry entry, alias, dependency, lockfile, backend, database, environment, migration, provider, deployment, or production-data change was made.
+
+### Homepage hierarchy and Projects filter disclosure - 2026-07-23
+
+- Baseline: branch `feat/home-hierarchy-project-filter-disclosure`, based directly on `origin/main` at `6a4d235083137b12a107e4d302ddcd3a8537057a`, with `0 0` ahead/behind before publication.
+- Changed files: `apps/frontend/app/globals.css`, `apps/frontend/app/page.tsx`, `apps/frontend/app/projects/page.tsx`, `apps/frontend/components/projects/listing/project-catalog.tsx`, `apps/frontend/components/projects/listing/project-catalog-state.ts`, `apps/frontend/components/projects/listing/project-catalog-toolbar.tsx`, `apps/frontend/components/sections/home/contact-cta/contact-cta-section.tsx`, `apps/frontend/components/sections/home/currently-building/current-project-card.tsx`, `apps/frontend/components/sections/home/quick-intro/quick-intro-section.tsx`, `apps/frontend/components/sections/home/skills-tools/skill-category-card.tsx`, `apps/frontend/components/ui/bento-grid.tsx`, `apps/frontend/tests/home-visual-hierarchy-contract.test.mjs`, `apps/frontend/tests/project-catalog-filter-contract.test.mjs`, `docs/post-deployment-smoke-test.md`, and `docs/validation-log.md`.
+- Focused homepage visual-hierarchy contract: passed 8/8. Focused Projects catalog/filter contract: passed 10/10. Focused Currently Building/certification contract: passed 4/4.
+- `npm.cmd run typecheck:frontend`: the first run exposed a malformed ignored `.next/dev/types/routes.d.ts` artifact from an earlier development process. After regenerating route types and removing only the stale ignored `.next/dev` output, the repeated frontend typecheck passed without tracked changes.
+- `npm.cmd run lint:frontend`: passed; frontend client boundaries passed for 167 source files.
+- `npm.cmd run test:frontend`: 75/77 passed. All new homepage and Projects tests passed. The only failures were the unchanged local Node 22.16.0/`tsx` named-export loader mismatches in `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs`.
+- `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release`: passed.
+- The restricted `npm.cmd run build:frontend` attempt failed only because Next.js could not fetch the existing Geist and Geist Mono Google Fonts. The approved network-enabled retry passed all 15 public routes.
+- `npm.cmd run build`: passed shared, database, public frontend, admin frontend, and backend builds.
+- `npm.cmd run validate`: all workspace typechecks and lints, shared 32/32, and database 11/11 passed before aggregate execution stopped at admin 13/14 on the unchanged local Node 22.16.0/`tsx` named-export mismatch for `IMAGE_UPLOAD_MAX_FILES` in `project-form-and-upload.test.mjs`. Supported Node 20 GitHub Actions remains the authoritative aggregate gate.
+- The user reported that the final local homepage hierarchy, neutral card elevation, restored Bento and card hover effects, and Projects filter-disclosure behavior were visually approved.
+- Physical-device testing was not claimed.
+- No dependency, lockfile, backend, admin, database, shared-contract, environment, migration, provider-setting, production-data, manual deployment, or merge change was made.
