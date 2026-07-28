@@ -53,7 +53,7 @@ const FeaturedProjectsSection = ({ projects, error }: Props) => {
             staggerChildren={0.035}
           >
             {featuredProjects.map((project) => (
-              <StaggerItem key={project.id}>
+              <StaggerItem key={project.id} className="h-full">
                 <FeaturedProjectCard project={project} />
               </StaggerItem>
             ))}

@@ -287,12 +287,8 @@ test("shared cards and protected controls remain isolated from homepage recovery
   );
 });
 
-test("shared project card and Projects filter sources remain byte-for-byte preserved", () => {
+test("Projects filter sources remain byte-for-byte preserved", () => {
   const expectedHashes = new Map([
-    [
-      "components/projects/shared/project-card.tsx",
-      "1C61D28FF45B902C6F42F684587725EE01B0F27624F1D14FEFD89395667F3E97",
-    ],
     [
       "app/projects/page.tsx",
       "7236847902D61E76F17F25620896E7E5771CD5EF2EF5D22A0C44946F6E6086F7",

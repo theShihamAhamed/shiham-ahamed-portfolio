@@ -7,13 +7,16 @@ import type {
 
 import { getVisibleAchievements } from "@/lib/server/repositories/achievement.repository";
 import { getVisibleCertifications } from "@/lib/server/repositories/certification.repository";
+import { getVisibleProjects } from "@/lib/server/repositories/project.repository";
 
 export type AboutPageData = {
   certifications: PublicCertification[];
   achievements: PublicAchievement[];
+  visibleProjectCount: number | null;
   errors: {
     certifications?: string;
     achievements?: string;
+    projects?: string;
   };
 };
 
@@ -30,10 +33,12 @@ const getSettledValue = <T>(
 };
 
 export const getAboutPageData = async (): Promise<AboutPageData> => {
-  const [certificationsResult, achievementsResult] = await Promise.allSettled([
-    getVisibleCertifications(),
-    getVisibleAchievements(),
-  ]);
+  const [certificationsResult, achievementsResult, projectsResult] =
+    await Promise.allSettled([
+      getVisibleCertifications(),
+      getVisibleAchievements(),
+      getVisibleProjects(),
+    ]);
   const certifications = getSettledValue(
     certificationsResult,
     [],
@@ -46,13 +51,21 @@ export const getAboutPageData = async (): Promise<AboutPageData> => {
     "Failed to load about achievements",
     "Achievements are temporarily unavailable.",
   );
+  const projects = getSettledValue(
+    projectsResult,
+    [],
+    "Failed to load visible projects for about statistics",
+    "Portfolio project count is temporarily unavailable.",
+  );
 
   return {
     certifications: certifications.value,
     achievements: achievements.value,
+    visibleProjectCount: projects.error ? null : projects.value.length,
     errors: {
       ...(certifications.error ? { certifications: certifications.error } : {}),
       ...(achievements.error ? { achievements: achievements.error } : {}),
+      ...(projects.error ? { projects: projects.error } : {}),
     },
   };
 };

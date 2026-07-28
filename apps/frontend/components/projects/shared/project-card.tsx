@@ -22,7 +22,7 @@ const FeaturedProjectCard = ({ project }: Props) => {
   return (
     <article
       className={cn(
-        "group relative flex flex-col overflow-hidden rounded-2xl border border-border/60 bg-background shadow-sm transition-all duration-200 ease-out",
+        "group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border/60 bg-background shadow-sm transition-all duration-200 ease-out",
         "hover:-translate-y-0.5 hover:border-border hover:shadow-[0_18px_48px_rgba(0,0,0,0.1)] dark:hover:shadow-[0_18px_48px_rgba(255,255,255,0.035)]",
       )}
     >
@@ -56,7 +56,7 @@ const FeaturedProjectCard = ({ project }: Props) => {
           </p>
         </div>
 
-        <div className="mt-4 flex flex-wrap gap-1.5">
+        <div className="mt-4 mb-5 flex flex-wrap gap-1.5">
           {project.techStack.slice(0, 5).map((tag) => (
             <TechTag key={`${project.title}-${tag.label}`} tag={tag} />
           ))}
@@ -68,12 +68,15 @@ const FeaturedProjectCard = ({ project }: Props) => {
         </div>
 
         {/* Divider + Actions */}
-        <div className="mt-5 flex flex-wrap items-center justify-between gap-3 border-t border-border/40 pt-4">
+        <div className="mt-auto flex flex-wrap items-center justify-between gap-3 border-t border-border/40 pt-4">
           <Button
             asChild
             className="h-9 flex-1 rounded-lg bg-foreground px-3.5 text-sm font-medium text-background shadow-sm transition-all duration-200 ease-out hover:-translate-y-px hover:bg-foreground/90 sm:flex-none"
           >
-            <Link href={`/projects/${project.slug}`}>
+            <Link
+              href={`/projects/${project.slug}`}
+              aria-label={`View details for ${project.title}`}
+            >
               View details
               <MoveRight className="ml-1.5 h-3.5 w-3.5" />
             </Link>

@@ -1,8 +1,10 @@
 export type AboutStat = {
   id: number;
   label: string;
-  value: string;
+  value: number | null;
   note: string;
+  suffix?: string;
+  unavailableLabel?: string;
 };
 
 export type FocusArea = {
