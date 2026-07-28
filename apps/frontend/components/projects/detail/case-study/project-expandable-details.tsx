@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
-import { createPortal } from "react-dom";
 
 type Props = {
   children: React.ReactNode;
@@ -12,7 +11,6 @@ const NAV_OFFSET = 96;
 const PREVIEW_MAX_HEIGHT = 520;
 const CONTENT_ID = "project-case-study-content";
 const COLLAPSED_DESCRIPTION_ID = "project-case-study-collapsed-description";
-const subscribeToMountState = () => () => undefined;
 
 const getScrollBehavior = (): ScrollBehavior =>
   window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
@@ -29,11 +27,6 @@ const getElementByHash = (hash: string): HTMLElement | null => {
 };
 
 const ProjectExpandableDetails = ({ children }: Props) => {
-  const mounted = React.useSyncExternalStore(
-    subscribeToMountState,
-    () => true,
-    () => false,
-  );
   const [expanded, setExpanded] = React.useState(false);
   const [hasOverflow, setHasOverflow] = React.useState(true);
   const sectionRef = React.useRef<HTMLDivElement | null>(null);
@@ -136,9 +129,27 @@ const ProjectExpandableDetails = ({ children }: Props) => {
   };
 
   return (
-    <>
-      <div ref={sectionRef} className="relative mt-6 min-w-0">
-        <div className="relative min-w-0" onClick={handleContentClick}>
+    <div ref={sectionRef} className="relative mt-6 min-w-0">
+      <div className="grid min-w-0">
+        {isExpanded ? (
+          <div className="pointer-events-none sticky top-[calc(100dvh-3.75rem-env(safe-area-inset-bottom))] z-40 col-start-1 row-start-1 flex h-11 self-start justify-center px-4 sm:top-[calc(100dvh-4.25rem-env(safe-area-inset-bottom))]">
+            <button
+              type="button"
+              onClick={handleCollapse}
+              aria-expanded="true"
+              aria-controls={CONTENT_ID}
+              className="pointer-events-auto inline-flex min-h-11 items-center rounded-full border border-border/60 bg-background/95 px-4 py-2 text-sm font-medium text-foreground shadow-lg backdrop-blur transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+            >
+              Show less
+              <ChevronUp className="ml-2 h-4 w-4" aria-hidden="true" />
+            </button>
+          </div>
+        ) : null}
+
+        <div
+          className="relative col-start-1 row-start-1 min-w-0"
+          onClick={handleContentClick}
+        >
           <div
             id={CONTENT_ID}
             ref={contentRef}
@@ -154,47 +165,29 @@ const ProjectExpandableDetails = ({ children }: Props) => {
             </div>
           </div>
         </div>
-
-        {hasOverflow && !isExpanded ? (
-          <div className="mt-6 flex justify-center">
-            <p id={COLLAPSED_DESCRIPTION_ID} className="sr-only">
-              The case-study preview is collapsed. Activate the button to make
-              the full content available.
-            </p>
-            <button
-              ref={expandButtonRef}
-              type="button"
-              onClick={handleExpand}
-              aria-expanded="false"
-              aria-controls={CONTENT_ID}
-              aria-describedby={COLLAPSED_DESCRIPTION_ID}
-              className="inline-flex items-center rounded-full border border-border/60 bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
-            >
-              Show full details
-              <ChevronDown className="ml-2 h-4 w-4" aria-hidden="true" />
-            </button>
-          </div>
-        ) : null}
       </div>
 
-      {mounted && isExpanded
-        ? createPortal(
-            <div className="fixed inset-x-0 bottom-4 z-40 flex justify-center px-4 pb-[env(safe-area-inset-bottom)] sm:bottom-6">
-              <button
-                type="button"
-                onClick={handleCollapse}
-                aria-expanded="true"
-                aria-controls={CONTENT_ID}
-                className="inline-flex items-center rounded-full border border-border/60 bg-background/95 px-4 py-2 text-sm font-medium text-foreground shadow-lg backdrop-blur transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
-              >
-                Show less
-                <ChevronUp className="ml-2 h-4 w-4" aria-hidden="true" />
-              </button>
-            </div>,
-            document.body,
-          )
-        : null}
-    </>
+      {hasOverflow && !isExpanded ? (
+        <div className="mt-6 flex justify-center">
+          <p id={COLLAPSED_DESCRIPTION_ID} className="sr-only">
+            The case-study preview is collapsed. Activate the button to make
+            the full content available.
+          </p>
+          <button
+            ref={expandButtonRef}
+            type="button"
+            onClick={handleExpand}
+            aria-expanded="false"
+            aria-controls={CONTENT_ID}
+            aria-describedby={COLLAPSED_DESCRIPTION_ID}
+            className="inline-flex min-h-11 items-center rounded-full border border-border/60 bg-background px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-foreground"
+          >
+            Show full details
+            <ChevronDown className="ml-2 h-4 w-4" aria-hidden="true" />
+          </button>
+        </div>
+      ) : null}
+    </div>
   );
 };
 

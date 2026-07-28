@@ -445,12 +445,13 @@ test("README rendering and expansion controls remain editorial and functional", 
   assert.match(readmeRenderer, /<ProjectCodeBlock/);
   assert.match(expandableDetails, /Show full details/);
   assert.match(expandableDetails, /Show less/);
-  assert.match(expandableDetails, /createPortal/);
-  assert.match(expandableDetails, /mounted && isExpanded/);
-  assert.match(expandableDetails, /document\.body/);
+  assert.doesNotMatch(expandableDetails, /createPortal|document\.body/);
+  assert.match(expandableDetails, /pointer-events-none sticky/);
+  assert.match(expandableDetails, /col-start-1 row-start-1/);
   assert.equal((expandableDetails.match(/Show less/g) ?? []).length, 1);
   assert.match(expandableDetails, /focus\(\{ preventScroll: true \}\)/);
-  assert.match(expandableDetails, /pb-\[env\(safe-area-inset-bottom\)\]/);
+  assert.match(expandableDetails, /env\(safe-area-inset-bottom\)/);
+  assert.match(expandableDetails, /min-h-11/);
 });
 
 test("project detail visual refinements add no animation dependency", () => {

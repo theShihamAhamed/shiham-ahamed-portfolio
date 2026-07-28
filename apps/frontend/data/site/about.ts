@@ -14,27 +14,6 @@ export const aboutStory: string[] = [
   "My current direction is clear: become a software engineer who can contribute to practical full-stack systems, communicate tradeoffs, and keep improving through real projects, careful review, and consistent iteration.",
 ];
 
-export const aboutStats: AboutStat[] = [
-  {
-    id: 1,
-    value: "12+",
-    label: "Projects",
-    note: "built",
-  },
-  {
-    id: 2,
-    value: "2",
-    label: "Large Systems",
-    note: "in progress",
-  },
-  {
-    id: 3,
-    value: "4",
-    label: "Core Areas",
-    note: "of focus",
-  },
-];
-
 export const focusAreas: FocusArea[] = [
   {
     id: 1,
@@ -59,6 +38,33 @@ export const focusAreas: FocusArea[] = [
     title: "DevOps practice",
     description:
       "Using Docker, CI workflows, and Kubernetes experiments to understand how software runs beyond local development.",
+  },
+];
+
+// Verified against the public GitHub profile on 2026-07-28.
+const publicRepositoryCount = 22;
+
+export const getAboutStats = (
+  visibleProjectCount: number | null,
+): AboutStat[] => [
+  {
+    id: 1,
+    value: visibleProjectCount,
+    label: "Portfolio projects",
+    note: "published",
+    unavailableLabel: "Portfolio project count temporarily unavailable",
+  },
+  {
+    id: 2,
+    value: publicRepositoryCount,
+    label: "Public repositories",
+    note: "on GitHub",
+  },
+  {
+    id: 3,
+    value: focusAreas.length,
+    label: "Core focus areas",
+    note: "in active practice",
   },
 ];
 

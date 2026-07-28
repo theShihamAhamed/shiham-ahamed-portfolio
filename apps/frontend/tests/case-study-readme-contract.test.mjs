@@ -23,7 +23,7 @@ test("public case studies use non-executable GFM plus raw-HTML sanitization", ()
   assert.equal(fs.existsSync(path.join(repoRoot, "apps/frontend/lib/projects/mdx.ts")), false);
 });
 
-test("public README section has one primary container and a viewport-fixed expansion control", () => {
+test("public README section has one primary container and a section-bounded sticky control", () => {
   const section = read("apps/frontend/components/projects/detail/case-study/project-readme-section.tsx");
   const expandable = read("apps/frontend/components/projects/detail/case-study/project-expandable-details.tsx");
   assert.match(section, /Project case study/);
@@ -33,29 +33,33 @@ test("public README section has one primary container and a viewport-fixed expan
   assert.match(expandable, /aria-controls/);
   assert.match(expandable, /history\.pushState/);
   assert.match(expandable, /NAV_OFFSET/);
-  assert.match(expandable, /import \{ createPortal \} from "react-dom"/);
-  assert.match(expandable, /const mounted = React\.useSyncExternalStore/);
-  assert.match(
+  assert.doesNotMatch(expandable, /createPortal|document\.body/);
+  assert.doesNotMatch(
     expandable,
-    /React\.useSyncExternalStore\(\s*subscribeToMountState,\s*\(\) => true,\s*\(\) => false/s,
+    /subscribeToMountState|const mounted = React\.useSyncExternalStore/,
   );
-  assert.match(expandable, /mounted && isExpanded\s*\? createPortal\(/s);
-  assert.match(expandable, /document\.body/);
   assert.match(expandable, /\{hasOverflow && !isExpanded \? \(\s*<div className="mt-6 flex justify-center">/s);
   assert.match(expandable, /Show full details/);
   assert.match(expandable, /Show less/);
   assert.equal((expandable.match(/aria-expanded="true"/g) ?? []).length, 1);
   assert.equal((expandable.match(/aria-expanded="false"/g) ?? []).length, 1);
-  assert.match(expandable, /fixed inset-x-0/);
-  assert.doesNotMatch(expandable, /sticky bottom-4/);
+  assert.match(expandable, /\{isExpanded \? \(/);
+  assert.match(expandable, /pointer-events-none sticky/);
+  assert.match(expandable, /col-start-1 row-start-1/);
+  assert.match(expandable, /100dvh/);
+  assert.match(expandable, /env\(safe-area-inset-bottom\)/);
+  assert.match(expandable, /pointer-events-auto inline-flex min-h-11/);
+  assert.doesNotMatch(expandable, /\bfixed\b|bottom-4|inset-x-0/);
   assert.equal((expandable.match(/Show less/g) ?? []).length, 1);
   assert.match(
     expandable,
-    /<\/div>\s*\{mounted && isExpanded\s*\? createPortal\(/s,
+    /<div ref=\{sectionRef\}[\s\S]*\{isExpanded \? \([\s\S]*Show less[\s\S]*project-case-study-preview/s,
   );
   assert.match(expandable, /ref=\{expandButtonRef\}/);
   assert.match(expandable, /expandButtonRef\.current\?\.focus\(\{ preventScroll: true \}\)/);
   assert.match(expandable, /scrollToSectionTop/);
+  assert.match(expandable, /isExpanded \? "pb-28 sm:pb-24" : undefined/);
+  assert.doesNotMatch(expandable, /overflow-y-auto|overflow-y-scroll/);
   assert.doesNotMatch(expandable, /rounded-\[2rem\].*border/);
 });
 

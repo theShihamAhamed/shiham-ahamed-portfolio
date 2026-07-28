@@ -38,6 +38,38 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 - [ ] Reduced-motion preferences preserve usable disclosure and Sheet transitions.
 - [ ] Search, inline controls, Sheet content, chips, and result summaries remain usable at mobile, tablet, and desktop widths without horizontal overflow.
 
+### Project-card row alignment and navigation
+
+- [ ] Featured and related-project cards have equal heights within each multi-column visual row, while separate rows retain their natural independent heights.
+- [ ] At mobile widths, cards retain natural heights without fixed-height clipping; titles, descriptions, technology badges, and actions remain readable.
+- [ ] Action areas align at the bottom of each row, including cards with different combinations of GitHub and Live Demo actions.
+- [ ] View details remains the compact project-detail link and has a visible keyboard focus state.
+- [ ] Clicking the image, title, description, technology badges, card body, or unused whitespace does not navigate.
+- [ ] GitHub and Live Demo remain independent links with visible keyboard focus states and open only their intended destinations.
+- [ ] Project-card grids introduce no horizontal overflow.
+
+### About statistics
+
+- [ ] The final values read `17 Portfolio projects — published`, `22 Public repositories — on GitHub`, and `4 Core focus areas — in active practice`.
+- [ ] The portfolio-project count matches the current number of visible public projects.
+- [ ] With normal motion, visual counters begin at zero on first entry, animate once, and finish at the exact final integers without restarting after re-entry.
+- [ ] With reduced motion, final values render immediately without a shortened count animation.
+- [ ] A hard refresh produces no hydration warning or permanent visual zero.
+- [ ] Accessibility inspection exposes one stable final phrase per statistic and excludes intermediate animated digits from the accessibility tree.
+- [ ] When visible-project retrieval is unavailable, the portfolio count uses its unavailable marker and phrase rather than displaying zero or failing the page.
+
+### Section-bounded case-study collapse control
+
+- [ ] Show less is absent while the case study is collapsed and appears only after a long case study is expanded.
+- [ ] Show less remains reachable while reading the middle of an expanded case study.
+- [ ] Near the case-study bottom, the control is constrained by the case-study section and scrolls away with it.
+- [ ] The control never overlaps related projects, a later CTA, the footer, or any other later page content.
+- [ ] Collapsing restores keyboard focus to Show full details and returns to the intended case-study position.
+- [ ] Reduced-motion collapse skips smooth scrolling while preserving focus restoration.
+- [ ] Mobile safe-area spacing keeps the control reachable without obscuring the final case-study content.
+- [ ] Expanding and collapsing introduce no empty post-footer scroll range.
+- [ ] Unrelated follow-up: verify the known pre-existing approximately 6px overflow at 320px from the unchanged Gallery/Key Highlights surfaces; this branch does not claim to fix it.
+
 - [ ] Projects page loads and filters by canonical project type.
 - [ ] Project cards link to valid visible slugs.
 - [ ] Completed, in-progress, planned, hidden, and unknown-slug behavior is correct.

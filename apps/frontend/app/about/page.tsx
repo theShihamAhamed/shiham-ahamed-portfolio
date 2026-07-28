@@ -14,13 +14,14 @@ import SectionQuickNav from "@/components/navigation/section-quick-nav";
 import CertificationsSection from "@/components/sections/about/certifications-section";
 import EducationCard from "@/components/sections/about/education-card";
 import AchievementsSection from "@/components/sections/about/achievements-section";
+import AboutStatsSection from "@/components/sections/about/about-stats-section";
 import {
   aboutClosing,
   aboutIntro,
-  aboutStats,
   aboutStory,
   education,
   focusAreas,
+  getAboutStats,
   timeline,
   values,
 } from "@/data/site/about";
@@ -56,6 +57,7 @@ export default async function AboutPage() {
   const achievements: Achievement[] = data.achievements.map(
     mapPublicAchievementToAchievement,
   );
+  const stats = getAboutStats(data.visibleProjectCount);
 
   return (
     <main className="pb-20 sm:pb-24 lg:pb-28">
@@ -139,30 +141,7 @@ export default async function AboutPage() {
       </section>
 
       {/* Stats */}
-      <section className="border-y border-border/60 bg-background py-10 sm:py-12 lg:py-14">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-center justify-center gap-10 text-center sm:flex-row sm:gap-0 sm:divide-x sm:divide-border/50">
-            {aboutStats.map((item) => (
-              <div
-                key={item.id}
-                className="flex min-w-[160px] flex-col items-center px-8 sm:px-12 lg:px-16"
-              >
-                <div className="text-[2.5rem] font-bold leading-none tracking-[-0.055em] text-foreground sm:text-[3rem] lg:text-[3.25rem]">
-                  {item.value}
-                </div>
-
-                <div className="mt-2.5 text-base font-semibold leading-none tracking-[-0.02em] text-foreground">
-                  {item.label}
-                </div>
-
-                <div className="mt-2 text-sm leading-6 text-muted-foreground">
-                  {item.note}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <AboutStatsSection stats={stats} />
 
       {/* Focus Areas */}
       <section

@@ -329,7 +329,7 @@ export default async function ProjectDetailsPage({ params }: Props) {
             staggerChildren={0.035}
           >
             {relatedProjects.map((relatedProject) => (
-              <StaggerItem key={relatedProject.id}>
+              <StaggerItem key={relatedProject.id} className="h-full">
                 <FeaturedProjectCard project={relatedProject} />
               </StaggerItem>
             ))}

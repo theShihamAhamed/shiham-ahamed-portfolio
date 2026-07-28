@@ -927,3 +927,23 @@ Read-only file/package/source searches and final docs-only consistency checks
 - The user reported that the final local homepage hierarchy, neutral card elevation, restored Bento and card hover effects, and Projects filter-disclosure behavior were visually approved.
 - Physical-device testing was not claimed.
 - No dependency, lockfile, backend, admin, database, shared-contract, environment, migration, provider-setting, production-data, manual deployment, or merge change was made.
+
+## Public project-card, About-stat, and bounded case-study follow-up - 2026-07-29
+
+- Baseline: branch `fix/public-card-about-case-study`, based directly on `origin/main` at `09d6ceef269902a630b0137223d5430a93f2f9b1`, with `0 0` ahead/behind before publication.
+- Changed files: `apps/frontend/app/about/page.tsx`, `apps/frontend/app/projects/[slug]/page.tsx`, `apps/frontend/components/projects/detail/case-study/project-expandable-details.tsx`, `apps/frontend/components/projects/shared/project-card.tsx`, `apps/frontend/components/sections/about/about-stats-section.tsx`, `apps/frontend/components/sections/home/featured-projects/featured-projects-section.tsx`, `apps/frontend/data/site/about.ts`, `apps/frontend/lib/server/queries/get-about-page-data.ts`, `apps/frontend/types/about.ts`, `apps/frontend/tests/about-stats-contract.test.mjs`, `apps/frontend/tests/case-study-readme-contract.test.mjs`, `apps/frontend/tests/home-visual-hierarchy-contract.test.mjs`, `apps/frontend/tests/project-card-layout-contract.test.mjs`, `apps/frontend/tests/project-detail-visual-contract.test.mjs`, `docs/post-deployment-smoke-test.md`, and `docs/validation-log.md`.
+- Focused project-card, About-stat, case-study, project-detail visual, and homepage hierarchy contracts passed 32/32.
+- `npm.cmd run typecheck:frontend` and `npm.cmd run typecheck` passed.
+- `npm.cmd run lint:frontend` and `npm.cmd run lint` passed; frontend client boundaries passed for 170 source files.
+- `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release` passed.
+- The restricted `npm.cmd run build:frontend` attempt failed only because the existing Geist fonts could not be fetched. Its approved network-enabled retry passed all public routes.
+- `npm.cmd run build` passed shared, DB, public frontend, admin frontend, and backend builds. Public static generation retained its existing local MongoDB fallback warnings without failing the build.
+- `npm.cmd run validate` repeated the successful typecheck and lint phases, then reached the test phase: shared and DB tests passed before the established local Node 22.16.0/`tsx` named-export loader mismatch in admin `project-form-and-upload.test.mjs` stopped the aggregate command.
+- `npm.cmd run test:frontend` passed 80/82. The only failures were the established local Node 22.16.0/`tsx` named-export loader mismatches in `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs`; no unrelated test was weakened to suppress them.
+- Local production-browser QA covered `/`, `/projects`, a project detail with related projects, and `/about` at 320px through 1440px, normal and reduced motion, and light and dark themes. Every measured multi-column project-card row had a `0px` maximum height difference; mobile cards retained natural heights, and noninteractive card regions did not navigate.
+- About counters began visually at zero below the viewport, reached exact `17`, `22`, and `4` values over approximately 900ms, did not restart after re-entry, exposed stable final semantic text, and rendered final values immediately under reduced motion. No hydration or application console error was observed.
+- Long case-study QA covered 320×568, 375×667, 768×900, 1024×900, and 1440×900 viewports. The 44px Show less control remained inside the case-study boundary, moved with the section bottom, scrolled away below it, and did not overlap the footer. Collapse restored focus, including under reduced motion.
+- A known pre-existing approximately 6px horizontal overflow at 320px was traced to unchanged Gallery/Key Highlights surfaces and remains an unrelated follow-up; it was not attributed to or fixed by this branch.
+- The user reported that the final local project-card height alignment, compact project navigation, About statistics and count animation, and section-bounded case-study control were visually approved.
+- Physical-device testing was not claimed.
+- No dependency, lockfile, admin, backend, database, shared-contract, environment, migration, provider-setting, production-data, manual deployment, force-push, or merge change was made.
