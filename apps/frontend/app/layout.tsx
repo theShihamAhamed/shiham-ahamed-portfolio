@@ -17,6 +17,14 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const socialPreviewImage = {
+  url: "/social/shiham-ahamed-portfolio-social-card-v1.png",
+  width: 1200,
+  height: 630,
+  type: "image/png",
+  alt: "Shiham Ahamed software engineering portfolio preview",
+};
+
 export const metadata: Metadata = {
   metadataBase: getPublicSiteUrl(),
   title: {
@@ -32,13 +40,18 @@ export const metadata: Metadata = {
     siteName: "Shiham Ahamed Portfolio",
     title: "Shiham Ahamed | Portfolio",
     description: "Practical web applications, backend systems, and engineering work by Shiham Ahamed.",
-    images: [{ url: "/logo.svg", alt: "Shiham Ahamed portfolio mark" }],
+    images: [socialPreviewImage],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Shiham Ahamed | Portfolio",
     description: "Practical web applications, backend systems, and engineering work by Shiham Ahamed.",
-    images: ["/logo.svg"],
+    images: [
+      {
+        url: socialPreviewImage.url,
+        alt: socialPreviewImage.alt,
+      },
+    ],
   },
   icons: { icon: "/favicon.ico" },
   robots: { index: true, follow: true },
