@@ -89,6 +89,22 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 - [ ] Light and dark themes work.
 - [ ] Record any Lighthouse or performance observations.
 
+### Root social-share metadata
+
+- [ ] The root canonical URL is the absolute HTTPS production URL and is emitted exactly once.
+- [ ] Exactly one Open Graph image and one Twitter image are emitted.
+- [ ] The Open Graph image uses the absolute HTTPS production URL for `/social/shiham-ahamed-portfolio-social-card-v1.png`.
+- [ ] Open Graph reports `image/png`, width `1200`, height `630`, and the approved image alt text.
+- [ ] Twitter uses `summary_large_image`, the same absolute PNG URL, and the approved image alt text.
+- [ ] Neither Open Graph nor Twitter uses `/logo.svg` as its social image target.
+- [ ] Production canonical, Open Graph, and Twitter metadata contains no localhost or Vercel preview-domain URL.
+- [ ] The production PNG endpoint returns HTTP 200 with `Content-Type: image/png` and no redirect loop.
+- [ ] A fresh WhatsApp share displays the approved portfolio preview image, title, and description.
+- [ ] A fresh LinkedIn share displays the approved portfolio preview image, title, and description.
+- [ ] A fresh Discord or Slack share displays the approved portfolio preview image, title, and description.
+- [ ] Cache-aware retesting uses each platform's debugger or a cache-busting URL after metadata changes.
+- [ ] Project-detail routes retain their project-specific title, description, `article` Open Graph type, thumbnail, and `summary_large_image` card.
+
 ## Admin
 
 - [ ] Admin login succeeds with the operator account.

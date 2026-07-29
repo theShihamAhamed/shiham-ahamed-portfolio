@@ -947,3 +947,18 @@ Read-only file/package/source searches and final docs-only consistency checks
 - The user reported that the final local project-card height alignment, compact project navigation, About statistics and count animation, and section-bounded case-study control were visually approved.
 - Physical-device testing was not claimed.
 - No dependency, lockfile, admin, backend, database, shared-contract, environment, migration, provider-setting, production-data, manual deployment, force-push, or merge change was made.
+
+## Root social-share preview metadata - 2026-07-30
+
+- Changed files: `apps/frontend/app/layout.tsx`, `apps/frontend/public/social/shiham-ahamed-portfolio-social-card-v1.png`, `apps/frontend/tests/root-social-metadata-contract.test.mjs`, `docs/post-deployment-smoke-test.md`, and `docs/validation-log.md`.
+- Focused root social metadata contract: passed 3/3.
+- `npm.cmd run typecheck:frontend`: passed.
+- `npm.cmd run lint:frontend`: passed; frontend client-boundary validation also passed.
+- `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release`: passed.
+- The network-enabled frontend production build passed, and the complete monorepo build passed.
+- Aggregate `npm.cmd run validate` completed typecheck and lint, then stopped only at the established local Node 22 admin named-export loader mismatch in `project-form-and-upload.test.mjs`; no social-metadata failure occurred.
+- Rendered metadata checks passed for normal browser, Facebook, Twitter, and LinkedIn user agents, with every required canonical, Open Graph, and Twitter field emitted exactly once.
+- The local social image endpoint returned HTTP 200 with `Content-Type: image/png`, valid public PNG bytes, and no redirect loop.
+- The user reported that the final 1200 Ã— 630 social preview image and root Open Graph and Twitter metadata were visually approved.
+- Deployment-dependent WhatsApp preview testing remains outstanding, together with production metadata, PNG endpoint, LinkedIn, Discord or Slack, and cache-aware retesting.
+- No dependency, manifest, lockfile, admin, backend, database, shared-contract, environment, provider-setting, production-data, manual deployment, force-push, or merge change was made.
