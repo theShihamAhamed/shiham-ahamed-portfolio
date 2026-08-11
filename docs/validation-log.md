@@ -962,3 +962,18 @@ Read-only file/package/source searches and final docs-only consistency checks
 - The user reported that the final 1200 Ã— 630 social preview image and root Open Graph and Twitter metadata were visually approved.
 - Deployment-dependent WhatsApp preview testing remains outstanding, together with production metadata, PNG endpoint, LinkedIn, Discord or Slack, and cache-aware retesting.
 - No dependency, manifest, lockfile, admin, backend, database, shared-contract, environment, provider-setting, production-data, manual deployment, force-push, or merge change was made.
+
+## Vercel Web Analytics - 2026-08-11
+
+- The user approved the local Vercel Web Analytics integration for the public portfolio.
+- `@vercel/analytics` resolved to `2.0.1` as a direct runtime dependency of `@portfolio/frontend`, with manifest range `^2.0.1`.
+- Changed files: `apps/frontend/package.json`, `package-lock.json`, `apps/frontend/app/layout.tsx`, `apps/frontend/tests/vercel-analytics-contract.test.mjs`, `docs/post-deployment-smoke-test.md`, and `docs/validation-log.md`.
+- Focused `node --import=tsx --test tests/vercel-analytics-contract.test.mjs`: passed 4/4, covering dependency scope, the prop-free public root integration, default collection behavior, Speed Insights exclusion, and admin exclusion.
+- `npm.cmd run typecheck:frontend`: passed.
+- `npm.cmd run lint:frontend`: passed; frontend client-boundary validation passed for 172 source files.
+- `npm.cmd run test:frontend`: 87/89 passed. All four Analytics tests passed; the only failures were the established unrelated Node 22.16.0/`tsx` named-export loader mismatches in `project-tech-display-groups.test.mjs` and `section-navigation.test.mjs`.
+- `npm.cmd run check:assets`, `npm.cmd run check:deployment`, and `npm.cmd run check:release`: passed.
+- The restricted `npm.cmd run build:frontend` attempt failed only because the existing Geist and Geist Mono Google Fonts could not be fetched. Its network-enabled retry passed all public routes.
+- `npm.cmd run build`: passed shared, database, public frontend, admin frontend, and backend builds.
+- Preview Analytics network, duplicate-page-view, query-only behavior, privacy-payload, and dashboard Preview-environment checks remain pending until after push; no preview or production evidence is claimed here.
+- No custom event, Speed Insights, admin Analytics, backend, database, shared-contract, environment, provider-setting, production-data, manual deployment, force-push, or merge change was made.

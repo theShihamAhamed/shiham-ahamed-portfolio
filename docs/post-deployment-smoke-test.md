@@ -105,6 +105,28 @@ timestamp, evidence, issue, and whether rollback is required for every section.
 - [ ] Cache-aware retesting uses each platform's debugger or a cache-busting URL after metadata changes.
 - [ ] Project-detail routes retain their project-specific title, description, `article` Open Graph type, thumbnail, and `summary_large_image` card.
 
+### Vercel Web Analytics
+
+- [ ] The public frontend directly declares `@vercel/analytics`, and the public root layout contains exactly one prop-free `<Analytics />`.
+- [ ] The admin frontend remains uninstrumented, with no `@vercel/analytics` declaration or import.
+- [ ] Web Analytics is enabled in the Vercel dashboard for the public frontend project.
+- [ ] The public Vercel preview deploys successfully.
+- [ ] With content blockers disabled, the current Analytics script and intake request are visible in the browser Network panel with no Analytics console error.
+- [ ] A direct page load produces one expected pathname page view.
+- [ ] A client-side route transition produces one expected pathname page view.
+- [ ] Browser Back produces one expected pathname page view.
+- [ ] Browser Forward produces one expected pathname page view.
+- [ ] A public dynamic `/projects/[slug]` route produces the expected pathname page view.
+- [ ] Direct loads, client navigation, Back, and Forward do not produce duplicate page views.
+- [ ] Query-only Projects search, type, technology, status, and sort changes do not produce unexpected pathname page views.
+- [ ] Analytics requests do not expose the visitor-entered Projects search value from `q`.
+- [ ] Analytics requests do not expose contact name, email, subject, message, honeypot, or token values.
+- [ ] The Vercel Analytics dashboard Preview environment receives preview traffic after a reasonable ingestion delay.
+- [ ] After merge and production deployment, the dashboard Production environment receives production traffic without confusing it with Preview data.
+- [ ] If requests are absent, repeat the check with ad blockers, Brave Shields, tracking-protection extensions, and relevant DNS filtering disabled.
+- [ ] `@vercel/speed-insights` and `<SpeedInsights />` remain absent.
+- [ ] No custom Analytics events or `track()` calls are present.
+
 ## Admin
 
 - [ ] Admin login succeeds with the operator account.
